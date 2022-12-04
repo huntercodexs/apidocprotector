@@ -1,7 +1,6 @@
 package com.huntercodexs.sample.apidocprotector.library;
 
 import com.huntercodexs.sample.apidocprotector.dto.ApiDocProtectorDto;
-import com.huntercodexs.sample.apidocprotector.dto.ApiDocProtectorUserGeneratorRequestDto;
 import com.huntercodexs.sample.apidocprotector.model.ApiDocProtectorEntity;
 import com.huntercodexs.sample.apidocprotector.repository.ApiDocProtectorRepository;
 import com.huntercodexs.sample.apidocprotector.rule.ApiDocProtectorErrorRedirect;
@@ -16,8 +15,13 @@ import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Map;
 
 @Slf4j
 @Service
@@ -32,7 +36,10 @@ public abstract class ApiDocProtectorLibrary extends ApiDocProtectorDataLibrary 
     @Value("${api.prefix:/error}")
     protected String apiPrefix;
 
-    @Value("${apidocprotector.custom.uri-login:/apidoc-protector/login}")
+    @Value("${apidocprotector.custom.uri-generator:/doc-protect/generator}")
+    protected String uriCustomGenerator;
+
+    @Value("${apidocprotector.custom.uri-login:/doc-protect/login}")
     protected String uriCustomLogin;
 
     @Value("${apidocprotector.custom.uri-form:/doc-protect/protector/form}")
@@ -40,6 +47,9 @@ public abstract class ApiDocProtectorLibrary extends ApiDocProtectorDataLibrary 
 
     @Value("${apidocprotector.custom.uri-logout:/doc-protect/logout}")
     protected String uriCustomLogout;
+
+    @Value("${apidocprotector.custom.uri-user-generator:/doc-protect/generator/user}")
+    protected String uriCustomUserGenerator;
 
     @Value("${apidocprotector.server-name:localhost}")
     protected String apiDocServerName;
@@ -64,6 +74,9 @@ public abstract class ApiDocProtectorLibrary extends ApiDocProtectorDataLibrary 
 
     @Value("${apidocprotector.session.expire-time:0}")
     protected int expireTimeSession;
+
+    @Value("${apidocprotector.email.expire-time:20}")
+    protected int expireTimeEmail;
 
     @Value("${apidocprotector.custom.server-domain:http://localhost}")
     protected String customServerDomain;
@@ -255,39 +268,39 @@ public abstract class ApiDocProtectorLibrary extends ApiDocProtectorDataLibrary 
         }
     }
 
-    public String userGenerator(ApiDocProtectorUserGeneratorRequestDto userBody) {
+    public String userGenerator(Map<String, String> userBody) {
 
         try {
 
             String token = guide();
             String tokenCrypt = dataEncrypt(token);
 
-            if (userBody.getRole() == null || userBody.getRole().equals("")) {
-                userBody.setRole("viewer");
+            if (userBody.get("role") == null || userBody.get("role").equals("")) {
+                userBody.put("role", "viewer");
             }
 
             if (
-                    userBody.getName() == null || userBody.getName().equals("") ||
-                    userBody.getUsername() == null || userBody.getUsername().equals("") ||
-                    userBody.getPassword() == null || userBody.getPassword().equals("") ||
-                    userBody.getEmail() == null || userBody.getEmail().equals("")
+                    userBody.get("name") == null || userBody.get("name").equals("") ||
+                    userBody.get("username") == null || userBody.get("username").equals("") ||
+                    userBody.get("password") == null || userBody.get("password").equals("") ||
+                    userBody.get("email") == null || userBody.get("email").equals("")
             ) {
                 return "Missing data, check your request";
             }
 
             LocalDateTime dateTime = LocalDateTime.now();
             String currentDate = dateTime.format(FORMATTER);
-            String passwordCrypt = dataEncrypt(userBody.getPassword());
+            String passwordCrypt = dataEncrypt(userBody.get("password"));
 
-            if (apiDocProtectorRepository.findByUsernameOrEmail(userBody.getUsername(), userBody.getEmail()) != null) {
+            if (apiDocProtectorRepository.findByUsernameOrEmail(userBody.get("username"), userBody.get("email")) != null) {
                 return "User already exists";
             }
 
             ApiDocProtectorEntity newUser = new ApiDocProtectorEntity();
-            newUser.setName(userBody.getName());
-            newUser.setUsername(userBody.getUsername());
-            newUser.setEmail(userBody.getEmail());
-            newUser.setRole(userBody.getRole());
+            newUser.setName(userBody.get("name"));
+            newUser.setUsername(userBody.get("username"));
+            newUser.setEmail(userBody.get("email"));
+            newUser.setRole(userBody.get("role"));
             newUser.setPassword(passwordCrypt);
             newUser.setToken(tokenCrypt);
             newUser.setActive("no");
@@ -334,6 +347,40 @@ public abstract class ApiDocProtectorLibrary extends ApiDocProtectorDataLibrary 
         logTerm("SESSION-KEY FROM TRANSFER IN findDataSession", sessionKey, true);
 
         return apiDocProtectorRepository.findBySessionKeyAndActive(sessionKey, "yes");
+    }
+
+    public String readFile(String filepath) {
+        StringBuilder dataHtml = new StringBuilder();
+
+        try {
+            FileReader activateFile = null;
+            try {
+                activateFile = new FileReader(filepath);
+            } catch (FileNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+            BufferedReader readActivateFile = new BufferedReader(activateFile);
+
+            String lineFile = "";
+            try {
+                lineFile = readActivateFile.readLine();
+                dataHtml = new StringBuilder(lineFile);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
+            while (lineFile != null) {
+                dataHtml.append(lineFile);
+                lineFile = readActivateFile.readLine();
+            }
+
+            activateFile.close();
+
+        } catch (IOException e) {
+            logTerm("READ-FILE [EXCEPTION]", e.getMessage(), true);
+        }
+
+        return dataHtml.toString();
     }
 
 }

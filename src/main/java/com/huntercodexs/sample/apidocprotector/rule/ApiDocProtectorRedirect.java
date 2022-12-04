@@ -14,9 +14,29 @@ public class ApiDocProtectorRedirect extends ApiDocProtectorLibrary {
         return "redirect:"+apiPrefix;
     }
 
+    public String forwardToGeneratorGlass() {
+        session.setAttribute("ADP-USER-GENERATOR", "1");
+        logTerm("forwardToGeneratorGlass IS START", null, true);
+        return "forward:/doc-protect/protector/generator/glass";
+    }
+
     public String forwardToGlass() {
         logTerm("forwardToGlass IS START", null, true);
         return "forward:/doc-protect/protector/glass";
+    }
+
+    public String redirectToGeneratorForm() {
+
+        logTerm("REDIRECT TO GENERATOR FORM IS START", null, true);
+
+        String uriTarget = uriCustomGenerator.replaceFirst("/$", "");
+        if (!uriTarget.startsWith("/")) uriTarget = "/" + uriTarget;
+        if (!uriTarget.endsWith("/form")) uriTarget = uriTarget.replaceFirst("/form$", "");
+        uriTarget = uriTarget + "/form";
+
+        logTerm("REDIRECT TO GENERATOR FORM", uriTarget, true);
+
+        return "redirect:" + uriTarget;
     }
 
     public String redirectToForm() {

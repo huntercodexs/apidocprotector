@@ -24,6 +24,34 @@ public class ApiDocProtectorViewer extends ApiDocProtectorLibrary {
         return modelAndView;
     }
 
+    public ModelAndView generator(String userCreatedSuccessful) {
+
+        try {
+
+            if (apiDocProtectorType.equals("swagger")) {
+                ModelAndView modelAndView = new ModelAndView("apidocprotector/generator");
+                modelAndView.addObject("apidoc_protector_target", uriCustomUserGenerator);
+
+                if (userCreatedSuccessful != null) {
+                    modelAndView.addObject("apidoc_protector_created", userCreatedSuccessful);
+                }
+
+                return modelAndView;
+            }
+
+            return error(
+                    FORM_VIEW_ERROR.getMessage(),
+                    "Occurs an critical error on form",
+                    FORM_VIEW_ERROR.getStatusCode());
+
+        } catch (RuntimeException re) {
+            return error(
+                    FORM_ERROR.getMessage(),
+                    re.getMessage(),
+                    FORM_ERROR.getStatusCode());
+        }
+    }
+
     public ModelAndView form(HttpSession session, String sessionId) {
 
         Map<String, String> body = new HashMap<>();

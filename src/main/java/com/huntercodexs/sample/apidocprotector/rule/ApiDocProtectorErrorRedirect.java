@@ -5,6 +5,10 @@ import org.springframework.stereotype.Service;
 @Service
 public class ApiDocProtectorErrorRedirect {
 
+    public String generatorError(String data) {
+        return "redirect:/doc-protect/generator/error/"+data;
+    }
+
     public String initializerError(String data) {
         return "redirect:/doc-protect/initializer/error/"+data;
     }
