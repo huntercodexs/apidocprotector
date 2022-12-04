@@ -69,6 +69,16 @@ public enum ApiDocProtectorErrorLibrary {
             10011,
             "Request timeout"),
 
+    GENERATOR_ERROR(
+            HttpStatus.INTERNAL_SERVER_ERROR,
+            10012,
+            "Generator process error"),
+
+    GENERATOR_UNAUTHORIZED(
+            HttpStatus.UNAUTHORIZED,
+            10013,
+            "Generator process error"),
+
     UNAUTHORIZED_FIREWALL(
             HttpStatus.UNAUTHORIZED,
             50001,

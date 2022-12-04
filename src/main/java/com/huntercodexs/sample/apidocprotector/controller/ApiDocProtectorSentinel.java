@@ -25,7 +25,7 @@ import static com.huntercodexs.sample.apidocprotector.library.ApiDocProtectorErr
 public class ApiDocProtectorSentinel extends ApiDocProtectorLibrary {
 
 	@Operation(hidden = true)
-	@GetMapping(path = "${apidocprotector.custom.server-uri-account-active:/apidoc-protector/account/active}/{token}")
+	@GetMapping(path = "${apidocprotector.custom.server-uri-account-active:/doc-protect/account/active}/{token}")
 	@ResponseBody
 	public String activator(@PathVariable("token") String token) {
 
@@ -38,21 +38,18 @@ public class ApiDocProtectorSentinel extends ApiDocProtectorLibrary {
 			apiDocProtectorRepository.save(result);
 			response.setStatus(HttpStatus.OK.value());
 
-			String urlUser = customServerDomain.replaceFirst("/$", "");
-			String uriUser = uriCustomLogin.replaceFirst("/$", "") + "/" + token;
-			if (!uriUser.startsWith("/")) uriUser = "/" + uriUser;
-			String urlToken = urlUser + uriUser;
+			/*Activated (HTML)*/
+			String dataHtml = readFile("./src/main/resources/templates/apidocprotector/activated.html");
 
-			logTerm("USER TOKEN IS ACVATED", result, true);
+			String emailTo = result.getEmail();
+			String subject = apiDocProtectorMailSender.subjectMail(result.getUsername());
+			String content = apiDocProtectorMailSender.contentMailActivatedUser(result.getName(), token);
 
-			return "<h3>User activated successful</h3>" +
-					"<hr />" +
-					"<p>User Token: "+token+"</p>"+
-					"<p>Use the link below to make future login<br />" +
-						"<a href='"+urlToken+"'>"
-							+ urlToken +
-						"</a>" +
-					"</p>";
+			apiDocProtectorMailSender.sendMailAttached(emailTo, subject, content);
+
+			logTerm("USER TOKEN IS ACTIVATED", result, true);
+
+			return dataHtml.replace("@{apidoc_protector_username}", result.getName());
 
 		}
 		response.setStatus(HttpStatus.NOT_FOUND.value());
@@ -107,7 +104,7 @@ public class ApiDocProtectorSentinel extends ApiDocProtectorLibrary {
 			"/doc-protect/viewer",
 			"/doc-protect/doc-protected",
 			"/doc-protect/index.html",
-			"${apidocprotector.custom.uri-generator:/doc-protect/generator/user}", /*HTTP METHOD GET IS NOT ACCEPTED*/
+			"${apidocprotector.custom.uri-user-generator:/doc-protect/generator/user}", /*HTTP METHOD GET IS NOT ACCEPTED*/
 			/*Swagger Routes*/
 			"/doc-protect/swagger",
 			"/doc-protect/swagger/index.html",
@@ -138,34 +135,6 @@ public class ApiDocProtectorSentinel extends ApiDocProtectorLibrary {
 	public ModelAndView protector() {
 		logTerm("PROTECTOR FROM SENTINEL", null, true);
 		return apiDocProtectorViewer.protector(session, null);
-	}
-
-	@Operation(hidden = true)
-	@PostMapping(
-			path = "${apidocprotector.custom.uri-generator:/doc-protect/generator/user}",
-			consumes = MediaType.APPLICATION_JSON_VALUE,
-			produces = MediaType.TEXT_PLAIN_VALUE)
-	@ResponseBody
-	public String generator(@Valid @RequestBody ApiDocProtectorUserGeneratorRequestDto body) {
-
-		logTerm("GENERATOR FROM SENTINEL IS START", null, true);
-
-		if (request.getHeader("Authorization") == null || request.getHeader("Authorization").equals("")) {
-			return "Invalid Access";
-		}
-
-		if (!findPrivilegedAdmin(request.getHeader("Authorization"))) {
-			return "Unauthorized";
-		}
-
-		String userToken = userGenerator(body);
-		String emailTo = body.getEmail();
-		String subject = apiDocProtectorMailSender.subjectMail(body.getUsername());
-		String content = apiDocProtectorMailSender.contentMail(body.getName(), userToken);
-
-		apiDocProtectorMailSender.sendMail(emailTo, subject, content);
-
-		return "User Created Successful";
 	}
 
 	@Operation(hidden = true)

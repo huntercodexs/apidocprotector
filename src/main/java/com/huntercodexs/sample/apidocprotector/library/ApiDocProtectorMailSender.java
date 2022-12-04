@@ -3,18 +3,23 @@ package com.huntercodexs.sample.apidocprotector.library;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
 
 @Slf4j
 @Service
-public class ApiDocProtectorMailSender {
+public class ApiDocProtectorMailSender extends ApiDocProtectorLibrary {
 
     @Value("${apidocprotector.custom.server-domain:http://localhost}")
     String customServerDomain;
 
-    @Value("${apidocprotector.custom.server-uri-account-active:/apidoc-protector/account/active}")
+    @Value("${apidocprotector.custom.server-uri-account-active:/doc-protect/account/active}")
     String customServerUriAccountActive;
 
     @Autowired
@@ -29,30 +34,72 @@ public class ApiDocProtectorMailSender {
         message.setTo(to);
         message.setSubject(subject);
         message.setText(content);
-        System.out.println("JAVA MAIL SENDER: "+message);
+
+        logTerm("JAVA MAIL SENDER", message, true);
+
         try {
             javaMailSender.send(message);
         } catch (RuntimeException re) {
-            System.out.println("[ JAVA MAIL SENDER EXCEPTION ]");
-            System.out.println(re.getMessage());
-            System.out.println("------------------------------------------------------------------------");
-            System.out.println("[ EMAIL ]");
-            System.out.println(message);
-            System.out.println("------------------------------------------------------------------------");
+            logTerm("[ JAVA MAIL SENDER EXCEPTION ]", re.getMessage(), true);
+            logTerm("[ EMAIL ]", message, true);
         }
     }
 
-    public String subjectMail(String username) {
-        return "APIDOC PROTECTOR: active your account " + username;
+    public void sendMailAttached(String to, String subject, String content) {
+        try {
+            MimeMessage message = javaMailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true);
+            helper.setTo(to);
+            helper.setSubject(subject);
+            helper.setText(content, true);
+            helper.addAttachment("huntercodexs-name-white.png", new ClassPathResource("/templates/apidocprotector/files/huntercodexs-name-white.png"));
+
+            logTerm("[ EMAIL ]", message, true);
+            logTerm("[ HELPER ]", helper, true);
+
+            javaMailSender.send(message);
+
+        } catch (MessagingException me) {
+            logTerm("JAVA MAIL SENDER [ATTACHED] [MESSAGING-EXCEPTION]", me.getMessage(), true);
+            throw new RuntimeException(me.getMessage());
+        }
+
+        logTerm("JAVA MAIL SENDER [ATTACHED] IS OK", "OK", true);
     }
 
-    public String contentMail(String username, String token) {
+    public String subjectMail(String username) {
+        return "[APIDOC PROTECTOR] Account Creating to " + username;
+    }
+
+    public String contentMailGeneratorUser(String username, String token) {
         String domainServer = customServerDomain.replaceFirst("/$", "");;
         String uriServer = customServerUriAccountActive.replaceFirst("/$", "");
         if (!uriServer.startsWith("/")) uriServer = "/" + uriServer;
         String link = domainServer + uriServer +"/" + token;
-        return "Hi " + username + "\n" +
-                "Active your account now: " + link;
+
+        /*Activate (HTML)*/
+        String dataHtml = readFile("./src/main/resources/templates/apidocprotector/mail/activate.html");
+        String emailTime = String.valueOf(expireTimeEmail) + " minutes";
+
+        return dataHtml
+                .replace("@{apidoc_protector_username}", username)
+                .replace("@{apidoc_protector_url_active}", link)
+                .replace("@{apidoc_protector_email_expires_time}", emailTime);
+    }
+
+    public String contentMailActivatedUser(String username, String token) {
+        String urlUser = customServerDomain.replaceFirst("/$", "");
+        String uriUser = uriCustomLogin.replaceFirst("/$", "") + "/" + token;
+        if (!uriUser.startsWith("/")) uriUser = "/" + uriUser;
+        String urlToken = urlUser + uriUser;
+
+        /*Activated (HTML)*/
+        String dataHtml = readFile("./src/main/resources/templates/apidocprotector/mail/welcome.html");
+
+        return dataHtml
+                .replace("@{apidoc_protector_username}", username)
+                .replace("@{apidoc_protector_user_token}", token)
+                .replace("@{apidoc_protector_url_access}", urlToken);
     }
 
 }

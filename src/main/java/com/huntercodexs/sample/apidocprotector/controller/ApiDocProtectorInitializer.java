@@ -18,7 +18,7 @@ import static com.huntercodexs.sample.apidocprotector.library.ApiDocProtectorErr
 public class ApiDocProtectorInitializer extends ApiDocProtectorLibrary {
 
 	@Operation(hidden = true)
-	@GetMapping(path = "${apidocprotector.custom.uri-login:/apidoc-protector/login}/{token}")
+	@GetMapping(path = "${apidocprotector.custom.uri-login:/doc-protect/login}/{token}")
 	public String initializer(@PathVariable("token") String token) {
 
 		String tokenCrypt = dataEncrypt(token);
@@ -49,7 +49,7 @@ public class ApiDocProtectorInitializer extends ApiDocProtectorLibrary {
 		try {
 			return apiDocProtectorRedirect.redirectToForm();
 		} catch (RuntimeException re) {
-			logTerm(re.getMessage(), "ERROR", true);
+			logTerm("GLASS IN INITIALIZER [EXCEPTION]", re.getMessage(), true);
 		}
 		return apiDocProtectorErrorRedirect.initializerError("sessionId");
 	}
@@ -93,7 +93,7 @@ public class ApiDocProtectorInitializer extends ApiDocProtectorLibrary {
 					BURN_ERROR.getStatusCode());
 
 		} catch (RuntimeException re) {
-			logTerm(re.getMessage(), "EXCEPTION", true);
+			logTerm("FORM INITIALIZER [EXCEPTION]", re.getMessage(), true);
 			return apiDocProtectorViewer.error(
 					BURN_EXCEPTION.getMessage(),
 					"The request has caused a exception",
@@ -102,7 +102,7 @@ public class ApiDocProtectorInitializer extends ApiDocProtectorLibrary {
 	}
 
 	@Operation(hidden = true)
-	@GetMapping(path = "${apidocprotector.custom.uri-login:/apidoc-protector/login}")
+	@GetMapping(path = "${apidocprotector.custom.uri-login:/doc-protect/login}")
 	public String denied() {
 		return apiDocProtectorErrorRedirect.initializerError("Missing_Token");
 	}
