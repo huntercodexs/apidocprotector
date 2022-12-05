@@ -1,4 +1,4 @@
-package com.huntercodexs.sample.apidocprotector.rule;
+package com.huntercodexs.sample.apidocprotector.secure;
 
 import com.huntercodexs.sample.apidocprotector.library.ApiDocProtectorLibrary;
 import org.springframework.http.HttpStatus;

@@ -16,12 +16,6 @@ import javax.mail.internet.MimeMessage;
 @Service
 public class ApiDocProtectorMailSender extends ApiDocProtectorLibrary {
 
-    @Value("${apidocprotector.custom.server-domain:http://localhost}")
-    String customServerDomain;
-
-    @Value("${apidocprotector.custom.server-uri-account-active:/doc-protect/account/active}")
-    String customServerUriAccountActive;
-
     @Autowired
     private final JavaMailSender javaMailSender;
 
@@ -77,7 +71,7 @@ public class ApiDocProtectorMailSender extends ApiDocProtectorLibrary {
         if (!uriServer.startsWith("/")) uriServer = "/" + uriServer;
         String link = domainServer + uriServer +"/" + token;
 
-        /*Activate (HTML)*/
+        /*Activate (HTML Mail)*/
         String dataHtml = readFile("./src/main/resources/templates/apidocprotector/mail/activate.html");
         String emailTime = String.valueOf(expireTimeEmail) + " minutes";
 
@@ -93,7 +87,7 @@ public class ApiDocProtectorMailSender extends ApiDocProtectorLibrary {
         if (!uriUser.startsWith("/")) uriUser = "/" + uriUser;
         String urlToken = urlUser + uriUser;
 
-        /*Activated (HTML)*/
+        /*Welcome (HTML Mail)*/
         String dataHtml = readFile("./src/main/resources/templates/apidocprotector/mail/welcome.html");
 
         return dataHtml

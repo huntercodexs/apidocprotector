@@ -263,3 +263,14 @@ john: 39a5fa0e-f295-43e3-a8e5-dd1bf860be7a
 mary: 80e72137-b256-47f3-af60-6577294c46f9
 brow: 494cf7de-9068-4684-b9cd-60c62c29f2d2
 jereelton: d17bd520-4c05-4d96-82f5-7fb28975324a
+
+
+# Etapas
+
+- Gerar um usuário
+  - http://localhost:31303/doc-protect/generator
+- Acessar email para ativar conta
+  - Clicar no link (Activate Account)
+- Após clicar no link para ativar a conta
+  - Verificar email de boas vindas ao APIDOC PROTECTOR
+  - Clicar no link (click here) para acessar a conta

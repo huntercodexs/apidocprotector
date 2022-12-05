@@ -22,7 +22,7 @@ public class ApiDocProtectorInitializer extends ApiDocProtectorLibrary {
 	public String initializer(@PathVariable("token") String token) {
 
 		String tokenCrypt = dataEncrypt(token);
-		ApiDocProtectorEntity result = findUserForm(tokenCrypt, "yes");
+		ApiDocProtectorEntity result = findAccountByTokenAndActive(tokenCrypt, "yes");
 		logTerm("RESULT TOKEN", result, true);
 
 		if (result != null && result.getToken().equals(tokenCrypt)) {
@@ -37,10 +37,10 @@ public class ApiDocProtectorInitializer extends ApiDocProtectorLibrary {
 		}
 
 		String error = token;
-		if (findUserForm(tokenCrypt, "no") != null) {
+		if (findAccountByTokenAndActive(tokenCrypt, "no") != null) {
 			error = "user_is_not_active";
 		}
-		return apiDocProtectorErrorRedirect.initializerError(error);
+		return apiDocProtectorErrorRedirect.redirectInitializerError(error);
 	}
 
 	@Operation(hidden = true)
@@ -51,7 +51,7 @@ public class ApiDocProtectorInitializer extends ApiDocProtectorLibrary {
 		} catch (RuntimeException re) {
 			logTerm("GLASS IN INITIALIZER [EXCEPTION]", re.getMessage(), true);
 		}
-		return apiDocProtectorErrorRedirect.initializerError("sessionId");
+		return apiDocProtectorErrorRedirect.redirectInitializerError("sessionId");
 	}
 
 	@Operation(hidden = true)
@@ -104,7 +104,7 @@ public class ApiDocProtectorInitializer extends ApiDocProtectorLibrary {
 	@Operation(hidden = true)
 	@GetMapping(path = "${apidocprotector.custom.uri-login:/doc-protect/login}")
 	public String denied() {
-		return apiDocProtectorErrorRedirect.initializerError("Missing_Token");
+		return apiDocProtectorErrorRedirect.redirectInitializerError("Missing_Token");
 	}
 
 	@Operation(hidden = true)

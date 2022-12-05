@@ -3,10 +3,10 @@ package com.huntercodexs.sample.apidocprotector.library;
 import com.huntercodexs.sample.apidocprotector.dto.ApiDocProtectorDto;
 import com.huntercodexs.sample.apidocprotector.model.ApiDocProtectorEntity;
 import com.huntercodexs.sample.apidocprotector.repository.ApiDocProtectorRepository;
-import com.huntercodexs.sample.apidocprotector.rule.ApiDocProtectorErrorRedirect;
-import com.huntercodexs.sample.apidocprotector.rule.ApiDocProtectorRedirect;
-import com.huntercodexs.sample.apidocprotector.rule.ApiDocProtectorSecurity;
-import com.huntercodexs.sample.apidocprotector.rule.ApiDocProtectorViewer;
+import com.huntercodexs.sample.apidocprotector.secure.ApiDocProtectorErrorRedirect;
+import com.huntercodexs.sample.apidocprotector.secure.ApiDocProtectorRedirect;
+import com.huntercodexs.sample.apidocprotector.secure.ApiDocProtectorSecurity;
+import com.huntercodexs.sample.apidocprotector.secure.ApiDocProtectorViewer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -60,7 +60,7 @@ public abstract class ApiDocProtectorLibrary extends ApiDocProtectorDataLibrary 
     @Value("${apidocprotector.type:swagger}")
     protected String apiDocProtectorType;
 
-    @Value("${apidocprotector.data.crypt.type:}")
+    @Value("${apidocprotector.data.crypt.type:md5}")
     protected String dataCryptTpe;
 
     @Value("${springdoc.api-docs.path:/api-docs-guard}")
@@ -75,11 +75,14 @@ public abstract class ApiDocProtectorLibrary extends ApiDocProtectorDataLibrary 
     @Value("${apidocprotector.session.expire-time:0}")
     protected int expireTimeSession;
 
-    @Value("${apidocprotector.email.expire-time:20}")
+    @Value("${apidocprotector.email.expire-time:1}")
     protected int expireTimeEmail;
 
     @Value("${apidocprotector.custom.server-domain:http://localhost}")
     protected String customServerDomain;
+
+    @Value("${apidocprotector.custom.server-uri-account-active:/doc-protect/account/active}")
+    String customServerUriAccountActive;
 
     @Autowired
     protected ApiDocProtectorErrorRedirect apiDocProtectorErrorRedirect;
@@ -192,6 +195,58 @@ public abstract class ApiDocProtectorLibrary extends ApiDocProtectorDataLibrary 
 
         sessionRenew(result, dateTimeNow);
         logTerm("SESSION REFRESHED", result.getSessionVal(), true);
+
+        return false;
+    }
+
+    public boolean alreadyActivated(String clearToken) {
+        String tokenCrypt = dataEncrypt(clearToken);
+        ApiDocProtectorEntity result = apiDocProtectorRepository.findByTokenAndActive(tokenCrypt, "yes");
+        if (result != null && result.getToken().equals(tokenCrypt)) {
+            logTerm("ACCOUNT ALREADY ACTIVATED", clearToken, true);
+            return true;
+        }
+        logTerm("ACCOUNT IS NOT ACTIVATED YET", clearToken, true);
+        return false;
+    }
+
+    public boolean activateExpired(String tokenClear) {
+
+        /*Default/Minimum Time to Activate Expire*/
+        if (expireTimeEmail < 1) {
+            expireTimeEmail = 1;
+        }
+
+        String tokenCrypt = dataEncrypt(tokenClear);
+        ApiDocProtectorEntity result = apiDocProtectorRepository.findByTokenAndActive(tokenCrypt, "no");
+        String accountCreatedAt = result.getCreatedAt();
+
+        LocalDateTime dateTimeAccount = LocalDateTime.parse(result.getCreatedAt(), FORMATTER);
+        LocalDateTime accountTimePlus = dateTimeAccount.plusMinutes(expireTimeEmail);
+
+        LocalDateTime dateTimeNow = LocalDateTime.now();
+        String dateTimeFormat = dateTimeNow.format(FORMATTER);
+        LocalDateTime dateTimeFormatter = LocalDateTime.parse(dateTimeFormat, FORMATTER);
+
+        int diffTime = dateTimeFormatter.compareTo(accountTimePlus);
+
+        logTerm("ACCOUNT EXPIRED START LOG", null, true);
+        logTerm("ACCOUNT CREATED AT", accountCreatedAt, false);
+        logTerm("DATE TIME NOW", dateTimeNow, false);
+        logTerm("DATE TIME NOW FORMATTER", dateTimeFormatter, false);
+        logTerm("ACCOUNT TIME PLUS", accountTimePlus, false);
+        logTerm("ACCOUNT TIME PLUS FORMATTER", accountTimePlus.format(FORMATTER), false);
+        logTerm("DIFF TIME", diffTime, false);
+        logTerm("EXPIRED TIME ACCOUNT IS", expireTimeEmail, false);
+        logTerm("ACCOUNT EXPIRED FINISH LOG", null, true);
+
+        /*Check Expired Account Time*/
+        if (diffTime > 0) {
+            logTerm("ACCOUNT TIME EXPIRED", result.getToken(), true);
+            return true;
+        }
+
+        logTerm("ACCOUNT TIME IS OK", result.getToken(), true);
 
         return false;
     }
@@ -336,7 +391,7 @@ public abstract class ApiDocProtectorLibrary extends ApiDocProtectorDataLibrary 
         return result != null && result.getToken().equals(tokenCrypt);
     }
 
-    public ApiDocProtectorEntity findUserForm(String tokenCrypt, String active) {
+    public ApiDocProtectorEntity findAccountByTokenAndActive(String tokenCrypt, String active) {
         return apiDocProtectorRepository.findByTokenAndActive(tokenCrypt, active);
     }
 

@@ -88,7 +88,7 @@ public class ApiDocProtectorSwaggerRouter extends ApiDocProtectorLibrary {
 	@RequestMapping(value = "${springdoc.swagger-ui.path:/swagger-ui-path}/index.html")
 	public String denied(HttpServletResponse httpResponse) throws IOException {
 		httpResponse.setStatus(HttpStatus.NOT_ACCEPTABLE.value());
-		return apiDocProtectorErrorRedirect.sentinelError("Operation not allowed");
+		return apiDocProtectorErrorRedirect.forwardSentinelError("Operation not allowed");
 	}
 
 	@Operation(hidden = true)

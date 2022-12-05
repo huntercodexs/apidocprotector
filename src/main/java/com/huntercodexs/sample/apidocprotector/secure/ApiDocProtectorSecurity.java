@@ -1,4 +1,4 @@
-package com.huntercodexs.sample.apidocprotector.rule;
+package com.huntercodexs.sample.apidocprotector.secure;
 
 import com.huntercodexs.sample.apidocprotector.dto.ApiDocProtectorDto;
 import com.huntercodexs.sample.apidocprotector.library.ApiDocProtectorLibrary;

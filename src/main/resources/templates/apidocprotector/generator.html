@@ -11,7 +11,7 @@
         }
         body {
             overflow: hidden;
-            background: #C9C9CA;
+            background: #F1F1F1;
         }
         body > form:nth-child(1) > p:nth-child(1) {
             width: 100%;
@@ -91,8 +91,8 @@
              color: #888;
         }
         #post-message {
-            margin: 30px;
-            color: #4080D2;
+            color: #353535;
+            margin: 40px;
         }
     </style>
 </head>
@@ -102,7 +102,6 @@
         <p id="apidoc-protector-icon">&#9661;</p>
         <h3>APIDOC PROTECTOR</h3>
         <p style="color: #676767;">Powered by Huntercodexs &copy; 2022</p>
-        <p id="post-message" th:text="${apidoc_protector_created}"></p>
     </span>
     </div>
     <div id="left-side">
@@ -122,15 +121,16 @@
             </p>
             <p class="title-field">Password
             <p>
-            <input type='password' name='password' id='password' value="" />
-        </p>
+                <input type='password' name='password' id='password' value="" />
+            </p>
             <p class="title-field">Role
             <p>
-            <input type='text' name='role' id='role' value="user" disabled />
-        </p>
+                <input type='text' name='role' id='role' value="user" disabled />
+            </p>
             <p id="p-button">
                 <input type='submit' id='bt-signup' value='Sign Up' />
             </p>
+            <p id="post-message" th:text="${apidoc_protector_created}"></p>
         </form>
     </div>
     <script>

@@ -1,4 +1,4 @@
-package com.huntercodexs.sample.apidocprotector.rule;
+package com.huntercodexs.sample.apidocprotector.secure;
 
 import com.huntercodexs.sample.apidocprotector.dto.ApiDocProtectorDto;
 import com.huntercodexs.sample.apidocprotector.library.ApiDocProtectorLibrary;
@@ -24,7 +24,7 @@ public class ApiDocProtectorViewer extends ApiDocProtectorLibrary {
         return modelAndView;
     }
 
-    public ModelAndView generator(String userCreatedSuccessful) {
+    public ModelAndView generator(boolean userCreatedSuccessful) {
 
         try {
 
@@ -32,8 +32,8 @@ public class ApiDocProtectorViewer extends ApiDocProtectorLibrary {
                 ModelAndView modelAndView = new ModelAndView("apidocprotector/generator");
                 modelAndView.addObject("apidoc_protector_target", uriCustomUserGenerator);
 
-                if (userCreatedSuccessful != null) {
-                    modelAndView.addObject("apidoc_protector_created", userCreatedSuccessful);
+                if (userCreatedSuccessful) {
+                    modelAndView.addObject("apidoc_protector_created", "Account Created Successful");
                 }
 
                 return modelAndView;

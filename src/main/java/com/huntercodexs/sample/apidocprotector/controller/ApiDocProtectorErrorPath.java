@@ -12,7 +12,7 @@ public class ApiDocProtectorErrorPath extends ApiDocProtectorLibrary implements 
     @Override
     @RequestMapping(path = "/error")
     public String getErrorPath() {
-        return apiDocProtectorErrorRedirect.sentinelError("No Mapping Found");
+        return apiDocProtectorErrorRedirect.forwardSentinelError("No Mapping Found");
     }
 }
 

@@ -1,20 +1,20 @@
 package com.huntercodexs.sample.apidocprotector.controller;
 
-import com.huntercodexs.sample.apidocprotector.dto.ApiDocProtectorUserGeneratorRequestDto;
 import com.huntercodexs.sample.apidocprotector.library.ApiDocProtectorLibrary;
 import com.huntercodexs.sample.apidocprotector.model.ApiDocProtectorEntity;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
 import java.io.IOException;
 
 import static com.huntercodexs.sample.apidocprotector.library.ApiDocProtectorErrorLibrary.SENTINEL_ERROR;
@@ -23,38 +23,6 @@ import static com.huntercodexs.sample.apidocprotector.library.ApiDocProtectorErr
 @Controller
 @CrossOrigin(origins = "*")
 public class ApiDocProtectorSentinel extends ApiDocProtectorLibrary {
-
-	@Operation(hidden = true)
-	@GetMapping(path = "${apidocprotector.custom.server-uri-account-active:/doc-protect/account/active}/{token}")
-	@ResponseBody
-	public String activator(@PathVariable("token") String token) {
-
-		String tokenCrypt = dataEncrypt(token);
-		ApiDocProtectorEntity result = findUserForm(tokenCrypt, "no");
-		logTerm("RESULT TOKEN", result, true);
-
-		if (result != null && result.getToken().equals(tokenCrypt)) {
-			result.setActive("yes");
-			apiDocProtectorRepository.save(result);
-			response.setStatus(HttpStatus.OK.value());
-
-			/*Activated (HTML)*/
-			String dataHtml = readFile("./src/main/resources/templates/apidocprotector/activated.html");
-
-			String emailTo = result.getEmail();
-			String subject = apiDocProtectorMailSender.subjectMail(result.getUsername());
-			String content = apiDocProtectorMailSender.contentMailActivatedUser(result.getName(), token);
-
-			apiDocProtectorMailSender.sendMailAttached(emailTo, subject, content);
-
-			logTerm("USER TOKEN IS ACTIVATED", result, true);
-
-			return dataHtml.replace("@{apidoc_protector_username}", result.getName());
-
-		}
-		response.setStatus(HttpStatus.NOT_FOUND.value());
-		return apiDocProtectorErrorRedirect.initializerError("user_not_found");
-	}
 
 	@Operation(hidden = true)
 	@GetMapping(path = {"/"})
@@ -144,6 +112,67 @@ public class ApiDocProtectorSentinel extends ApiDocProtectorLibrary {
 				SENTINEL_ERROR.getMessage(),
 				error.replaceAll("_", " "),
 				SENTINEL_ERROR.getStatusCode());
+	}
+
+	@Operation(hidden = true)
+	@GetMapping(path = "${apidocprotector.custom.server-uri-account-active:/doc-protect/account/active}/{token}")
+	@ResponseBody
+	public String activator(@PathVariable("token") String token) {
+
+		logTerm("ACTIVATOR IS START", null, true);
+
+		String tokenCrypt = dataEncrypt(token);
+		ApiDocProtectorEntity result = findAccountByTokenAndActive(tokenCrypt, "no");
+		logTerm("RESULT TOKEN", result, true);
+
+		if (result == null) {
+
+			/*Generic (HTML Page)*/
+			String dataHtml = readFile("./src/main/resources/templates/apidocprotector/generic.html");
+
+			if (alreadyActivated(token)) {
+				logTerm("ACCOUNT ALREADY ACTIVATED IN ACTIVATOR", token, true);
+
+				response.setStatus(HttpStatus.CONFLICT.value());
+				return dataHtml
+						.replace("@{apidoc_protector_title}", "Activation Failure")
+						.replace("@{apidoc_protector_content}", "The account has been already activated");
+			}
+
+			logTerm("ACCOUNT NOT FOUND IN ACTIVATOR", null, true);
+
+			response.setStatus(HttpStatus.NOT_FOUND.value());
+			return dataHtml
+					.replace("@{apidoc_protector_title}", "Activation Failure")
+					.replace("@{apidoc_protector_content}", "The account was not found");
+		}
+
+		if (activateExpired(token)) {
+			logTerm("ACCOUNT HAS BEEN EXPIRED TO ACTIVE IN ACTIVATOR", token, true);
+
+			/*Generic (HTML Page)*/
+			String dataHtml = readFile("./src/main/resources/templates/apidocprotector/generic.html");
+			response.setStatus(HttpStatus.NOT_ACCEPTABLE.value());
+			return dataHtml
+					.replace("@{apidoc_protector_title}", "Activation Failure")
+					.replace("@{apidoc_protector_content}", "The time to active your account has been expired, please make a enrollment again");
+		}
+
+		result.setActive("yes");
+		apiDocProtectorRepository.save(result);
+
+		String emailTo = result.getEmail();
+		String subject = apiDocProtectorMailSender.subjectMail(result.getUsername());
+		String content = apiDocProtectorMailSender.contentMailActivatedUser(result.getName(), token);
+
+		apiDocProtectorMailSender.sendMailAttached(emailTo, subject, content);
+
+		logTerm("USER TOKEN HAS BEEN ACTIVATED IN ACTIVATOR", result, true);
+
+		/*Activated (HTML Page)*/
+		String dataHtml = readFile("./src/main/resources/templates/apidocprotector/activated.html");
+		response.setStatus(HttpStatus.OK.value());
+		return dataHtml.replace("@{apidoc_protector_username}", result.getName());
 	}
 
 }
