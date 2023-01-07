@@ -147,6 +147,7 @@ public class ApiDocProtectorSentinel extends ApiDocProtectorLibrary {
 					.replace("@{apidoc_protector_content}", "The account was not found");
 		}
 
+		/*TODO: Create an alternative to solve this issue (Expired Time to Activate Account)*/
 		if (activateExpired(token)) {
 			logTerm("ACCOUNT HAS BEEN EXPIRED TO ACTIVE IN ACTIVATOR", token, true);
 
@@ -156,6 +157,8 @@ public class ApiDocProtectorSentinel extends ApiDocProtectorLibrary {
 			return dataHtml
 					.replace("@{apidoc_protector_title}", "Activation Failure")
 					.replace("@{apidoc_protector_content}", "The time to active your account has been expired, please make a enrollment again");
+
+
 		}
 
 		result.setActive("yes");

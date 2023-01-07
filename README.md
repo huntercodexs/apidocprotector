@@ -274,3 +274,32 @@ jereelton: d17bd520-4c05-4d96-82f5-7fb28975324a
 - Após clicar no link para ativar a conta
   - Verificar email de boas vindas ao APIDOC PROTECTOR
   - Clicar no link (click here) para acessar a conta
+
+# TODO
+
+if expired account time
+  - click in account recovery
+    - inform your email
+  - check/receive email
+    - click account activate
+
+if account activated and remember access
+  - get generator form
+    - click in account recovery
+      - inform your email
+    - check/receive email
+      - click activate account
+
+if account activate and change password
+  - get login form
+    - click in change password
+      - inform your email
+    - check/receive email
+      - click change password
+    - inform a new password
+      - redirect into login form
+
+if account not found from login form
+  - retrieve login not found
+
+

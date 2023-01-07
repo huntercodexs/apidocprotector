@@ -89,7 +89,9 @@ public class ApiDocProtectorGenerator extends ApiDocProtectorLibrary {
 			logTerm("INVALID SESSION FROM CREATE IN GENERATOR", null, true);
 		}
 
+		/*TODO: Check if user already exists*/
 		try {
+
 			String userToken = userGenerator(body);
 			String emailTo = body.get("email");
 			String subject = apiDocProtectorMailSender.subjectMail(body.get("username"));
