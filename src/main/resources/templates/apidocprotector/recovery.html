@@ -52,8 +52,8 @@
             padding: 15px !important;
             margin-bottom: 25px;
         }
-        #bt-signup {
-            margin-top: 50px;
+        #bt-recovery {
+            margin-top: 20px;
             padding: 13px 13px;
             background: #4d95e1;
             color: #FFF;
@@ -112,35 +112,18 @@
     </span>
     </div>
     <div id="left-side">
-        <h5>Account Creation</h5>
+        <h5>Account Recovery</h5>
         <form method='POST' th:action="${apidoc_protector_target}" enctype='application/x-www-form-urlencoded'>
-            <p class="title-field">Name</p>
-            <p>
-                <input type='text' name='name' id='name' value="" />
-            </p>
-            <p class="title-field">Username</p>
-            <p>
-                <input type='text' name='username' id='username' value="" />
-            </p>
+
             <p class="title-field">Email</p>
             <p>
                 <input type='text' name='email' id='email' value="" />
             </p>
-            <p class="title-field">Password
-            <p>
-                <input type='password' name='password' id='password' value="" />
-            </p>
-            <p class="title-field">Role
-            <p>
-                <input type='text' name='role' id='role' value="user" disabled />
-            </p>
-            <p>
-                <a th:href="${apidoc_protector_form_recovery}">Account Recovery</a>
-            </p>
+
             <p id="p-button">
-                <input type='submit' id='bt-signup' value='Sign Up' />
+                <input type='submit' id='bt-recovery' value='Send' />
             </p>
-            <p id="post-message" th:text="${apidoc_protector_created}"></p>
+            <p id="post-message" th:text="${apidoc_protector_recovery}"></p>
         </form>
     </div>
     <script>

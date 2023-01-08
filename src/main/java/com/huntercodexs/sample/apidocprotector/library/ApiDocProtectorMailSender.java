@@ -1,8 +1,8 @@
 package com.huntercodexs.sample.apidocprotector.library;
 
+import com.huntercodexs.sample.apidocprotector.model.ApiDocProtectorEntity;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -65,9 +65,9 @@ public class ApiDocProtectorMailSender extends ApiDocProtectorLibrary {
         return "[APIDOC PROTECTOR] Account Creating to " + username;
     }
 
-    public String contentMailGeneratorUser(String username, String token) {
-        String domainServer = customServerDomain.replaceFirst("/$", "");;
-        String uriServer = customServerUriAccountActive.replaceFirst("/$", "");
+    public String contentMailGeneratorOrRecoveryUser(String username, String token) {
+        String domainServer = customUrlServerDomain.replaceFirst("/$", "");;
+        String uriServer = customUriAccountActive.replaceFirst("/$", "");
         if (!uriServer.startsWith("/")) uriServer = "/" + uriServer;
         String link = domainServer + uriServer +"/" + token;
 
@@ -81,9 +81,39 @@ public class ApiDocProtectorMailSender extends ApiDocProtectorLibrary {
                 .replace("@{apidoc_protector_email_expires_time}", emailTime);
     }
 
+    public String contentMailPassword(ApiDocProtectorEntity user) {
+        String domainServer = customUrlServerDomain.replaceFirst("/$", "");;
+        String uriServer = customUriPasswordRecovery.replaceFirst("/$", "");
+        if (!uriServer.startsWith("/")) uriServer = "/" + uriServer;
+        String link = domainServer + uriServer +"/" + user.getToken();
+
+        /*Password Recovery (HTML Mail)*/
+        String dataHtml = readFile("./src/main/resources/templates/apidocprotector/mail/password.html");
+        String emailTime = String.valueOf(expireTimeEmail) + " minutes";
+
+        return dataHtml
+                .replace("@{apidoc_protector_username}", user.getName())
+                .replace("@{apidoc_protector_url_password_recovery}", link)
+                .replace("@{apidoc_protector_email_expires_time}", emailTime);
+    }
+
+    public String contentMailPasswordRecovery(ApiDocProtectorEntity user) {
+        String domainServer = customUrlServerDomain.replaceFirst("/$", "");;
+        String uriServer = customUriLogin.replaceFirst("/$", "");
+        if (!uriServer.startsWith("/")) uriServer = "/" + uriServer;
+        String link = domainServer + uriServer +"/" + user.getToken();
+
+        /*Password Recovery (HTML Mail)*/
+        String dataHtml = readFile("./src/main/resources/templates/apidocprotector/mail/password-recovery.html");
+
+        return dataHtml
+                .replace("@{apidoc_protector_username}", user.getName())
+                .replace("@{apidoc_protector_url_password_recovery}", link);
+    }
+
     public String contentMailActivatedUser(String username, String token) {
-        String urlUser = customServerDomain.replaceFirst("/$", "");
-        String uriUser = uriCustomLogin.replaceFirst("/$", "") + "/" + token;
+        String urlUser = customUrlServerDomain.replaceFirst("/$", "");
+        String uriUser = customUriLogin.replaceFirst("/$", "") + "/" + token;
         if (!uriUser.startsWith("/")) uriUser = "/" + uriUser;
         String urlToken = urlUser + uriUser;
 

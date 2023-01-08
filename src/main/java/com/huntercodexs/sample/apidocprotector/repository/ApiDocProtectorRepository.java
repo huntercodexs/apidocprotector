@@ -8,6 +8,8 @@ import javax.persistence.NonUniqueResultException;
 
 @Repository
 public interface ApiDocProtectorRepository extends JpaRepository<ApiDocProtectorEntity, Long> {
+    ApiDocProtectorEntity findByEmail(String email) throws NonUniqueResultException;
+    ApiDocProtectorEntity findByToken(String token) throws NonUniqueResultException;
     ApiDocProtectorEntity findByUsernameOrEmail(String username, String email) throws NonUniqueResultException;
     ApiDocProtectorEntity findByTokenAndActive(String token, String active);
     ApiDocProtectorEntity findByUsernameAndPasswordAndTokenAndActive(String username, String password, String token, String active);

@@ -30,7 +30,8 @@ public class ApiDocProtectorViewer extends ApiDocProtectorLibrary {
 
             if (apiDocProtectorType.equals("swagger")) {
                 ModelAndView modelAndView = new ModelAndView("apidocprotector/generator");
-                modelAndView.addObject("apidoc_protector_target", uriCustomUserGenerator);
+                modelAndView.addObject("apidoc_protector_target", customUriUserGenerator);
+                modelAndView.addObject("apidoc_protector_form_recovery", customUriRecovery);
 
                 if (userCreatedSuccessful) {
                     modelAndView.addObject("apidoc_protector_created", "Account Created Successful");
@@ -42,6 +43,92 @@ public class ApiDocProtectorViewer extends ApiDocProtectorLibrary {
             return error(
                     FORM_VIEW_ERROR.getMessage(),
                     "Occurs an critical error on form",
+                    FORM_VIEW_ERROR.getStatusCode());
+
+        } catch (RuntimeException re) {
+            return error(
+                    FORM_ERROR.getMessage(),
+                    re.getMessage(),
+                    FORM_ERROR.getStatusCode());
+        }
+    }
+
+    public ModelAndView recovery(boolean userRecoverySuccessful) {
+
+        try {
+
+            if (apiDocProtectorType.equals("swagger")) {
+                ModelAndView modelAndView = new ModelAndView("apidocprotector/recovery");
+                modelAndView.addObject("apidoc_protector_target", customUriUserRecovery);
+
+                if (userRecoverySuccessful) {
+                    modelAndView.addObject("apidoc_protector_recovery", "Check your email !");
+                }
+
+                return modelAndView;
+            }
+
+            return error(
+                    FORM_VIEW_ERROR.getMessage(),
+                    "Occurs an critical error on form recovery",
+                    FORM_VIEW_ERROR.getStatusCode());
+
+        } catch (RuntimeException re) {
+            return error(
+                    FORM_ERROR.getMessage(),
+                    re.getMessage(),
+                    FORM_ERROR.getStatusCode());
+        }
+    }
+
+    public ModelAndView password(boolean userRecoverySuccessful) {
+
+        try {
+
+            if (apiDocProtectorType.equals("swagger")) {
+                ModelAndView modelAndView = new ModelAndView("apidocprotector/password");
+                modelAndView.addObject("apidoc_protector_target", customUriUserPassword);
+
+                if (userRecoverySuccessful) {
+                    modelAndView.addObject("apidoc_protector_password", "Check your email !");
+                }
+
+                return modelAndView;
+            }
+
+            return error(
+                    FORM_VIEW_ERROR.getMessage(),
+                    "Occurs an critical error on form password",
+                    FORM_VIEW_ERROR.getStatusCode());
+
+        } catch (RuntimeException re) {
+            return error(
+                    FORM_ERROR.getMessage(),
+                    re.getMessage(),
+                    FORM_ERROR.getStatusCode());
+        }
+    }
+
+    public ModelAndView passwordRecovery(boolean userRecoverySuccessful, String currentToken) {
+
+        try {
+
+            if (apiDocProtectorType.equals("swagger")) {
+                ModelAndView modelAndView = new ModelAndView("apidocprotector/password-recovery");
+                modelAndView.addObject("apidoc_protector_target", customUriUserPasswordRecovery);
+
+                if (userRecoverySuccessful) {
+                    modelAndView.addObject("apidoc_protector_password", "Password changed successful !");
+                } else {
+                    modelAndView.addObject("apidoc_protector_token", currentToken);
+                }
+
+                return modelAndView;
+            }
+
+            return error(
+                    FORM_VIEW_ERROR.getMessage(),
+                    "Occurs an critical error on form password recovery",
                     FORM_VIEW_ERROR.getStatusCode());
 
         } catch (RuntimeException re) {
@@ -72,6 +159,7 @@ public class ApiDocProtectorViewer extends ApiDocProtectorLibrary {
                 modelAndView.addObject("apidoc_protector_target", swaggerUIPath);
                 modelAndView.addObject("apidoc_protector_sec", secret);
                 modelAndView.addObject("apidoc_protector_token", token);
+                modelAndView.addObject("apidoc_protector_form_password", customUriPassword);
                 return modelAndView;
             }
 
@@ -99,7 +187,7 @@ public class ApiDocProtectorViewer extends ApiDocProtectorLibrary {
             modelAndView.addObject("swagger_layout", swaggerLayout);
             modelAndView.addObject("show_url_api_docs", showUrlApiDocs);
 
-            String uriLogout = uriCustomLogout.replaceFirst("/$", "") + "/";
+            String uriLogout = customUriLogout.replaceFirst("/$", "") + "/";
             if (!uriLogout.startsWith("/")) uriLogout = "/" + uriLogout;
 
             modelAndView.addObject("apidoc_protector_logout_token", uriLogout+token);

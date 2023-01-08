@@ -20,6 +20,24 @@ public class ApiDocProtectorRedirect extends ApiDocProtectorLibrary {
         return "forward:/doc-protect/protector/generator/glass";
     }
 
+    public String forwardToRecoveryGlass() {
+        session.setAttribute("ADP-USER-RECOVERY", "1");
+        logTerm("forwardToRecoveryGlass IS START", null, true);
+        return "forward:/doc-protect/protector/recovery/glass";
+    }
+
+    public String forwardToPasswordGlass() {
+        session.setAttribute("ADP-USER-PASSWORD", "1");
+        logTerm("forwardToPasswordGlass IS START", null, true);
+        return "forward:/doc-protect/protector/password/glass";
+    }
+
+    public String forwardToPasswordRecoveryGlass(String md5Token) {
+        session.setAttribute("ADP-USER-PASSWORD-RECOVERY", "1");
+        logTerm("forwardToPasswordRecoveryGlass IS START", null, true);
+        return "forward:/doc-protect/protector/password/recovery/glass/"+md5Token;
+    }
+
     public String forwardToGlass() {
         logTerm("forwardToGlass IS START", null, true);
         return "forward:/doc-protect/protector/glass";
@@ -29,7 +47,7 @@ public class ApiDocProtectorRedirect extends ApiDocProtectorLibrary {
 
         logTerm("REDIRECT TO GENERATOR FORM IS START", null, true);
 
-        String uriTarget = uriCustomGenerator.replaceFirst("/$", "");
+        String uriTarget = customUriGenerator.replaceFirst("/$", "");
         if (!uriTarget.startsWith("/")) uriTarget = "/" + uriTarget;
         if (!uriTarget.endsWith("/form")) uriTarget = uriTarget.replaceFirst("/form$", "");
         uriTarget = uriTarget + "/form";
@@ -39,12 +57,54 @@ public class ApiDocProtectorRedirect extends ApiDocProtectorLibrary {
         return "redirect:" + uriTarget;
     }
 
+    public String redirectToRecoveryForm() {
+
+        logTerm("REDIRECT TO RECOVERY FORM IS START", null, true);
+
+        String uriTarget = customUriRecovery.replaceFirst("/$", "");
+        if (!uriTarget.startsWith("/")) uriTarget = "/" + uriTarget;
+        if (!uriTarget.endsWith("/form")) uriTarget = uriTarget.replaceFirst("/form$", "");
+        uriTarget = uriTarget + "/form";
+
+        logTerm("REDIRECT TO RECOVERY FORM", uriTarget, true);
+
+        return "redirect:" + uriTarget;
+    }
+
+    public String redirectToPasswordForm() {
+
+        logTerm("REDIRECT TO PASSWORD FORM IS START", null, true);
+
+        String uriTarget = customUriPassword.replaceFirst("/$", "");
+        if (!uriTarget.startsWith("/")) uriTarget = "/" + uriTarget;
+        if (!uriTarget.endsWith("/form")) uriTarget = uriTarget.replaceFirst("/form$", "");
+        uriTarget = uriTarget + "/form";
+
+        logTerm("REDIRECT TO PASSWORD FORM", uriTarget, true);
+
+        return "redirect:" + uriTarget;
+    }
+
+    public String redirectToPasswordRecoveryForm(String md5Token) {
+
+        logTerm("REDIRECT TO PASSWORD RECOVERY FORM IS START", null, true);
+
+        String uriTarget = customUriPasswordRecovery.replaceFirst("/$", "");
+        if (!uriTarget.startsWith("/")) uriTarget = "/" + uriTarget;
+        if (!uriTarget.endsWith("/form")) uriTarget = uriTarget.replaceFirst("/form$", "");
+        uriTarget = uriTarget + "/form/" + md5Token;
+
+        logTerm("REDIRECT TO PASSWORD RECOVERY FORM", uriTarget, true);
+
+        return "redirect:" + uriTarget;
+    }
+
     public String redirectToForm() {
 
         logTerm("REDIRECT TO FORM IS START", null, true);
         logTerm("ADP-EXPIRED-SESSION", session.getAttribute("ADP-EXPIRED-SESSION"), true);
 
-        String uriTarget = uriCustomForm.replaceFirst("/$", "");
+        String uriTarget = customUriForm.replaceFirst("/$", "");
         if (!uriTarget.startsWith("/")) uriTarget = "/" + uriTarget;
         if (session.getAttribute("ADP-EXPIRED-SESSION") != null && session.getAttribute("ADP-EXPIRED-SESSION").equals(1)) {
             session.setAttribute("ADP-EXPIRED-SESSION", 0);
@@ -57,7 +117,7 @@ public class ApiDocProtectorRedirect extends ApiDocProtectorLibrary {
 
         logTerm("REDIRECT EXPIRED SESSION IS START", null, true);
 
-        String uriTarget = uriCustomLogin.replaceFirst("/$", "") + "/" + token;
+        String uriTarget = customUriLogin.replaceFirst("/$", "") + "/" + token;
         if (!uriTarget.startsWith("/")) uriTarget = "/" + uriTarget;
         session.setAttribute("ADP-EXPIRED-SESSION", 1);
         response.setStatus(HttpStatus.REQUEST_TIMEOUT.value());
@@ -102,7 +162,7 @@ public class ApiDocProtectorRedirect extends ApiDocProtectorLibrary {
         session.removeAttribute("ADP-KEYPART");
         session.removeAttribute("ADP-SECRET");
         session.removeAttribute("ADP-KEYPART-REFRESH");
-        String uriTarget = uriCustomLogin.replaceFirst("/$", "") + "/" + token;
+        String uriTarget = customUriLogin.replaceFirst("/$", "") + "/" + token;
         if (!uriTarget.startsWith("/")) uriTarget = "/" + uriTarget;
         return "redirect:"+uriTarget;
     }

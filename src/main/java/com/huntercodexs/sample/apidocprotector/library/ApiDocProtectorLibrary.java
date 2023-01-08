@@ -37,19 +37,37 @@ public abstract class ApiDocProtectorLibrary extends ApiDocProtectorDataLibrary 
     protected String apiPrefix;
 
     @Value("${apidocprotector.custom.uri-generator:/doc-protect/generator}")
-    protected String uriCustomGenerator;
+    protected String customUriGenerator;
+
+    @Value("${apidocprotector.custom.uri-recovery:/doc-protect/recovery}")
+    protected String customUriRecovery;
+
+    @Value("${apidocprotector.custom.uri-password:/doc-protect/password}")
+    protected String customUriPassword;
 
     @Value("${apidocprotector.custom.uri-login:/doc-protect/login}")
-    protected String uriCustomLogin;
+    protected String customUriLogin;
 
     @Value("${apidocprotector.custom.uri-form:/doc-protect/protector/form}")
-    protected String uriCustomForm;
+    protected String customUriForm;
 
     @Value("${apidocprotector.custom.uri-logout:/doc-protect/logout}")
-    protected String uriCustomLogout;
+    protected String customUriLogout;
 
     @Value("${apidocprotector.custom.uri-user-generator:/doc-protect/generator/user}")
-    protected String uriCustomUserGenerator;
+    protected String customUriUserGenerator;
+
+    @Value("${apidocprotector.custom.uri-form-recovery:/doc-protect/recovery/form}")
+    protected String customUriUserFormRecovery;
+
+    @Value("${apidocprotector.custom.uri-user-recovery:/doc-protect/recovery/user}")
+    protected String customUriUserRecovery;
+
+    @Value("${apidocprotector.custom.uri-user-password:/doc-protect/password/user}")
+    protected String customUriUserPassword;
+
+    @Value("${apidocprotector.custom.uri-user-password-recovery:/doc-protect/password/recovery/user}")
+    protected String customUriUserPasswordRecovery;
 
     @Value("${apidocprotector.server-name:localhost}")
     protected String apiDocServerName;
@@ -79,10 +97,13 @@ public abstract class ApiDocProtectorLibrary extends ApiDocProtectorDataLibrary 
     protected int expireTimeEmail;
 
     @Value("${apidocprotector.custom.server-domain:http://localhost}")
-    protected String customServerDomain;
+    protected String customUrlServerDomain;
 
-    @Value("${apidocprotector.custom.server-uri-account-active:/doc-protect/account/active}")
-    String customServerUriAccountActive;
+    @Value("${apidocprotector.custom.uri-account-active:/doc-protect/account/active}")
+    protected String customUriAccountActive;
+
+    @Value("${apidocprotector.custom.uri-password-recovery:/doc-protect/password/recovery}")
+    protected String customUriPasswordRecovery;
 
     @Autowired
     protected ApiDocProtectorErrorRedirect apiDocProtectorErrorRedirect;
@@ -210,6 +231,29 @@ public abstract class ApiDocProtectorLibrary extends ApiDocProtectorDataLibrary 
         return false;
     }
 
+    private int diffTime(String userDate) {
+
+        LocalDateTime dateTimeNow = LocalDateTime.now();
+        String dateTimeFormat = dateTimeNow.format(FORMATTER);
+        LocalDateTime dateTimeFormatter = LocalDateTime.parse(dateTimeFormat, FORMATTER);
+
+        try {
+            LocalDateTime dateTimeAccount = LocalDateTime.parse(userDate, FORMATTER);
+            LocalDateTime accountTimePlus = dateTimeAccount.plusMinutes(expireTimeEmail);
+
+            logTerm("DATE TIME NOW", dateTimeNow, false);
+            logTerm("DATE TIME NOW FORMATTER", dateTimeFormatter, false);
+            logTerm("ACCOUNT TIME PLUS", accountTimePlus, false);
+            logTerm("ACCOUNT TIME PLUS FORMATTER", accountTimePlus.format(FORMATTER), false);
+            logTerm("EXPIRED TIME ACCOUNT IS", expireTimeEmail, false);
+
+            return dateTimeFormatter.compareTo(accountTimePlus);
+        } catch (Exception ex) {
+            logTerm("DIFF TIME ACCOUNT[EXCEPTION]", ex.getMessage(), true);
+            return 0;
+        }
+    }
+
     public boolean activateExpired(String tokenClear) {
 
         /*Default/Minimum Time to Activate Expire*/
@@ -218,35 +262,24 @@ public abstract class ApiDocProtectorLibrary extends ApiDocProtectorDataLibrary 
         }
 
         String tokenCrypt = dataEncrypt(tokenClear);
-        ApiDocProtectorEntity result = apiDocProtectorRepository.findByTokenAndActive(tokenCrypt, "no");
-        String accountCreatedAt = result.getCreatedAt();
-
-        LocalDateTime dateTimeAccount = LocalDateTime.parse(result.getCreatedAt(), FORMATTER);
-        LocalDateTime accountTimePlus = dateTimeAccount.plusMinutes(expireTimeEmail);
-
-        LocalDateTime dateTimeNow = LocalDateTime.now();
-        String dateTimeFormat = dateTimeNow.format(FORMATTER);
-        LocalDateTime dateTimeFormatter = LocalDateTime.parse(dateTimeFormat, FORMATTER);
-
-        int diffTime = dateTimeFormatter.compareTo(accountTimePlus);
+        ApiDocProtectorEntity user = apiDocProtectorRepository.findByTokenAndActive(tokenCrypt, "no");
+        String accountCreatedAt = user.getCreatedAt();
+        int diffTimeCreated = diffTime(user.getCreatedAt());
+        int diffTimeUpdated = diffTime(user.getUpdatedAt());
 
         logTerm("ACCOUNT EXPIRED START LOG", null, true);
         logTerm("ACCOUNT CREATED AT", accountCreatedAt, false);
-        logTerm("DATE TIME NOW", dateTimeNow, false);
-        logTerm("DATE TIME NOW FORMATTER", dateTimeFormatter, false);
-        logTerm("ACCOUNT TIME PLUS", accountTimePlus, false);
-        logTerm("ACCOUNT TIME PLUS FORMATTER", accountTimePlus.format(FORMATTER), false);
-        logTerm("DIFF TIME", diffTime, false);
-        logTerm("EXPIRED TIME ACCOUNT IS", expireTimeEmail, false);
+        logTerm("DIFF TIME CREATED", diffTimeCreated, false);
+        logTerm("DIFF TIME UPDATED", diffTimeUpdated, false);
         logTerm("ACCOUNT EXPIRED FINISH LOG", null, true);
 
         /*Check Expired Account Time*/
-        if (diffTime > 0) {
-            logTerm("ACCOUNT TIME EXPIRED", result.getToken(), true);
+        if (diffTimeCreated > 0 && diffTimeUpdated > 0) {
+            logTerm("ACCOUNT TIME EXPIRED", user.getToken(), true);
             return true;
         }
 
-        logTerm("ACCOUNT TIME IS OK", result.getToken(), true);
+        logTerm("ACCOUNT TIME IS OK", user.getToken(), true);
 
         return false;
     }
@@ -372,6 +405,58 @@ public abstract class ApiDocProtectorLibrary extends ApiDocProtectorDataLibrary 
 
         } catch (RuntimeException re) {
             return "Exception, " + re.getMessage();
+        }
+
+    }
+
+    public String userRecovery(Map<String, String> userBody, ApiDocProtectorEntity user) {
+
+        try {
+
+            String token = guide();
+            String tokenCrypt = dataEncrypt(token);
+            LocalDateTime dateTime = LocalDateTime.now();
+            String currentDate = dateTime.format(FORMATTER);
+
+            user.setToken(tokenCrypt);
+            user.setActive("no");
+            user.setSessionKey(null);
+            user.setSessionVal(null);
+            user.setSessionCreatedAt(null);
+            user.setUpdatedAt(currentDate);
+
+            apiDocProtectorRepository.save(user);
+
+            return token;
+
+        } catch (RuntimeException re) {
+            return "Exception, " + re.getMessage();
+        }
+
+    }
+
+    public String userPasswordUpdate(Map<String, String> userBody, ApiDocProtectorEntity user) {
+
+        try {
+
+            String token = guide();
+            String tokenCrypt = dataEncrypt(token);
+
+            LocalDateTime dateTime = LocalDateTime.now();
+            String currentDate = dateTime.format(FORMATTER);
+            String passwordCrypt = dataEncrypt(userBody.get("password"));
+
+            user.setToken(tokenCrypt);
+            user.setPassword(passwordCrypt);
+            user.setUpdatedAt(currentDate);
+
+            apiDocProtectorRepository.save(user);
+
+            return token;
+
+        } catch (Exception ex) {
+            logTerm("USER PASSWORD UPDATE [EXCEPTION]", ex.getMessage(), true);
+            return null;
         }
 
     }

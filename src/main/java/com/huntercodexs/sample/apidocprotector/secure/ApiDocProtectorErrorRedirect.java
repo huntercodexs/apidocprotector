@@ -9,6 +9,18 @@ public class ApiDocProtectorErrorRedirect {
         return "redirect:/doc-protect/generator/error/"+data;
     }
 
+    public String redirectRecoveryError(String data) {
+        return "redirect:/doc-protect/recovery/error/"+data;
+    }
+
+    public String redirectPasswordError(String data) {
+        return "redirect:/doc-protect/password/error/"+data;
+    }
+
+    public String redirectPasswordRecoveryError(String data) {
+        return "redirect:/doc-protect/password/recovery/error/"+data;
+    }
+
     public String redirectInitializerError(String data) {
         return "redirect:/doc-protect/initializer/error/"+data;
     }

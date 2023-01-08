@@ -3,7 +3,6 @@ package com.huntercodexs.sample.apidocprotector.controller;
 import com.huntercodexs.sample.apidocprotector.library.ApiDocProtectorLibrary;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -38,7 +37,9 @@ public class ApiDocProtectorGenerator extends ApiDocProtectorLibrary {
 	@Operation(hidden = true)
 	@GetMapping(path = "/doc-protect/protector/generator/glass")
 	public String glass() {
+
 		logTerm("GENERATOR IN GLASS START", null, true);
+
 		try {
 			return apiDocProtectorRedirect.redirectToGeneratorForm();
 		} catch (RuntimeException re) {
@@ -87,15 +88,20 @@ public class ApiDocProtectorGenerator extends ApiDocProtectorLibrary {
 
 		if (session.getAttribute("ADP-USER-GENERATOR") == null || !session.getAttribute("ADP-USER-GENERATOR").equals("1")) {
 			logTerm("INVALID SESSION FROM CREATE IN GENERATOR", null, true);
+			return apiDocProtectorErrorRedirect.redirectGeneratorError("invalid_session_user_generator");
 		}
 
-		/*TODO: Check if user already exists*/
+		if (apiDocProtectorRepository.findByUsernameOrEmail(body.get("username"), body.get("email")) != null) {
+			session.setAttribute("ADP-ACCOUNT-CREATED-SUCCESSFUL", null);
+			return apiDocProtectorErrorRedirect.redirectGeneratorError("user_already_exists");
+		}
+
 		try {
 
 			String userToken = userGenerator(body);
 			String emailTo = body.get("email");
 			String subject = apiDocProtectorMailSender.subjectMail(body.get("username"));
-			String content = apiDocProtectorMailSender.contentMailGeneratorUser(body.get("name"), userToken);
+			String content = apiDocProtectorMailSender.contentMailGeneratorOrRecoveryUser(body.get("name"), userToken);
 
 			apiDocProtectorMailSender.sendMailAttached(emailTo, subject, content);
 
