@@ -65,7 +65,23 @@ public class ApiDocProtectorMailSender extends ApiDocProtectorLibrary {
         return "[APIDOC PROTECTOR] Account Creating to " + username;
     }
 
-    public String contentMailGeneratorOrRecoveryUser(String username, String token) {
+    public String contentMailGeneratorUser(String username, String token) {
+        String domainServer = customUrlServerDomain.replaceFirst("/$", "");;
+        String uriServer = customUriAccountActive.replaceFirst("/$", "");
+        if (!uriServer.startsWith("/")) uriServer = "/" + uriServer;
+        String link = domainServer + uriServer +"/" + token;
+
+        /*Activate (HTML Mail)*/
+        String dataHtml = readFile("./src/main/resources/templates/apidocprotector/mail/activate.html");
+        String emailTime = String.valueOf(expireTimeEmail) + " minutes";
+
+        return dataHtml
+                .replace("@{apidoc_protector_username}", username)
+                .replace("@{apidoc_protector_url_active}", link)
+                .replace("@{apidoc_protector_email_expires_time}", emailTime);
+    }
+
+    public String contentMailRecoveryUser(String username, String token) {
         String domainServer = customUrlServerDomain.replaceFirst("/$", "");;
         String uriServer = customUriAccountActive.replaceFirst("/$", "");
         if (!uriServer.startsWith("/")) uriServer = "/" + uriServer;

@@ -65,6 +65,7 @@ public class ApiDocProtectorInitializer extends ApiDocProtectorLibrary {
 
 		ApiDocProtectorEntity sessionData = findDataSession(this.transfer.getKeypart(), this.transfer.getSecret());
 		logTerm("SESSION-DATA FROM TRANSFER IN FORM", sessionData, true);
+		/*TODO: Check if DATA SESSION is ok*/
 
 		String sessionId = sessionData.getSessionVal();
 		logTerm("SESSION-ID FROM TRANSFER IN FORM", sessionId, true);

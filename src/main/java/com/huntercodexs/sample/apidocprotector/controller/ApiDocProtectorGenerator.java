@@ -101,7 +101,7 @@ public class ApiDocProtectorGenerator extends ApiDocProtectorLibrary {
 			String userToken = userGenerator(body);
 			String emailTo = body.get("email");
 			String subject = apiDocProtectorMailSender.subjectMail(body.get("username"));
-			String content = apiDocProtectorMailSender.contentMailGeneratorOrRecoveryUser(body.get("name"), userToken);
+			String content = apiDocProtectorMailSender.contentMailGeneratorUser(body.get("name"), userToken);
 
 			apiDocProtectorMailSender.sendMailAttached(emailTo, subject, content);
 
