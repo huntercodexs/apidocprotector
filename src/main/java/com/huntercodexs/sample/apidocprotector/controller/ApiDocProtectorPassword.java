@@ -41,8 +41,6 @@ public class ApiDocProtectorPassword extends ApiDocProtectorLibrary {
 
 		logTerm("PASSWORD IN GLASS START", null, true);
 
-		/*TODO: Check the Session value "ADP-USER-PASSWORD"*/
-
 		try {
 			return apiDocProtectorRedirect.redirectToPasswordForm();
 		} catch (RuntimeException re) {

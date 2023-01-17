@@ -23,75 +23,6 @@ import static com.huntercodexs.sample.apidocprotector.library.ApiDocProtectorErr
 public class ApiDocProtectorSwaggerRouter extends ApiDocProtectorLibrary {
 
 	@Operation(hidden = true)
-	@GetMapping(path = {
-			/*Swagger*/
-			"/swagger",
-			"/swagger/",
-			"/swagger/login",
-			"/swagger/sign",
-			"/swagger/viewer",
-			"/swagger/logout",
-			"/swagger/doc-protected",
-			"/swagger/index",
-
-			/*Swagger-UI*/
-			"/swagger-ui",
-			"/swagger-ui/",
-			"/swagger-ui/login",
-			"/swagger-ui/sign",
-			"/swagger-ui/viewer",
-			"/swagger-ui/logout",
-			"/swagger-ui/doc-protected",
-			"/swagger-ui/index"
-	})
-	public String routes() {
-		logTerm("ROUTES FROM SWAGGER", null, true);
-		return apiDocProtectorRedirect.captor(session);
-	}
-
-	@Operation(hidden = true)
-	@GetMapping(path = "${springdoc.swagger-ui.path:/swagger-ui}/protector")
-	public ModelAndView refresh() {
-		logTerm("REFRESH FROM MODEL-AND-VIEW", null, true);
-		logTerm("ADP-KEYPART SESSION", session.getAttribute("ADP-KEYPART"), true);
-		logTerm("ADP-SECRET SESSION", session.getAttribute("ADP-SECRET"), true);
-		logTerm("ADP-KEYPART-REFRESH SESSION", session.getAttribute("ADP-KEYPART-REFRESH"), true);
-
-		String keypart = session.getAttribute("ADP-KEYPART").toString();
-		logTerm("KEYPART IN REFRESH", keypart, true);
-
-		String secret = session.getAttribute("ADP-SECRET").toString();
-		logTerm("SECRET IN REFRESH", secret, true);
-
-		String sessionKey = md5(keypart + secret).toUpperCase();
-		logTerm("SESSION-KEY IN REFRESH", sessionKey, true);
-
-		ApiDocProtectorEntity sessionData = apiDocProtectorRepository.findBySessionKeyAndActive(sessionKey, "yes");
-		logTerm("SESSION-DATA IN REFRESH", sessionData, true);
-
-		String sessionId = sessionData.getSessionVal();
-		logTerm("SESSION-ID IN REFRESH", sessionId, true);
-
-		return apiDocProtectorViewer.refresh(session, sessionId,"--refresh-page");
-	}
-
-	@Operation(hidden = true)
-	@GetMapping(path = "/doc-protect/login/error/{username}")
-	public ModelAndView error(@PathVariable(required = false) String username) {
-		return apiDocProtectorViewer.error(
-				INVALID_LOGIN.getMessage(),
-				username,
-				INVALID_LOGIN.getStatusCode());
-	}
-
-	@Operation(hidden = true)
-	@RequestMapping(value = "${springdoc.swagger-ui.path:/swagger-ui-path}/index.html")
-	public String denied(HttpServletResponse httpResponse) throws IOException {
-		httpResponse.setStatus(HttpStatus.NOT_ACCEPTABLE.value());
-		return apiDocProtectorErrorRedirect.forwardSentinelError("Operation not allowed");
-	}
-
-	@Operation(hidden = true)
 	@PostMapping(
 			path = "${springdoc.swagger-ui.path:/swagger-ui}/protector",
 			consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
@@ -177,5 +108,74 @@ public class ApiDocProtectorSwaggerRouter extends ApiDocProtectorLibrary {
 				"login failure to "+username,
 				INVALID_ACCESS.getStatusCode());
 
+	}
+
+	@Operation(hidden = true)
+	@GetMapping(path = "${springdoc.swagger-ui.path:/swagger-ui}/protector")
+	public ModelAndView refresh() {
+		logTerm("REFRESH FROM MODEL-AND-VIEW", null, true);
+		logTerm("ADP-KEYPART SESSION", session.getAttribute("ADP-KEYPART"), true);
+		logTerm("ADP-SECRET SESSION", session.getAttribute("ADP-SECRET"), true);
+		logTerm("ADP-KEYPART-REFRESH SESSION", session.getAttribute("ADP-KEYPART-REFRESH"), true);
+
+		String keypart = session.getAttribute("ADP-KEYPART").toString();
+		logTerm("KEYPART IN REFRESH", keypart, true);
+
+		String secret = session.getAttribute("ADP-SECRET").toString();
+		logTerm("SECRET IN REFRESH", secret, true);
+
+		String sessionKey = md5(keypart + secret).toUpperCase();
+		logTerm("SESSION-KEY IN REFRESH", sessionKey, true);
+
+		ApiDocProtectorEntity sessionData = apiDocProtectorRepository.findBySessionKeyAndActive(sessionKey, "yes");
+		logTerm("SESSION-DATA IN REFRESH", sessionData, true);
+
+		String sessionId = sessionData.getSessionVal();
+		logTerm("SESSION-ID IN REFRESH", sessionId, true);
+
+		return apiDocProtectorViewer.refresh(session, sessionId,"--refresh-page");
+	}
+
+	@Operation(hidden = true)
+	@GetMapping(path = {
+			/*Swagger*/
+			"/swagger",
+			"/swagger/",
+			"/swagger/login",
+			"/swagger/sign",
+			"/swagger/viewer",
+			"/swagger/logout",
+			"/swagger/doc-protected",
+			"/swagger/index",
+
+			/*Swagger-UI*/
+			"/swagger-ui",
+			"/swagger-ui/",
+			"/swagger-ui/login",
+			"/swagger-ui/sign",
+			"/swagger-ui/viewer",
+			"/swagger-ui/logout",
+			"/swagger-ui/doc-protected",
+			"/swagger-ui/index"
+	})
+	public String routes() {
+		logTerm("ROUTES FROM SWAGGER", null, true);
+		return apiDocProtectorRedirect.captor(session);
+	}
+
+	@Operation(hidden = true)
+	@RequestMapping(value = "${springdoc.swagger-ui.path:/swagger-ui-path}/index.html")
+	public String denied(HttpServletResponse httpResponse) throws IOException {
+		httpResponse.setStatus(HttpStatus.NOT_ACCEPTABLE.value());
+		return apiDocProtectorErrorRedirect.forwardSentinelError("Operation not allowed");
+	}
+
+	@Operation(hidden = true)
+	@GetMapping(path = "/doc-protect/login/error/{username}")
+	public ModelAndView error(@PathVariable(required = false) String username) {
+		return apiDocProtectorViewer.error(
+				INVALID_LOGIN.getMessage(),
+				username,
+				INVALID_LOGIN.getStatusCode());
 	}
 }

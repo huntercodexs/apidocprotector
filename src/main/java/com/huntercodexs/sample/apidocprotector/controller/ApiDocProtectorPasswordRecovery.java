@@ -114,7 +114,7 @@ public class ApiDocProtectorPasswordRecovery extends ApiDocProtectorLibrary {
 			apiDocProtectorMailSender.sendMailAttached(user.getEmail(), subject, content);
 
 			session.setAttribute("ADP-ACCOUNT-PASSWORD-RECOVERY-SUCCESSFUL", "1");
-			return apiDocProtectorRedirect.redirectToPasswordForm();
+			return apiDocProtectorRedirect.redirectToPasswordRecoveryForm(newToken);
 
 		} catch (RuntimeException re) {
 			session.setAttribute("ADP-ACCOUNT-PASSWORD-RECOVERY-SUCCESSFUL", null);
