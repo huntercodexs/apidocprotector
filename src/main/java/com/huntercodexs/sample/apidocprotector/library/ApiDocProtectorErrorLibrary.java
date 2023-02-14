@@ -79,6 +79,11 @@ public enum ApiDocProtectorErrorLibrary {
             10013,
             "Generator process error"),
 
+    INVALID_SESSION(
+            HttpStatus.REQUEST_TIMEOUT,
+            10014,
+            "Access Violation"),
+
     UNAUTHORIZED_FIREWALL(
             HttpStatus.UNAUTHORIZED,
             50001,

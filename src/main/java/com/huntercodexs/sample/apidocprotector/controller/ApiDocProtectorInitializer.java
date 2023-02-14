@@ -65,7 +65,13 @@ public class ApiDocProtectorInitializer extends ApiDocProtectorLibrary {
 
 		ApiDocProtectorEntity sessionData = findDataSession(this.transfer.getKeypart(), this.transfer.getSecret());
 		logTerm("SESSION-DATA FROM TRANSFER IN FORM", sessionData, true);
-		/*TODO: Check if DATA SESSION is ok*/
+
+		if (sessionData == null) {
+			return apiDocProtectorViewer.error(
+					INVALID_SESSION.getMessage(),
+					"The request is burned",
+					INVALID_SESSION.getStatusCode());
+		}
 
 		String sessionId = sessionData.getSessionVal();
 		logTerm("SESSION-ID FROM TRANSFER IN FORM", sessionId, true);
@@ -84,6 +90,7 @@ public class ApiDocProtectorInitializer extends ApiDocProtectorLibrary {
 				logTerm("NOT BURN FROM TRANSFER IN FORM", null, true);
 
 				return apiDocProtectorViewer.form(session, sessionId);
+				//return apiDocProtectorViewer.index(this.transfer.getToken());
 			}
 
 			logTerm("OPS! WAS BURN FROM TRANSFER IN FORM", null, true);
