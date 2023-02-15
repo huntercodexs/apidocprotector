@@ -386,64 +386,126 @@ There is a many settings tha can be made in the application.properties file, but
   - apidocprotector.custom.uri-password-recovery: 
     - URI to password recovery, default is /doc-protect/password/recovery
 
+
+- APIDOC PROTECTOR (JAVA MAIL SENDER)
+  - spring.mail.host:
+    - Set the hostname or IP Address to host mail server, example: 192.168.0.174 
+  - spring.mail.port:
+    - Set the port to host mail server, example: 31025 
+  - spring.mail.username:
+    - Set the origin mail to send mail, example: huntercodexs@mail.com 
+  - spring.mail.password:
+    - Set the password to mail sender if required, example: @gmail.com
+  - spring.mail.properties.mail.smtp.auth:
+    - Set if mail server required Authentication, use true or false 
+  - spring.mail.properties.mail.smtp.starttls.enable:
+    - Set if mail server require TLS secure layer, use true or false 
+  - spring.mail.properties.mail.smtp.connectiontimeout:
+    - Set time to connection timeout, example: 5000 
+  - spring.mail.properties.mail.smtp.timeout:
+    - Set time to send mail timeout, example: 5000 
+  - spring.mail.properties.mail.smtp.writetimeout:
+    - Set time to write mail timeout, example 5000 
+  - spring.mail.properties.mail.smtp.socketFactory.port:
+    - Set the port to communication between client and server mail, example: 31025 
+  - spring.mail.properties.mail.smtp.socketFactory.class:
+    - Set the kind of SSL socket, use javax.net.ssl.SSLSocketFactory if you don't know
+
+> Tip: Use a mail server test as the MailHog (see more in docker-series ion GitHub huntercodexs account)
+
 # Database Details
+
+APIDOC PROTECTOR use the MySQL by JPA to manager access and data audit in the project, so will be checkout and warranty that 
+this dependecies are been installed in the project and environment. Once of installed the project can be running without 
+problems. One table called apidoc_protector will be created in the database, where the user data will be record and 
+storaged in that table, and other table called apidoc_protector_audit will be created to make an audit of all process that 
+occurs in the application.
+
+The table apidoc_protector have the follow fields:
+
+<pre>
+id;name;username;email;role;password;token;active;sessionKey;sessionVal;sessionCreatedAt;createdAt;updatedAt;deletedAt;
+</pre>
+
+Let me explain the more importants fields in this context.
+
+***name:*** Refers the ame of user
+
+***email:*** Refers to email that use has been used in the generator account
+
+***role:*** Is a kind of user (admin, user, viewer, editor, etc...)
+
+***token:*** This is a more sensitive data, without it the user can't access the login form
+
+***sessionKey:*** This is an internal process of the APIDOC PROTECTOR, and will be used to find out the sessionVal
+
+***sessionVal:*** Is this literaly the user session id that can be accesed by correct login of the valid account
+
+***sessionCreatedAt:*** This is a date data, used to contol the user session (timeout or session expired)
+
+> To more details, see the source code from APIDOC PROTECTOR
 
 # Account Creation
 
-- User Generator
+- Get the URL to User Generator
   - http://localhost:31303/doc-protect/generator
-- Acessar email para ativar conta
-  - Clicar no link (Activate Account)
-- Após clicar no link para ativar a conta
-  - Verificar email de boas vindas ao APIDOC PROTECTOR
-  - Clicar no link (click here) para acessar a conta
-- Acessar a conta (via link enviado por email)
+- Access email to activate account
+  - Click on the link (Activate Account)
+- After clicking on the link to activate the account
+  - Check welcome email to APIDOC PROTECTOR
+  - Click on the link (click here) to access the account
+- Access the account (via link sent by email)
   - http://localhost:31303/doc-protect/protector/form#x-padlock
 
 # Account Recovery
 
-- Acessar formulario para gerar novo usuário
-    - http://localhost:31303/doc-protect/generator
-- Clicar em Account Recovery
+- Access form to generate new user
+  - http://localhost:31303/doc-protect/generator
+- Click on Account Recovery
   - http://localhost:31303/doc-protect/recovery/form#x-padlock
-  - Informar um email valido (que foi usado para cadastro)
-  - Checar o email
-  - Clicar no link Activate Account
-  - Um novo email será enviado para acessar a conta com um novo token
-  - Informar usuario e senha
+  - Enter a valid email (which was used for registration)
+  - Check email
+  - Click on the Activate Account link
+  - A new email will be sent to access the account with a new token
+  - Inform username and password
 
 # Login
 
-> NOTA: Não é possível fazer o login sem passar para formulario de login
+> NOTE: It is not possible to login without going through the login form
 
-- Para acessar o formulario de login é preciso saber qual o link de acesso com o token valido, esse link pode estar 
-salvo em seu email, ou então ser recuperado no processo de Recuperação de Conta, exemplo:
+- To access the login form, you need to know the access link with the valid token, this link may be
+  saved in your email, or be recovered in the Account Recovery process, example:
 - http://localhost:31303/doc-protect/login/287891be-aa00-4422-88cd-b52ae7645d0b
 
 # Password Recovery
 
-- Na tela de login clicar em "change password"
+- On the login screen click on "change password"
   - http://localhost:31303/doc-protect/password
-  - Sera aberta uma tela pedindo o endereço de email
-    - Insira o email para inciiar o processo de recuperação de senha
-    - Verifique seu email para definir uma nova senha
-    - Informe sua nova senha na tela de recuperação de senha
-    - Um novo link sera gerado para acesso, exemplo:
+  - A screen will open asking for the email address
+    - Enter the email to start the password recovery process
+    - Check your email to set a new password
+    - Enter your new password on the password recovery screen
+    - A new link will be generated for access, example:
       - http://localhost:31303/doc-protect/login/6a27a71d-2d4c-40e0-bcd6-d782db72b9a8
-    - Clique no link e efetue o login com a nova senha
+    - Click on the link and login with the new password
 
 #  Account Expired
 
-> Existe tempo para acessar a conta pela primeira vez depois de um usuário gerado pelo formulario gerador de contas, 
-> por isso é preciso verificar com atenção o que diz o email sobre o tempo para ativação de conta
+> There is time to access the account for the first time after a user generated by the account generator form,
+> therefore it is necessary to check carefully what the email says about the time for account activation
 
 # Invalid Account
 
+If an account is invalid or not found, an error or exception will be thrown on the screen.
 
 # Session Expired
 
+When the session expires, the user is directed to the login screen.
 
 # Intercepted flow
+
+All endpoints that will be intercepted can be seen in the application.properties configuration file, and the others
+endpoints to be intercepted can be seen in the file ApiDocProtectorSentinel.java and ApiDocProtectorSwaggerRouter.java
 
 # Advanced
 
