@@ -334,11 +334,63 @@ spring.mail.properties.mail.smtp.socketFactory.class=javax.net.ssl.SSLSocketFact
 
 # Properties File
 
+> NOTE: you can personlize the all options/features to get more confidente and security in the application implementation,
+> main in the custome.uri path
+
+There is a many settings tha can be made in the application.properties file, but we can talk about the options on  
+
+<pre>
+## APIDOC PROTECTOR
+## APIDOC PROTECTOR (JAVA MAIL SENDER)
+</pre>
+
+- APIDOC PROTECTOR OPTIONS 
+  - apidocprotector.enabled: 
+    - Use true or false to enabled/disable the APIDOC PROTECTOR
+  - apidocprotector.server-name: 
+    - Define where the application is running and will be used by Firewall in the APIDOC PROTECTOR
+  - apidocprotector.type: 
+    - Define wich kind of OPENAPI will be used, swagger, abode-aem or authentiq
+  - apidocprotector.data.crypt.type: 
+    - Set the kind of algorithm to data cipher
+  - apidocprotector.url.show: 
+    - Use true or false to mean if the doc-path url should be view
+  - apidocprotector.session.expire-time: 
+    - Define the time to session expire (in minutes), if value is 0 then expired time will be disabled
+  - apidocprotector.email.expire-time: 
+    - Define the time to email expire (in minutes), if value is 0 then expired time will be disabled
+  - apidocprotector.custom.server-domain: 
+    - Define where the APIDOC PROTECTOR is running 
+  - apidocprotector.custom.uri-login: 
+    - URI to redirect login form, default is /doc-protect/login 
+  - apidocprotector.custom.uri-logout: 
+    - URI to redirect user after logout, default is /doc-protect/logout 
+  - apidocprotector.custom.uri-form: 
+    - URI to redirect user to make a login, default is /doc-protect/protector/form 
+  - apidocprotector.custom.uri-user-generator: 
+    - URI defined to generator new account, default is /doc-protect/generator/user 
+  - apidocprotector.custom.uri-user-recovery: 
+    - URI that refer to recovery functionaly, default is /doc-protect/recovery/user 
+  - apidocprotector.custom.uri-user-password: 
+    - URI to user define a new password, default is /doc-protect/password/user 
+  - apidocprotector.custom.uri-user-password-recovery: 
+    - URI to user recovery the forgot password, default is /doc-protect/password/recovery/user 
+  - apidocprotector.custom.uri-generator: 
+    - URI to generate a form generator and generate an new user, default is /doc-protect/generator 
+  - apidocprotector.custom.uri-account-active: 
+    - URI to active account when it is required by email, default is /doc-protect/account/active 
+  - apidocprotector.custom.uri-recovery: 
+    - URI to account recovery, default is /doc-protect/recovery 
+  - apidocprotector.custom.uri-password: 
+    - URI to password, default is /doc-protect/password 
+  - apidocprotector.custom.uri-password-recovery: 
+    - URI to password recovery, default is /doc-protect/password/recovery
+
 # Database Details
 
-# Criação de Conta
+# Account Creation
 
-- Gerar um usuário
+- User Generator
   - http://localhost:31303/doc-protect/generator
 - Acessar email para ativar conta
   - Clicar no link (Activate Account)
@@ -348,7 +400,7 @@ spring.mail.properties.mail.smtp.socketFactory.class=javax.net.ssl.SSLSocketFact
 - Acessar a conta (via link enviado por email)
   - http://localhost:31303/doc-protect/protector/form#x-padlock
 
-# Recuperação de Conta
+# Account Recovery
 
 - Acessar formulario para gerar novo usuário
     - http://localhost:31303/doc-protect/generator
@@ -360,7 +412,7 @@ spring.mail.properties.mail.smtp.socketFactory.class=javax.net.ssl.SSLSocketFact
   - Um novo email será enviado para acessar a conta com um novo token
   - Informar usuario e senha
 
-# Efetuar Login
+# Login
 
 > NOTA: Não é possível fazer o login sem passar para formulario de login
 
@@ -368,7 +420,7 @@ spring.mail.properties.mail.smtp.socketFactory.class=javax.net.ssl.SSLSocketFact
 salvo em seu email, ou então ser recuperado no processo de Recuperação de Conta, exemplo:
 - http://localhost:31303/doc-protect/login/287891be-aa00-4422-88cd-b52ae7645d0b
 
-# Recuperação de Senha
+# Password Recovery
 
 - Na tela de login clicar em "change password"
   - http://localhost:31303/doc-protect/password
@@ -380,20 +432,20 @@ salvo em seu email, ou então ser recuperado no processo de Recuperação de Con
       - http://localhost:31303/doc-protect/login/6a27a71d-2d4c-40e0-bcd6-d782db72b9a8
     - Clique no link e efetue o login com a nova senha
 
-#  Conta Expirada
+#  Account Expired
 
 > Existe tempo para acessar a conta pela primeira vez depois de um usuário gerado pelo formulario gerador de contas, 
 > por isso é preciso verificar com atenção o que diz o email sobre o tempo para ativação de conta
 
-# Conta Invalida
+# Invalid Account
 
 
-# Sessão Expirada
+# Session Expired
 
 
-# Fluxo Interceptado
+# Intercepted flow
 
-# Avançado
+# Advanced
 
 - OAuth2 Settings
 
