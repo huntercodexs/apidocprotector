@@ -10,14 +10,15 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 
-	<groupId>com.huntercodexs.sample</groupId>
+	<groupId>com</groupId>
 	<version>22.01.1-SNAPSHOT</version>
-	<artifactId>APIDOC-PROTECTOR</artifactId>
-	<name>APIDOC-PROTECTOR</name>
-	<description>APIDOC-PROTECTOR</description>
+	<artifactId>SAMPLE-APPLICATION</artifactId>
+	<name>SAMPLE-APPLICATION</name>
+	<description>SAMPLE-APPLICATION</description>
 
 	<properties>
 		<java.version>1.8</java.version>
+		<spring-cloud.version>Finchley.RC1</spring-cloud.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 	</properties>
@@ -54,23 +55,26 @@
 			<scope>runtime</scope>
 		</dependency>
 
-		<!--DOCUMENT-->
+		<!--DOCUMENT/SWAGGER/OPENAPI-->
 		<dependency>
 			<groupId>org.springdoc</groupId>
 			<artifactId>springdoc-openapi-ui</artifactId>
 			<version>1.6.4</version>
 		</dependency>
-		<dependency><!--NEEDED TO USE IN APIDOC PROTECTOR-->
+
+		<!--APIDOC-PROTECTOR (REQUIRED)-->
+		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-thymeleaf</artifactId>
 		</dependency>
-        <dependency><!--NEEDED TO USE BCRYPT IN APIDOC PROTECTOR-->
+		<!--APIDOC-PROTECTOR (REQUIRED)-->
+        <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-crypto</artifactId>
             <version>5.6.1</version>
         </dependency>
 
-		<!--MAIL-->
+		<!--MAIL-SENDER-->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-mail</artifactId>
@@ -82,6 +86,18 @@
 		</dependency>
 
 	</dependencies>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-dependencies</artifactId>
+				<version>${spring-cloud.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 
 	<build>
 		<plugins>
@@ -108,5 +124,16 @@
 			</plugin>
 		</plugins>
 	</build>
+
+	<repositories>
+		<repository>
+			<id>spring-milestones</id>
+			<name>Spring Milestones</name>
+			<url>https://repo.spring.io/milestone</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
 
 </project>
