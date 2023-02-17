@@ -13,7 +13,7 @@ import javax.validation.Valid;
 import java.io.IOException;
 import java.util.Map;
 
-import static com.apidocprotector.library.ApiDocProtectorErrorLibrary.GENERATOR_ERROR;
+import static com.apidocprotector.enumerator.ApiDocProtectorLibraryEnum.GENERATOR_ERROR;
 
 @Hidden
 @Controller

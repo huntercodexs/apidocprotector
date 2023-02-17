@@ -15,7 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Map;
 
-import static com.apidocprotector.library.ApiDocProtectorErrorLibrary.*;
+import static com.apidocprotector.enumerator.ApiDocProtectorLibraryEnum.*;
 
 @Hidden
 @Controller

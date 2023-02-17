@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
+import static com.apidocprotector.enumerator.ApiDocProtectorAuditEnum.*;
+
 @Service
 public class ApiDocProtectorRedirect extends ApiDocProtectorLibrary {
 
@@ -17,6 +19,7 @@ public class ApiDocProtectorRedirect extends ApiDocProtectorLibrary {
     public String forwardToGeneratorGlass() {
         session.setAttribute("ADP-USER-GENERATOR", "1");
         logTerm("forwardToGeneratorGlass IS START", null, true);
+        auditor(GENERATOR_GLASS_FORWARD, null, null);
         return "forward:/doc-protect/protector/generator/glass";
     }
 
@@ -46,6 +49,7 @@ public class ApiDocProtectorRedirect extends ApiDocProtectorLibrary {
     public String redirectToGeneratorForm() {
 
         logTerm("REDIRECT TO GENERATOR FORM IS START", null, true);
+        auditor(GENERATOR_FORM_REDIRECT, null, null);
 
         String uriTarget = customUriGenerator.replaceFirst("/$", "");
         if (!uriTarget.startsWith("/")) uriTarget = "/" + uriTarget;
@@ -162,6 +166,7 @@ public class ApiDocProtectorRedirect extends ApiDocProtectorLibrary {
         session.removeAttribute("ADP-KEYPART");
         session.removeAttribute("ADP-SECRET");
         session.removeAttribute("ADP-KEYPART-REFRESH");
+        session.removeAttribute("APIDOC-AUDITOR");
         String uriTarget = customUriLogin.replaceFirst("/$", "") + "/" + token;
         if (!uriTarget.startsWith("/")) uriTarget = "/" + uriTarget;
         return "redirect:"+uriTarget;

@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpSession;
 import java.util.Map;
 
-import static com.apidocprotector.library.ApiDocProtectorErrorLibrary.*;
+import static com.apidocprotector.enumerator.ApiDocProtectorLibraryEnum.*;
 
 @Service
 public class ApiDocProtectorSecurity extends ApiDocProtectorLibrary {

@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.servlet.ModelAndView;
 
-import static com.apidocprotector.library.ApiDocProtectorErrorLibrary.*;
+import static com.apidocprotector.enumerator.ApiDocProtectorLibraryEnum.*;
 
 @Hidden
 @Controller

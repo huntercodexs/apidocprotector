@@ -11,7 +11,9 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.apidocprotector.library.ApiDocProtectorErrorLibrary.*;
+import static com.apidocprotector.enumerator.ApiDocProtectorAuditEnum.GENERATOR_FORM_INVALID_ACCCESS;
+import static com.apidocprotector.enumerator.ApiDocProtectorAuditEnum.VIEW_ERROR;
+import static com.apidocprotector.enumerator.ApiDocProtectorLibraryEnum.*;
 
 @Service
 public class ApiDocProtectorViewer extends ApiDocProtectorLibrary {
@@ -21,6 +23,7 @@ public class ApiDocProtectorViewer extends ApiDocProtectorLibrary {
         ModelAndView modelAndView = new ModelAndView("apidocprotector/error");
         modelAndView.addObject("apidoc_protector_error_title", title);
         modelAndView.addObject("apidoc_protector_error_info", info);
+        auditor(VIEW_ERROR, info, null);
         return modelAndView;
     }
 

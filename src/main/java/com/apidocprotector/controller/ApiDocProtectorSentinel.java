@@ -14,7 +14,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-import static com.apidocprotector.library.ApiDocProtectorErrorLibrary.SENTINEL_ERROR;
+import static com.apidocprotector.enumerator.ApiDocProtectorLibraryEnum.SENTINEL_ERROR;
 
 @Hidden
 @Controller

@@ -1,7 +1,11 @@
 package com.apidocprotector.library;
 
+import com.apidocprotector.dto.ApiDocProtectorAuditDto;
 import com.apidocprotector.dto.ApiDocProtectorDto;
+import com.apidocprotector.enumerator.ApiDocProtectorAuditEnum;
+import com.apidocprotector.model.ApiDocProtectorAuditEntity;
 import com.apidocprotector.model.ApiDocProtectorEntity;
+import com.apidocprotector.repository.ApiDocProtectorAuditRepository;
 import com.apidocprotector.repository.ApiDocProtectorRepository;
 import com.apidocprotector.secure.ApiDocProtectorErrorRedirect;
 import com.apidocprotector.secure.ApiDocProtectorRedirect;
@@ -22,6 +26,8 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
+
+import static com.apidocprotector.enumerator.ApiDocProtectorAuditEnum.GENERATOR_FORM_USER_CREATED;
 
 @Slf4j
 @Service
@@ -99,6 +105,9 @@ public abstract class ApiDocProtectorLibrary extends ApiDocProtectorDataLibrary 
     @Value("${apidocprotector.custom.server-domain:http://localhost}")
     protected String customUrlServerDomain;
 
+    @Value("${apidocprotector.audit.enabled:false}")
+    protected boolean apiDocAuditor;
+
     @Value("${apidocprotector.custom.uri-account-active:/doc-protect/account/active}")
     protected String customUriAccountActive;
 
@@ -121,6 +130,9 @@ public abstract class ApiDocProtectorLibrary extends ApiDocProtectorDataLibrary 
     protected ApiDocProtectorRepository apiDocProtectorRepository;
 
     @Autowired
+    protected ApiDocProtectorAuditRepository apiDocProtectorAuditRepository;
+
+    @Autowired
     protected ApiDocProtectorMailSender apiDocProtectorMailSender;
 
     @Autowired
@@ -140,7 +152,7 @@ public abstract class ApiDocProtectorLibrary extends ApiDocProtectorDataLibrary 
         transferDto.setResponse(response);
         transferDto.setOrigin("redirectToLoginForm");
         transferDto.setToken(token);
-        transferDto.setSecret(guide());
+        transferDto.setSecret(guide(null));
         transferDto.setUsername(null);
         transferDto.setPassword(null);
         transferDto.setAuthorized(true);
@@ -360,7 +372,7 @@ public abstract class ApiDocProtectorLibrary extends ApiDocProtectorDataLibrary 
 
         try {
 
-            String token = guide();
+            String token = guide(null);
             String tokenCrypt = dataEncrypt(token);
 
             if (userBody.get("role") == null || userBody.get("role").equals("")) {
@@ -400,6 +412,7 @@ public abstract class ApiDocProtectorLibrary extends ApiDocProtectorDataLibrary 
             newUser.setDeletedAt(null);
 
             apiDocProtectorRepository.save(newUser);
+            auditor(GENERATOR_FORM_USER_CREATED, null, null);
 
             return token;
 
@@ -413,7 +426,7 @@ public abstract class ApiDocProtectorLibrary extends ApiDocProtectorDataLibrary 
 
         try {
 
-            String token = guide();
+            String token = guide(null);
             String tokenCrypt = dataEncrypt(token);
             LocalDateTime dateTime = LocalDateTime.now();
             String currentDate = dateTime.format(FORMATTER);
@@ -439,7 +452,7 @@ public abstract class ApiDocProtectorLibrary extends ApiDocProtectorDataLibrary 
 
         try {
 
-            String token = guide();
+            String token = guide(null);
             String tokenCrypt = dataEncrypt(token);
 
             LocalDateTime dateTime = LocalDateTime.now();
@@ -521,6 +534,72 @@ public abstract class ApiDocProtectorLibrary extends ApiDocProtectorDataLibrary 
         }
 
         return dataHtml.toString();
+    }
+
+    public void auditor(ApiDocProtectorAuditEnum auditEnum, String customMessage, String sessionId) {
+
+        if (apiDocAuditor) {
+
+            String username = null;
+            String level = null;
+            String token = null;
+
+            if (sessionId != null && !sessionId.equals("")) {
+                ApiDocProtectorDto sessionData = ((ApiDocProtectorDto) session.getAttribute(sessionId));
+                username = sessionData.getUsername();
+                level = "auditor"; /*TODO: Turn on dynamic data*/
+                token = sessionData.getToken();
+            }
+
+            ApiDocProtectorAuditDto auditDto = new ApiDocProtectorAuditDto();
+            auditDto.setUsername(username);
+            auditDto.setLevel(level);
+            auditDto.setToken(token);
+            auditDto.setDetail(auditEnum.name());
+            auditDto.setIp(request.getRemoteAddr());
+
+            if (customMessage == null) {
+                auditDto.setMessage(auditEnum.getMessage());
+            } else {
+                auditDto.setMessage(customMessage);
+            }
+
+            if (session.getAttribute("APIDOC-AUDITOR") == null || session.getAttribute("APIDOC-AUDITOR").equals("")) {
+
+                auditDto.setTracker(guide(null));
+                session.setAttribute("APIDOC-AUDITOR", auditDto);
+
+            } else {
+
+                auditDto = ((ApiDocProtectorAuditDto) session.getAttribute("APIDOC-AUDITOR"));
+                auditDto.setDetail(auditEnum.name());
+
+                if (customMessage == null) {
+                    auditDto.setMessage(auditEnum.getMessage());
+                } else {
+                    auditDto.setMessage(customMessage);
+                }
+
+            }
+
+            LocalDateTime dateTime = LocalDateTime.now();
+            String currentDate = dateTime.format(FORMATTER);
+
+            ApiDocProtectorAuditEntity apiDocProtectorAuditEntity = new ApiDocProtectorAuditEntity();
+            apiDocProtectorAuditEntity.setUsername(((ApiDocProtectorAuditDto) session.getAttribute("APIDOC-AUDITOR")).getUsername());
+            apiDocProtectorAuditEntity.setLevel(auditDto.getLevel());
+            apiDocProtectorAuditEntity.setToken(auditDto.getToken());
+            apiDocProtectorAuditEntity.setTracker(auditDto.getTracker());
+            apiDocProtectorAuditEntity.setDetail(auditDto.getDetail());
+            apiDocProtectorAuditEntity.setMessage(auditDto.getMessage());
+            apiDocProtectorAuditEntity.setIp(auditDto.getIp());
+            apiDocProtectorAuditEntity.setCreatedAt(currentDate);
+
+            apiDocProtectorAuditRepository.save(apiDocProtectorAuditEntity);
+            logFile("Auditor on APIDOC PROTECTOR is ok", "info");
+            logFile(apiDocProtectorAuditEntity.toString(), "info");
+        }
+
     }
 
 }

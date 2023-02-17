@@ -1,4 +1,4 @@
-package com.apidocprotector.library;
+package com.apidocprotector.enumerator;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -8,7 +8,7 @@ import org.springframework.http.HttpStatus;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public enum ApiDocProtectorErrorLibrary {
+public enum ApiDocProtectorLibraryEnum {
     BURN_ERROR(
             HttpStatus.BAD_REQUEST,
             10000,

@@ -12,7 +12,8 @@ import javax.validation.Valid;
 import java.io.IOException;
 import java.util.Map;
 
-import static com.apidocprotector.library.ApiDocProtectorErrorLibrary.GENERATOR_ERROR;
+import static com.apidocprotector.enumerator.ApiDocProtectorAuditEnum.*;
+import static com.apidocprotector.enumerator.ApiDocProtectorLibraryEnum.GENERATOR_ERROR;
 
 @Hidden
 @Controller
@@ -24,14 +25,16 @@ public class ApiDocProtectorGenerator extends ApiDocProtectorLibrary {
 	public String generator() {
 
 		logTerm("GENERATOR FORM IS START", null, true);
+		auditor(GENERATOR_STARTED, null, null);
 
 		try {
 			return apiDocProtectorRedirect.forwardToGeneratorGlass();
 		} catch (RuntimeException re) {
 			logTerm("GENERATOR FORM [EXCEPTION]", re.getMessage(), true);
+			auditor(GENERATOR_EXCEPTION, re.getMessage(), null);
+			return apiDocProtectorErrorRedirect.redirectGeneratorError("error_to_load_form");
 		}
 
-		return apiDocProtectorErrorRedirect.redirectGeneratorError("error_to_load_form");
 	}
 
 	@Operation(hidden = true)
@@ -39,13 +42,15 @@ public class ApiDocProtectorGenerator extends ApiDocProtectorLibrary {
 	public String glass() {
 
 		logTerm("GENERATOR IN GLASS START", null, true);
+		auditor(GENERATOR_GLASS_STARTED, null, null);
 
 		try {
 			return apiDocProtectorRedirect.redirectToGeneratorForm();
 		} catch (RuntimeException re) {
 			logTerm("GENERATOR IN GLASS [EXCEPTION]", re.getMessage(), true);
+			auditor(GENERATOR_GLASS_EXCEPTION, re.getMessage(), null);
+			return apiDocProtectorErrorRedirect.redirectGeneratorError("glass_forward_error");
 		}
-		return apiDocProtectorErrorRedirect.redirectGeneratorError("unknown");
 	}
 
 	@Operation(hidden = true)
@@ -53,8 +58,12 @@ public class ApiDocProtectorGenerator extends ApiDocProtectorLibrary {
 	public ModelAndView form() {
 
 		logTerm("FORM IN GENERATOR IS START", null, true);
+		auditor(GENERATOR_FORM_STARTED, null, null);
 
 		if (session.getAttribute("ADP-USER-GENERATOR") == null || !session.getAttribute("ADP-USER-GENERATOR").equals("1")) {
+
+			auditor(GENERATOR_FORM_INVALID_ACCCESS, null, null);
+
 			return apiDocProtectorViewer.error(
 					GENERATOR_ERROR.getMessage(),
 					"invalid access",
@@ -62,14 +71,20 @@ public class ApiDocProtectorGenerator extends ApiDocProtectorLibrary {
 		}
 
 		try {
+
 			if (session.getAttribute("ADP-ACCOUNT-CREATED-SUCCESSFUL") != null) {
 				if (session.getAttribute("ADP-ACCOUNT-CREATED-SUCCESSFUL").equals("1")) {
+					auditor(GENERATOR_ACCOUNT_CREATED, null, null);
 					return apiDocProtectorViewer.generator(true);
 				}
 			}
+
+			auditor(GENERATOR_VIEW_FORM, null, null);
 			return apiDocProtectorViewer.generator(false);
+
 		} catch (RuntimeException re) {
 			logTerm("FORM IN GENERATOR [EXCEPTION]", re.getMessage(), true);
+			auditor(GENERATOR_EXCEPTION, re.getMessage(), null);
 			return apiDocProtectorViewer.error(
 					GENERATOR_ERROR.getMessage(),
 					"The request has caused a exception",
@@ -85,14 +100,17 @@ public class ApiDocProtectorGenerator extends ApiDocProtectorLibrary {
 	public String create(@Valid @RequestParam Map<String, String> body) throws IOException {
 
 		logTerm("CREATE IN GENERATOR IS START", null, true);
+		auditor(GENERATOR_DATA_POST, null, null);
 
 		if (session.getAttribute("ADP-USER-GENERATOR") == null || !session.getAttribute("ADP-USER-GENERATOR").equals("1")) {
 			logTerm("INVALID SESSION FROM CREATE IN GENERATOR", null, true);
+			auditor(GENERATOR_FORM_INVALID_SESSION, null, null);
 			return apiDocProtectorErrorRedirect.redirectGeneratorError("invalid_session_user_generator");
 		}
 
 		if (apiDocProtectorRepository.findByUsernameOrEmail(body.get("username"), body.get("email")) != null) {
 			session.setAttribute("ADP-ACCOUNT-CREATED-SUCCESSFUL", null);
+			auditor(GENERATOR_FORM_USER_ALREADY_EXISTS, null, null);
 			return apiDocProtectorErrorRedirect.redirectGeneratorError("user_already_exists");
 		}
 
@@ -104,6 +122,7 @@ public class ApiDocProtectorGenerator extends ApiDocProtectorLibrary {
 			String content = apiDocProtectorMailSender.contentMailGeneratorUser(body.get("name"), userToken);
 
 			apiDocProtectorMailSender.sendMailAttached(emailTo, subject, content);
+			auditor(GENERATOR_MAIL_SENDER_OK, null, null);
 
 			session.setAttribute("ADP-ACCOUNT-CREATED-SUCCESSFUL", "1");
 			return apiDocProtectorRedirect.redirectToGeneratorForm();
@@ -111,6 +130,7 @@ public class ApiDocProtectorGenerator extends ApiDocProtectorLibrary {
 		} catch (RuntimeException re) {
 			session.setAttribute("ADP-ACCOUNT-CREATED-SUCCESSFUL", null);
 			logTerm("CREATE IN GENERATOR [EXCEPTION]", re.getMessage(), true);
+			auditor(GENERATOR_EXCEPTION, re.getMessage(), null);
 			return apiDocProtectorErrorRedirect.redirectGeneratorError("account_create_error");
 		}
 	}
@@ -118,6 +138,7 @@ public class ApiDocProtectorGenerator extends ApiDocProtectorLibrary {
 	@Operation(hidden = true)
 	@GetMapping(path = "/doc-protect/generator/error/{data}")
 	public ModelAndView error(@PathVariable(required = false) String data) {
+		auditor(GENERATOR_EXCEPTION, data, null);
 		return apiDocProtectorViewer.error(
 				GENERATOR_ERROR.getMessage(),
 				data.replace("_", " "),

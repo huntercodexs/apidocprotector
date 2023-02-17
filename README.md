@@ -443,6 +443,22 @@ Let me explain the more importants fields in this context.
 
 ***sessionCreatedAt:*** This is a date data, used to contol the user session (timeout or session expired)
 
+> APIDOC PROTECTOR AUDITOR
+
+The table apidoc_protector_audit have the follow fields:
+
+<pre>
+id;username;level;token;tracker;detail;message;ip;createdAt;
+</pre>
+
+About these fields above we can say wich the most importants:
+
+***tracker:*** Tracker code to track the request information
+
+***detail:*** Details about the tracker code
+
+***message:*** Message refer the tracker code
+
 > To more details, see the source code from APIDOC PROTECTOR
 
 # Account Creation
