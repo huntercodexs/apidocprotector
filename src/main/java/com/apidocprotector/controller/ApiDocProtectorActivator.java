@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import static com.apidocprotector.enumerator.ApiDocProtectorAuditEnum.*;
+
 @Hidden
 @Controller
 @CrossOrigin(origins = "*")
@@ -22,6 +24,7 @@ public class ApiDocProtectorActivator extends ApiDocProtectorLibrary {
 	public String activator(@PathVariable("token") String token) {
 
 		logTerm("ACTIVATOR IS START", null, true);
+		auditor(ACTIVATOR_STARTED, null, null);
 
 		String tokenCrypt = dataEncrypt(token);
 		ApiDocProtectorEntity result = findAccountByTokenAndActive(tokenCrypt, "no");
@@ -34,6 +37,7 @@ public class ApiDocProtectorActivator extends ApiDocProtectorLibrary {
 
 			if (alreadyActivated(token)) {
 				logTerm("ACCOUNT ALREADY ACTIVATED IN ACTIVATOR", token, true);
+				auditor(ACTIVATOR_ACCOUNT_ALREADY_ACTIVATED, "The token was expired: " + token, null);
 
 				response.setStatus(HttpStatus.CONFLICT.value());
 				return dataHtml
@@ -42,6 +46,7 @@ public class ApiDocProtectorActivator extends ApiDocProtectorLibrary {
 			}
 
 			logTerm("ACCOUNT NOT FOUND IN ACTIVATOR", null, true);
+			auditor(ACTIVATOR_ACCOUNT_NOT_FOUND, token, null);
 
 			response.setStatus(HttpStatus.NOT_FOUND.value());
 			return dataHtml
@@ -51,6 +56,7 @@ public class ApiDocProtectorActivator extends ApiDocProtectorLibrary {
 
 		if (activateExpired(token)) {
 			logTerm("ACCOUNT HAS BEEN EXPIRED TO ACTIVE IN ACTIVATOR", token, true);
+			auditor(ACTIVATOR_EXPIRED_ACCOUNT, "The token was expired: " + token, null);
 
 			/*Generic (HTML Page)*/
 			String dataHtml = readFile("./src/main/resources/templates/apidocprotector/generic.html");
@@ -65,18 +71,21 @@ public class ApiDocProtectorActivator extends ApiDocProtectorLibrary {
 
 		result.setActive("yes");
 		apiDocProtectorRepository.save(result);
+		auditor(ACTIVATOR_TOKEN_OK, null, null);
 
 		String emailTo = result.getEmail();
 		String subject = apiDocProtectorMailSender.subjectMail(result.getUsername());
 		String content = apiDocProtectorMailSender.contentMailActivatedUser(result.getName(), token);
 
 		apiDocProtectorMailSender.sendMailAttached(emailTo, subject, content);
-
 		logTerm("USER TOKEN HAS BEEN ACTIVATED IN ACTIVATOR", result, true);
+		auditor(ACTIVATOR_MAIL_SUCCESSFUL, null, null);
 
 		/*Activated (HTML Page)*/
 		String dataHtml = readFile("./src/main/resources/templates/apidocprotector/activated.html");
 		response.setStatus(HttpStatus.OK.value());
+		auditor(ACTIVATOR_FINISHED, null, null);
+
 		return dataHtml.replace("@{apidoc_protector_username}", result.getName());
 	}
 

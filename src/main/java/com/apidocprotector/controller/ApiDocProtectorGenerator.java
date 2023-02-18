@@ -41,7 +41,7 @@ public class ApiDocProtectorGenerator extends ApiDocProtectorLibrary {
 	@GetMapping(path = "/doc-protect/protector/generator/glass")
 	public String glass() {
 
-		logTerm("GENERATOR IN GLASS START", null, true);
+		logTerm("GENERATOR GLASS START", null, true);
 		auditor(GENERATOR_GLASS_STARTED, null, null);
 
 		try {

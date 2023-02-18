@@ -27,7 +27,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
-import static com.apidocprotector.enumerator.ApiDocProtectorAuditEnum.GENERATOR_FORM_USER_CREATED;
+import static com.apidocprotector.enumerator.ApiDocProtectorAuditEnum.*;
 
 @Slf4j
 @Service
@@ -108,6 +108,9 @@ public abstract class ApiDocProtectorLibrary extends ApiDocProtectorDataLibrary 
     @Value("${apidocprotector.audit.enabled:false}")
     protected boolean apiDocAuditor;
 
+    @Value("${apidocprotector.logging.enabled:false}")
+    protected boolean apiDocLogging;
+
     @Value("${apidocprotector.custom.uri-account-active:/doc-protect/account/active}")
     protected String customUriAccountActive;
 
@@ -176,6 +179,7 @@ public abstract class ApiDocProtectorLibrary extends ApiDocProtectorDataLibrary 
         /*This is a main session (security)*/
         session.setAttribute(sessionVal, transfer);
         logTerm("SESSION CREATED", session.getAttribute(sessionVal), true);
+        auditor(SESSION_PREPARED_OK, null, null);
     }
 
     public void sessionRenew(ApiDocProtectorEntity result, LocalDateTime dateTimeNow) {
@@ -498,6 +502,7 @@ public abstract class ApiDocProtectorLibrary extends ApiDocProtectorDataLibrary 
 
         logTerm("KEYPART FROM TRANSFER IN findDataSession", keypart, true);
         logTerm("SESSION-KEY FROM TRANSFER IN findDataSession", sessionKey, true);
+        auditor(SESSION_FOUNDED, null, null);
 
         return apiDocProtectorRepository.findBySessionKeyAndActive(sessionKey, "yes");
     }
@@ -541,13 +546,12 @@ public abstract class ApiDocProtectorLibrary extends ApiDocProtectorDataLibrary 
         if (apiDocAuditor) {
 
             String username = null;
-            String level = null;
+            String level = "auditor"; /*TODO: Turn on dynamic data*/
             String token = null;
 
             if (sessionId != null && !sessionId.equals("")) {
                 ApiDocProtectorDto sessionData = ((ApiDocProtectorDto) session.getAttribute(sessionId));
                 username = sessionData.getUsername();
-                level = "auditor"; /*TODO: Turn on dynamic data*/
                 token = sessionData.getToken();
             }
 

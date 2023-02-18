@@ -43,6 +43,7 @@ public class ApiDocProtectorRedirect extends ApiDocProtectorLibrary {
 
     public String forwardToGlass() {
         logTerm("forwardToGlass IS START", null, true);
+        auditor(PROTECTOR_GLASS_FORWARD, null, null);
         return "forward:/doc-protect/protector/glass";
     }
 
@@ -166,7 +167,7 @@ public class ApiDocProtectorRedirect extends ApiDocProtectorLibrary {
         session.removeAttribute("ADP-KEYPART");
         session.removeAttribute("ADP-SECRET");
         session.removeAttribute("ADP-KEYPART-REFRESH");
-        session.removeAttribute("APIDOC-AUDITOR");
+        //session.removeAttribute("APIDOC-AUDITOR");
         String uriTarget = customUriLogin.replaceFirst("/$", "") + "/" + token;
         if (!uriTarget.startsWith("/")) uriTarget = "/" + uriTarget;
         return "redirect:"+uriTarget;
