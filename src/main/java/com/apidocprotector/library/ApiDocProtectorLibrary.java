@@ -596,6 +596,7 @@ public abstract class ApiDocProtectorLibrary extends ApiDocProtectorDataLibrary 
             apiDocProtectorAuditEntity.setTracker(auditDto.getTracker());
             apiDocProtectorAuditEntity.setDetail(auditDto.getDetail());
             apiDocProtectorAuditEntity.setMessage(auditDto.getMessage());
+            apiDocProtectorAuditEntity.setCode(auditEnum.getCode());
             apiDocProtectorAuditEntity.setIp(auditDto.getIp());
             apiDocProtectorAuditEntity.setCreatedAt(currentDate);
 

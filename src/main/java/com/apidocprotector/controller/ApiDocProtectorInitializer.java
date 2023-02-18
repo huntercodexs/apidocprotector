@@ -1,5 +1,6 @@
 package com.apidocprotector.controller;
 
+import com.apidocprotector.enumerator.ApiDocProtectorLibraryEnum;
 import com.apidocprotector.library.ApiDocProtectorLibrary;
 import com.apidocprotector.model.ApiDocProtectorEntity;
 import io.swagger.v3.oas.annotations.Hidden;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.servlet.ModelAndView;
 
 import static com.apidocprotector.enumerator.ApiDocProtectorAuditEnum.*;
+import static com.apidocprotector.enumerator.ApiDocProtectorAuditEnum.INITIALIZER_ERROR;
 import static com.apidocprotector.enumerator.ApiDocProtectorLibraryEnum.*;
 
 @Hidden
@@ -144,9 +146,9 @@ public class ApiDocProtectorInitializer extends ApiDocProtectorLibrary {
 	public ModelAndView error(@PathVariable(required = false) String data) {
 		auditor(INITIALIZER_EXCEPTION, data, null);
 		return apiDocProtectorViewer.error(
-				INITIALIZE_ERROR.getMessage(),
+				ApiDocProtectorLibraryEnum.INITIALIZER_ERROR.getMessage(),
 				data.replace("_", " "),
-				INITIALIZE_ERROR.getStatusCode());
+				ApiDocProtectorLibraryEnum.INITIALIZER_ERROR.getStatusCode());
 	}
 
 }

@@ -19,7 +19,7 @@ public enum ApiDocProtectorLibraryEnum {
             10001,
             "Process error"),
 
-    INITIALIZE_ERROR(
+    INITIALIZER_ERROR(
             HttpStatus.BAD_REQUEST,
             10002,
             "Initial process error"),
@@ -83,6 +83,26 @@ public enum ApiDocProtectorLibraryEnum {
             HttpStatus.REQUEST_TIMEOUT,
             10014,
             "Access Violation"),
+
+    PASSWORD_ERROR(
+            HttpStatus.INTERNAL_SERVER_ERROR,
+            10015,
+            "Password process error"),
+
+    PASSWORD_RECOVERY_ERROR(
+            HttpStatus.INTERNAL_SERVER_ERROR,
+            10016,
+            "Password Recovery process error"),
+
+    RECOVERY_ERROR(
+            HttpStatus.INTERNAL_SERVER_ERROR,
+            10017,
+            "Recovery process error"),
+
+    SWAGGER_ROUTE_ERROR(
+            HttpStatus.INTERNAL_SERVER_ERROR,
+            10017,
+            "Swagger Route process error"),
 
     UNAUTHORIZED_FIREWALL(
             HttpStatus.UNAUTHORIZED,

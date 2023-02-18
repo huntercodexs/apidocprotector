@@ -36,6 +36,9 @@ public class ApiDocProtectorAuditEntity {
     String message;
 
     @Column
+    int code;
+
+    @Column
     String ip;
 
     @Column

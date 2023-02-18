@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Map;
 
+import static com.apidocprotector.enumerator.ApiDocProtectorAuditEnum.*;
 import static com.apidocprotector.enumerator.ApiDocProtectorLibraryEnum.*;
 
 @Hidden
@@ -31,8 +32,14 @@ public class ApiDocProtectorSwaggerRouter extends ApiDocProtectorLibrary {
 	@ResponseBody
 	public ModelAndView sign(@RequestParam Map<String, String> body) {
 
+		logTerm("SWAGGER ROUTER IS START", null, true);
+		auditor(SWAGGER_ROUTER_SIGN, null, null);
+
 		if (!apiDocProtectorSecurity.shield(session)) {
+
 			logTerm("OPS! SIGN ERROR FROM POST (MISSING ADP-KEYPART SESSION)", "ERROR", true);
+			auditor(SWAGGER_ROUTER_STOPBY_SHIELD, null, null);
+
 			return apiDocProtectorViewer.error(
 					INVALID_ACCESS.getMessage(),
 					"session is needed",
@@ -46,9 +53,15 @@ public class ApiDocProtectorSwaggerRouter extends ApiDocProtectorLibrary {
 		String password = body.get("password");
 		String secret = body.get("apidocprotector_sec");
 		String token = body.get("apidocprotector_token");
+
 		logTerm("POST BODY", body, true);
+		auditor(SWAGGER_ROUTER_DETAILS, "The username to current request: " + username, null);
 
 		if (username == null || username.equals("")) {
+
+			logTerm(SWAGGER_ROUTER_MISSING_USERNAME.getMessage(), body, true);
+			auditor(SWAGGER_ROUTER_MISSING_USERNAME, null, null);
+
 			return apiDocProtectorViewer.error(
 					INVALID_ACCESS.getMessage(),
 					"missing username",
@@ -56,6 +69,10 @@ public class ApiDocProtectorSwaggerRouter extends ApiDocProtectorLibrary {
 		}
 
 		if (password == null || password.equals("")) {
+
+			logTerm(SWAGGER_ROUTER_MISSING_USERNAME.getMessage(), body, true);
+			auditor(SWAGGER_ROUTER_MISSING_PASSWORD, null, null);
+
 			return apiDocProtectorViewer.error(
 					INVALID_ACCESS.getMessage(),
 					"missing password",
@@ -63,16 +80,23 @@ public class ApiDocProtectorSwaggerRouter extends ApiDocProtectorLibrary {
 		}
 
 		if (sessionExpired(token)) {
+
+			logTerm(SWAGGER_ROUTER_EXPIRED_SESSION.getMessage(), null, true);
+			auditor(SWAGGER_ROUTER_EXPIRED_SESSION, null, null);
+
 			try {
 				apiDocProtectorRedirect.redirectExpiredSession(token);
 				return null;
 			} catch (IOException e) {
+
 				logTerm("EXCEPTION", e.getMessage(), true);
+				auditor(SWAGGER_ROUTER_EXCEPTION, e.getMessage(), null);
+
+				return apiDocProtectorViewer.error(
+						EXPIRED_SESSION.getMessage(),
+						"session expired",
+						EXPIRED_SESSION.getStatusCode());
 			}
-			return apiDocProtectorViewer.error(
-					EXPIRED_SESSION.getMessage(),
-					"session expired",
-					EXPIRED_SESSION.getStatusCode());
 		}
 
 		String sessionKey = md5(keypart + secret).toUpperCase();
@@ -80,9 +104,10 @@ public class ApiDocProtectorSwaggerRouter extends ApiDocProtectorLibrary {
 
 		ApiDocProtectorEntity sessionData = apiDocProtectorRepository.findBySessionKeyAndActive(sessionKey, "yes");
 		String sessionId = sessionData.getSessionVal();
-		logTerm("SESSION-ID FROM POST", sessionId, true);
 
+		logTerm("SESSION-ID FROM POST", sessionId, true);
 		logTerm("SESSION-CURRENT FROM POST", session.getAttribute(sessionId), true);
+		auditor(SWAGGER_ROUTER_SESSION_FOUNDED, null, sessionId);
 
 		ApiDocProtectorDto sessionTransfer = (ApiDocProtectorDto) session.getAttribute(sessionId);
 		logTerm("SESSION-TRANSFER FROM POST", sessionTransfer, true);
@@ -95,13 +120,16 @@ public class ApiDocProtectorSwaggerRouter extends ApiDocProtectorLibrary {
 
 			session.setAttribute(sessionId, sessionTransfer);
 			logTerm("SESSION-UPDATED FROM POST", session.getAttribute(sessionId), true);
-
 			response.setHeader("ApiDoc-Protector-Active-User", md5(username));
+			auditor(SWAGGER_ROUTER_LOGIN_OK, "Login successful to username " + username, sessionId);
+
 			return apiDocProtectorViewer.protector(session, sessionId);
+
 		}
 
 		sessionTransfer.setAuthenticate(false);
 		logTerm("OPS! SIGN ERROR FROM POST", "ERROR", true);
+		auditor(SWAGGER_ROUTER_LOGIN_ERROR, "The login was invalid to " + username, sessionId);
 
 		return apiDocProtectorViewer.error(
 				INVALID_ACCESS.getMessage(),
@@ -113,10 +141,12 @@ public class ApiDocProtectorSwaggerRouter extends ApiDocProtectorLibrary {
 	@Operation(hidden = true)
 	@GetMapping(path = "${springdoc.swagger-ui.path:/swagger-ui}/protector")
 	public ModelAndView refresh() {
+
 		logTerm("REFRESH FROM MODEL-AND-VIEW", null, true);
 		logTerm("ADP-KEYPART SESSION", session.getAttribute("ADP-KEYPART"), true);
 		logTerm("ADP-SECRET SESSION", session.getAttribute("ADP-SECRET"), true);
 		logTerm("ADP-KEYPART-REFRESH SESSION", session.getAttribute("ADP-KEYPART-REFRESH"), true);
+		auditor(SWAGGER_ROUTER_REFRESH_STARTED, null, null);
 
 		String keypart = session.getAttribute("ADP-KEYPART").toString();
 		logTerm("KEYPART IN REFRESH", keypart, true);
@@ -132,6 +162,7 @@ public class ApiDocProtectorSwaggerRouter extends ApiDocProtectorLibrary {
 
 		String sessionId = sessionData.getSessionVal();
 		logTerm("SESSION-ID IN REFRESH", sessionId, true);
+		auditor(SWAGGER_ROUTER_REFRESH_OK, null, sessionId);
 
 		return apiDocProtectorViewer.refresh(session, sessionId,"--refresh-page");
 	}
@@ -160,12 +191,14 @@ public class ApiDocProtectorSwaggerRouter extends ApiDocProtectorLibrary {
 	})
 	public String routes() {
 		logTerm("ROUTES FROM SWAGGER", null, true);
+		auditor(SWAGGER_ROUTER_ROUTES_STARTED, null, null);
 		return apiDocProtectorRedirect.captor(session);
 	}
 
 	@Operation(hidden = true)
 	@RequestMapping(value = "${springdoc.swagger-ui.path:/swagger-ui-path}/index.html")
 	public String denied(HttpServletResponse httpResponse) throws IOException {
+		auditor(SWAGGER_ROUTER_DENIED_STARTED, null, null);
 		httpResponse.setStatus(HttpStatus.NOT_ACCEPTABLE.value());
 		return apiDocProtectorErrorRedirect.forwardSentinelError("Operation not allowed");
 	}
@@ -173,6 +206,7 @@ public class ApiDocProtectorSwaggerRouter extends ApiDocProtectorLibrary {
 	@Operation(hidden = true)
 	@GetMapping(path = "/doc-protect/login/error/{username}")
 	public ModelAndView error(@PathVariable(required = false) String username) {
+		auditor(SWAGGER_ROUTER_ERROR_STARTED, "The username was blocked " + username, null);
 		return apiDocProtectorViewer.error(
 				INVALID_LOGIN.getMessage(),
 				username,
