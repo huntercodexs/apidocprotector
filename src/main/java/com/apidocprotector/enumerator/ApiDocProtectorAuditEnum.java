@@ -25,7 +25,8 @@ public enum ApiDocProtectorAuditEnum {
     GENERATOR_MAIL_SENDER_OK(15, "The mail has been sended to user"),
     GENERATOR_FORM_REDIRECT(16, "redirect: redirecting to form was running"),
 
-    VIEW_ERROR(50001, "");
+    GENERIC_MESSAGE(20000, ""),
+    VIEW_ERROR(50000, "");
 
     public int code;
     public String message;

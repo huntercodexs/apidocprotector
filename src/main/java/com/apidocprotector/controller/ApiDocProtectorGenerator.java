@@ -102,6 +102,12 @@ public class ApiDocProtectorGenerator extends ApiDocProtectorLibrary {
 		logTerm("CREATE IN GENERATOR IS START", null, true);
 		auditor(GENERATOR_DATA_POST, null, null);
 
+		try {
+			auditor(GENERIC_MESSAGE, "Try create user: "+body.get("username"), null);
+		} catch (RuntimeException re) {
+			auditor(GENERATOR_EXCEPTION, re.getMessage(), null);
+		}
+
 		if (session.getAttribute("ADP-USER-GENERATOR") == null || !session.getAttribute("ADP-USER-GENERATOR").equals("1")) {
 			logTerm("INVALID SESSION FROM CREATE IN GENERATOR", null, true);
 			auditor(GENERATOR_FORM_INVALID_SESSION, null, null);
@@ -125,6 +131,8 @@ public class ApiDocProtectorGenerator extends ApiDocProtectorLibrary {
 			auditor(GENERATOR_MAIL_SENDER_OK, null, null);
 
 			session.setAttribute("ADP-ACCOUNT-CREATED-SUCCESSFUL", "1");
+			auditor(GENERIC_MESSAGE, "User created successful: "+body.get("username"), null);
+
 			return apiDocProtectorRedirect.redirectToGeneratorForm();
 
 		} catch (RuntimeException re) {
