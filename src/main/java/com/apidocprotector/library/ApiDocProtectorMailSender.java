@@ -120,11 +120,11 @@ public class ApiDocProtectorMailSender extends ApiDocProtectorLibrary {
                 .replace("@{apidoc_protector_email_expires_time}", emailTime);
     }
 
-    public String contentMailPasswordRecovery(ApiDocProtectorEntity user) {
+    public String contentMailPasswordRecovery(String newToken, ApiDocProtectorEntity user) {
         String domainServer = customUrlServerDomain.replaceFirst("/$", "");;
         String uriServer = customUriLogin.replaceFirst("/$", "");
         if (!uriServer.startsWith("/")) uriServer = "/" + uriServer;
-        String link = domainServer + uriServer +"/" + user.getToken();
+        String link = domainServer + uriServer +"/" + newToken;
 
         /*Password Recovery (HTML Mail)*/
         String dataHtml = readFile("./src/main/resources/templates/apidocprotector/mail/password-recovery.html");

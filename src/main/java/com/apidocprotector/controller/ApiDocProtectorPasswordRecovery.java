@@ -126,9 +126,8 @@ public class ApiDocProtectorPasswordRecovery extends ApiDocProtectorLibrary {
 
 		try {
 
-			user.setToken(newToken);
 			String subject = apiDocProtectorMailSender.subjectMail(user.getUsername());
-			String content = apiDocProtectorMailSender.contentMailPasswordRecovery(user);
+			String content = apiDocProtectorMailSender.contentMailPasswordRecovery(newToken, user);
 
 			apiDocProtectorMailSender.sendMailAttached(user.getEmail(), subject, content);
 			session.setAttribute("ADP-ACCOUNT-PASSWORD-RECOVERY-SUCCESSFUL", "1");
