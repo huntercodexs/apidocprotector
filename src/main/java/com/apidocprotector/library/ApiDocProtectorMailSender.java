@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
+import static com.apidocprotector.enumerator.ApiDocProtectorAuditEnum.*;
+
 @Slf4j
 @Service
 public class ApiDocProtectorMailSender extends ApiDocProtectorLibrary {
@@ -30,6 +32,7 @@ public class ApiDocProtectorMailSender extends ApiDocProtectorLibrary {
         message.setText(content);
 
         logTerm("JAVA MAIL SENDER", message, true);
+        auditor(MAILSENDER_STARTED, null, null);
 
         try {
             javaMailSender.send(message);
@@ -50,6 +53,7 @@ public class ApiDocProtectorMailSender extends ApiDocProtectorLibrary {
 
             logTerm("[ EMAIL ]", message, true);
             logTerm("[ HELPER ]", helper, true);
+            auditor(MAILSENDER_STARTED, "mail to " + to, null);
 
             javaMailSender.send(message);
 
@@ -74,6 +78,7 @@ public class ApiDocProtectorMailSender extends ApiDocProtectorLibrary {
         /*Activate (HTML Mail)*/
         String dataHtml = readFile("./src/main/resources/templates/apidocprotector/mail/activate.html");
         String emailTime = String.valueOf(expireTimeEmail) + " minutes";
+        auditor(MAILSENDER_CONTENT, "mail to " + username, null);
 
         return dataHtml
                 .replace("@{apidoc_protector_username}", username)
@@ -90,6 +95,7 @@ public class ApiDocProtectorMailSender extends ApiDocProtectorLibrary {
         /*Activate (HTML Mail)*/
         String dataHtml = readFile("./src/main/resources/templates/apidocprotector/mail/activate.html");
         String emailTime = String.valueOf(expireTimeEmail) + " minutes";
+        auditor(MAILSENDER_CONTENT, "mail to " + username, null);
 
         return dataHtml
                 .replace("@{apidoc_protector_username}", username)
@@ -106,6 +112,7 @@ public class ApiDocProtectorMailSender extends ApiDocProtectorLibrary {
         /*Password Recovery (HTML Mail)*/
         String dataHtml = readFile("./src/main/resources/templates/apidocprotector/mail/password.html");
         String emailTime = String.valueOf(expireTimeEmail) + " minutes";
+        auditor(MAILSENDER_CONTENT, "mail to " + user.getUsername(), null);
 
         return dataHtml
                 .replace("@{apidoc_protector_username}", user.getName())
@@ -121,6 +128,7 @@ public class ApiDocProtectorMailSender extends ApiDocProtectorLibrary {
 
         /*Password Recovery (HTML Mail)*/
         String dataHtml = readFile("./src/main/resources/templates/apidocprotector/mail/password-recovery.html");
+        auditor(MAILSENDER_CONTENT, "mail to " + user.getUsername(), null);
 
         return dataHtml
                 .replace("@{apidoc_protector_username}", user.getName())
@@ -135,6 +143,7 @@ public class ApiDocProtectorMailSender extends ApiDocProtectorLibrary {
 
         /*Welcome (HTML Mail)*/
         String dataHtml = readFile("./src/main/resources/templates/apidocprotector/mail/welcome.html");
+        auditor(MAILSENDER_CONTENT, "mail to " + username, null);
 
         return dataHtml
                 .replace("@{apidoc_protector_username}", username)

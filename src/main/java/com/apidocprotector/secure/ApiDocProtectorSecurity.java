@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpSession;
 import java.util.Map;
 
+import static com.apidocprotector.enumerator.ApiDocProtectorAuditEnum.*;
 import static com.apidocprotector.enumerator.ApiDocProtectorLibraryEnum.*;
 
 @Service
@@ -16,6 +17,7 @@ public class ApiDocProtectorSecurity extends ApiDocProtectorLibrary {
 
         logTerm("FIREWALL IS RUNNING", "INFO", true);
         logTerm("FIREWALL IS RUNNING", response.getHeader("ApiDoc-Protector-Active-User"), true);
+        auditor(SECURITY_FIREWALL_STARTED, null, sessionId);
 
         ApiDocProtectorDto sessionTransfer = (ApiDocProtectorDto) session.getAttribute(sessionId);
         logTerm("SESSION TRANSFER IN FIREWALL", sessionTransfer, true);
@@ -270,9 +272,11 @@ public class ApiDocProtectorSecurity extends ApiDocProtectorLibrary {
         logTerm("FIREWALL PASSED", "INFO", true);
         logTerm("JSESSIONID IS: "+session.getId(), "INFO", true);
         logTerm("TOKEN IS: "+sessionTransfer.getToken(), "INFO", true);
+        auditor(SECURITY_FIREWALL_FINISHED, null, sessionId);
     }
 
     public boolean burn(HttpSession session, String tokenCrypt, String sessionId) {
+        auditor(SECURITY_BURN_STARTED, null, sessionId);
         ApiDocProtectorDto sessionTransfer = (ApiDocProtectorDto) session.getAttribute(sessionId);
         if (
                 !sessionTransfer.getOrigin().equals("redirectToLoginForm") ||
@@ -281,13 +285,17 @@ public class ApiDocProtectorSecurity extends ApiDocProtectorLibrary {
                 !session.getAttribute("ADP-KEYPART").equals(sessionTransfer.getKeypart())
         ) {
             doAuthorized(session, sessionId, false);
+            auditor(SECURITY_BURN_FINISHED_TRUE, null, sessionId);
             return true;
         }
+
+        auditor(SECURITY_BURN_FINISHED_FALSE, null, sessionId);
 
         return false;
     }
 
     public boolean shield(HttpSession session) {
+        auditor(SECURITY_SHIELD_STARTED, null, null);
         try {
             if (session.getAttribute("ADP-KEYPART").toString().equals("")) {
                 logTerm("MISSING ADP-KEYPART SESSION IN SHIELD", null, true);
