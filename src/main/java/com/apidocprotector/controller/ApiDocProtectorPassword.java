@@ -26,13 +26,13 @@ public class ApiDocProtectorPassword extends ApiDocProtectorLibrary {
 	public String password() {
 
 		logTerm("PASSWORD FORM IS START", null, true);
-		auditor(PASSWORD_STARTED, null, null);
+		auditor(PASSWORD_STARTED, null, null, 0);
 
 		try {
 			return apiDocProtectorRedirect.forwardToPasswordGlass();
 		} catch (RuntimeException re) {
 			logTerm("PASSWORD FORM [EXCEPTION]", re.getMessage(), true);
-			auditor(PASSWORD_EXCEPTION, re.getMessage(), null);
+			auditor(PASSWORD_EXCEPTION, re.getMessage(), null, 1);
 			return apiDocProtectorErrorRedirect.redirectPasswordError("error_to_load_form_password");
 		}
 
@@ -43,13 +43,13 @@ public class ApiDocProtectorPassword extends ApiDocProtectorLibrary {
 	public String glass() {
 
 		logTerm("PASSWORD IN GLASS START", null, true);
-		auditor(PASSWORD_GLASS_STARTED, null, null);
+		auditor(PASSWORD_GLASS_STARTED, null, null, 0);
 
 		try {
 			return apiDocProtectorRedirect.redirectToPasswordForm();
 		} catch (RuntimeException re) {
 			logTerm("PASSWORD IN GLASS [EXCEPTION]", re.getMessage(), true);
-			auditor(PASSWORD_GLASS_EXCEPTION, re.getMessage(), null);
+			auditor(PASSWORD_GLASS_EXCEPTION, re.getMessage(), null, 1);
 			return apiDocProtectorErrorRedirect.redirectPasswordError("unknown");
 		}
 	}
@@ -59,11 +59,11 @@ public class ApiDocProtectorPassword extends ApiDocProtectorLibrary {
 	public ModelAndView form() {
 
 		logTerm("FORM IN PASSWORD IS START", null, true);
-		auditor(PASSWORD_FORM_STARTED, null, null);
+		auditor(PASSWORD_FORM_STARTED, null, null, 0);
 
 		if (session.getAttribute("ADP-USER-PASSWORD") == null || !session.getAttribute("ADP-USER-PASSWORD").equals("1")) {
 
-			auditor(PASSWORD_FORM_INVALID_ACCCESS, null, null);
+			auditor(PASSWORD_FORM_INVALID_ACCCESS, null, null, 2);
 
 			return apiDocProtectorViewer.error(
 					PASSWORD_ERROR.getMessage(),
@@ -75,17 +75,17 @@ public class ApiDocProtectorPassword extends ApiDocProtectorLibrary {
 
 			if (session.getAttribute("ADP-ACCOUNT-PASSWORD-SUCCESSFUL") != null) {
 				if (session.getAttribute("ADP-ACCOUNT-PASSWORD-SUCCESSFUL").equals("1")) {
-					auditor(PASSWORD_CHANGED_SUCCESSFUL, null, null);
+					auditor(PASSWORD_CHANGED_SUCCESSFUL, null, null, 2);
 					return apiDocProtectorViewer.password(true);
 				}
 			}
 
-			auditor(PASSWORD_VIEW_FORM, null, null);
+			auditor(PASSWORD_VIEW_FORM, null, null, 2);
 			return apiDocProtectorViewer.password(false);
 
 		} catch (RuntimeException re) {
 			logTerm("FORM IN PASSWORD [EXCEPTION]", re.getMessage(), true);
-			auditor(PASSWORD_EXCEPTION, re.getMessage(), null);
+			auditor(PASSWORD_EXCEPTION, re.getMessage(), null, 1);
 			return apiDocProtectorViewer.error(
 					PASSWORD_ERROR.getMessage(),
 					"The request has caused a exception",
@@ -101,18 +101,18 @@ public class ApiDocProtectorPassword extends ApiDocProtectorLibrary {
 	public String update(@Valid @RequestParam Map<String, String> body) throws IOException {
 
 		logTerm("PASSWORD USER IS START", null, true);
-		auditor(PASSWORD_DATA_POST, null, null);
+		auditor(PASSWORD_DATA_POST, null, null, 0);
 
 		if (session.getAttribute("ADP-USER-PASSWORD") == null || !session.getAttribute("ADP-USER-PASSWORD").equals("1")) {
 			logTerm("INVALID SESSION FROM PASSWORD USER", null, true);
-			auditor(PASSWORD_FORM_INVALID_SESSION, null, null);
+			auditor(PASSWORD_FORM_INVALID_SESSION, null, null, 2);
 			return apiDocProtectorErrorRedirect.redirectPasswordError("invalid_session_user_password");
 		}
 
 		ApiDocProtectorEntity user = apiDocProtectorRepository.findByEmail(body.get("email"));
 
 		if (user == null) {
-			auditor(PASSWORD_ACCOUNT_NOT_FOUND, "The account was not found " + body.get("email"), null);
+			auditor(PASSWORD_ACCOUNT_NOT_FOUND, "The account was not found " + body.get("email"), null, 2);
 			session.setAttribute("ADP-ACCOUNT-PASSWORD-SUCCESSFUL", null);
 			return apiDocProtectorErrorRedirect.redirectPasswordError("user_not_found_password");
 		}
@@ -124,7 +124,7 @@ public class ApiDocProtectorPassword extends ApiDocProtectorLibrary {
 
 			apiDocProtectorMailSender.sendMailAttached(user.getEmail(), subject, content);
 			session.setAttribute("ADP-ACCOUNT-PASSWORD-SUCCESSFUL", "1");
-			auditor(PASSWORD_MAIL_SENDER_OK, null, null);
+			auditor(PASSWORD_MAIL_SENDER_OK, null, null, 0);
 
 			return apiDocProtectorRedirect.redirectToPasswordForm();
 
@@ -132,7 +132,7 @@ public class ApiDocProtectorPassword extends ApiDocProtectorLibrary {
 
 			session.setAttribute("ADP-ACCOUNT-PASSWORD-SUCCESSFUL", null);
 			logTerm("CREATE IN PASSWORD [EXCEPTION]", re.getMessage(), true);
-			auditor(PASSWORD_EXCEPTION, re.getMessage(), null);
+			auditor(PASSWORD_EXCEPTION, re.getMessage(), null, 1);
 
 			return apiDocProtectorErrorRedirect.redirectPasswordError("password_recovery_error");
 		}
@@ -141,7 +141,7 @@ public class ApiDocProtectorPassword extends ApiDocProtectorLibrary {
 	@Operation(hidden = true)
 	@GetMapping(path = "/doc-protect/password/error/{data}")
 	public ModelAndView error(@PathVariable(required = false) String data) {
-		auditor(PASSWORD_EXCEPTION, data, null);
+		auditor(PASSWORD_EXCEPTION, data, null, 1);
 		return apiDocProtectorViewer.error(
 				PASSWORD_ERROR.getMessage(),
 				data.replace("_", " "),

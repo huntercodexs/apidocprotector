@@ -108,6 +108,9 @@ public abstract class ApiDocProtectorLibrary extends ApiDocProtectorDataLibrary 
     @Value("${apidocprotector.audit.enabled:false}")
     protected boolean apiDocAuditor;
 
+    @Value("${apidocprotector.audit.level:0}")
+    protected int apiDocAuditorLevel;
+
     @Value("${apidocprotector.logging.enabled:false}")
     protected boolean apiDocLogging;
 
@@ -163,7 +166,7 @@ public abstract class ApiDocProtectorLibrary extends ApiDocProtectorDataLibrary 
         transferDto.setKeypart(keypartVal);
 
         logTerm("KEYPART-VAL", keypartVal, true);
-        auditor(LIBRARY_ENVIRONMENT_STARTED, null, null);
+        auditor(LIBRARY_ENVIRONMENT_STARTED, null, null, 2);
 
         return transferDto;
     }
@@ -180,13 +183,13 @@ public abstract class ApiDocProtectorLibrary extends ApiDocProtectorDataLibrary 
         /*This is a main session (security)*/
         session.setAttribute(sessionVal, transfer);
         logTerm("SESSION CREATED", session.getAttribute(sessionVal), true);
-        auditor(LIBRARY_SESSION_PREPARED_OK, null, null);
+        auditor(LIBRARY_SESSION_PREPARED_OK, null, null, 2);
     }
 
     public void sessionRenew(ApiDocProtectorEntity result, LocalDateTime dateTimeNow) {
         result.setSessionCreatedAt(dateTimeNow.format(FORMATTER));
         apiDocProtectorRepository.save(result);
-        auditor(LIBRARY_SESSION_RENEW_OK, null, null);
+        auditor(LIBRARY_SESSION_RENEW_OK, null, null, 2);
     }
 
     public boolean sessionExpired(String token) {
@@ -194,7 +197,7 @@ public abstract class ApiDocProtectorLibrary extends ApiDocProtectorDataLibrary 
         /*Control Session is disabled*/
         if (expireTimeSession == 0) {
             logTerm("CONTROL EXPIRED SESSION IS DISABLE", expireTimeSession, true);
-            auditor(LIBRARY_SESSION_CONTROL_DISABLED, null, null);
+            auditor(LIBRARY_SESSION_CONTROL_DISABLED, null, null, 2);
             return false;
         }
 
@@ -230,13 +233,13 @@ public abstract class ApiDocProtectorLibrary extends ApiDocProtectorDataLibrary 
         if (diffTime > 0) {
             sessionRenew(result, dateTimeNow);
             logTerm("SESSION EXPIRED", result.getSessionVal(), true);
-            auditor(LIBRARY_SESSION_EXPIRED, "Token " + tokenCrypt, null);
+            auditor(LIBRARY_SESSION_EXPIRED, "Token " + tokenCrypt, null, 2);
             return true;
         }
 
         sessionRenew(result, dateTimeNow);
         logTerm("SESSION REFRESHED", result.getSessionVal(), true);
-        auditor(LIBRARY_SESSION_RENEWED, "Token " + tokenCrypt, null);
+        auditor(LIBRARY_SESSION_RENEWED, "Token " + tokenCrypt, null, 2);
 
         return false;
     }
@@ -247,12 +250,12 @@ public abstract class ApiDocProtectorLibrary extends ApiDocProtectorDataLibrary 
 
         if (result != null && result.getToken().equals(tokenCrypt)) {
             logTerm("ACCOUNT ALREADY ACTIVATED", clearToken, true);
-            auditor(LIBRARY_ACCOUNT_ALREADY_ACTIVATED, null, null);
+            auditor(LIBRARY_ACCOUNT_ALREADY_ACTIVATED, null, null, 2);
             return true;
         }
 
         logTerm("ACCOUNT IS NOT ACTIVATED YET", clearToken, true);
-        auditor(LIBRARY_ACCOUNT_NOT_ACTIVATED_YET, null, null);
+        auditor(LIBRARY_ACCOUNT_NOT_ACTIVATED_YET, null, null, 2);
 
         return false;
     }
@@ -370,12 +373,12 @@ public abstract class ApiDocProtectorLibrary extends ApiDocProtectorDataLibrary 
 
             if (login != null && login.getUsername().equals(username)) {
                 logTerm("LOGIN SUCCESS: " + username, "INFO", true);
-                auditor(LIBRARY_LOGIN_SUCCESSFUL, "Login successful to user " + username, null);
+                auditor(LIBRARY_LOGIN_SUCCESSFUL, "Login successful to user " + username, null, 2);
                 return true;
             }
 
             logTerm("LOGIN FAILURE: " + login, "ERROR", true);
-            auditor(LIBRARY_LOGIN_ERROR, "Login not ok to user " + username, null);
+            auditor(LIBRARY_LOGIN_ERROR, "Login not ok to user " + username, null, 2);
 
             return false;
 
@@ -410,7 +413,7 @@ public abstract class ApiDocProtectorLibrary extends ApiDocProtectorDataLibrary 
             String passwordCrypt = dataEncrypt(userBody.get("password"));
 
             if (apiDocProtectorRepository.findByUsernameOrEmail(userBody.get("username"), userBody.get("email")) != null) {
-                auditor(LIBRARY_GENERATOR_USER_ALREADY_EXISTS, userBody.get("username"), null);
+                auditor(LIBRARY_GENERATOR_USER_ALREADY_EXISTS, userBody.get("username"), null, 2);
                 return "User already exists";
             }
 
@@ -430,7 +433,7 @@ public abstract class ApiDocProtectorLibrary extends ApiDocProtectorDataLibrary 
             newUser.setDeletedAt(null);
 
             apiDocProtectorRepository.save(newUser);
-            auditor(LIBRARY_GENERATOR_USER_SUCCESSFUL, "The user was created " + userBody.get("username"), null);
+            auditor(LIBRARY_GENERATOR_USER_SUCCESSFUL, "The user was created " + userBody.get("username"), null, 2);
 
             return token;
 
@@ -457,7 +460,7 @@ public abstract class ApiDocProtectorLibrary extends ApiDocProtectorDataLibrary 
             user.setUpdatedAt(currentDate);
 
             apiDocProtectorRepository.save(user);
-            auditor(LIBRARY_USER_RECOVERY_OK, user.getUsername(), null);
+            auditor(LIBRARY_USER_RECOVERY_OK, user.getUsername(), null, 2);
 
             return token;
 
@@ -483,7 +486,7 @@ public abstract class ApiDocProtectorLibrary extends ApiDocProtectorDataLibrary 
             user.setUpdatedAt(currentDate);
 
             apiDocProtectorRepository.save(user);
-            auditor(LIBRARY_PASSWORD_UPDATED, user.getUsername(), null);
+            auditor(LIBRARY_PASSWORD_UPDATED, user.getUsername(), null, 2);
 
             return token;
 
@@ -519,7 +522,7 @@ public abstract class ApiDocProtectorLibrary extends ApiDocProtectorDataLibrary 
 
         logTerm("KEYPART FROM TRANSFER IN findDataSession", keypart, true);
         logTerm("SESSION-KEY FROM TRANSFER IN findDataSession", sessionKey, true);
-        auditor(LIBRARY_SESSION_FOUNDED, null, null);
+        auditor(LIBRARY_SESSION_FOUNDED, null, null, 2);
 
         return apiDocProtectorRepository.findBySessionKeyAndActive(sessionKey, "yes");
     }
@@ -558,9 +561,9 @@ public abstract class ApiDocProtectorLibrary extends ApiDocProtectorDataLibrary 
         return dataHtml.toString();
     }
 
-    public void auditor(ApiDocProtectorAuditEnum auditEnum, String customMessage, String sessionId) {
+    public void auditor(ApiDocProtectorAuditEnum auditEnum, String customMessage, String sessionId, int auditLevel) {
 
-        if (apiDocAuditor) {
+        if (apiDocAuditor && auditLevel <= apiDocAuditorLevel) {
 
             String username = null;
             String level = "auditor";

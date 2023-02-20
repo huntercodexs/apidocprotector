@@ -25,23 +25,23 @@ public class ApiDocProtectorInitializer extends ApiDocProtectorLibrary {
 	public String initializer(@PathVariable("token") String token) {
 
 		logTerm("INITIALIZER IS START", null, true);
-		auditor(INITIALIZER_STARTED, null, null);
+		auditor(INITIALIZER_STARTED, null, null, 2);
 
 		String tokenCrypt = dataEncrypt(token);
 		ApiDocProtectorEntity result = findAccountByTokenAndActive(tokenCrypt, "yes");
 
 		logTerm("RESULT TOKEN", result, true);
-		auditor(INITIALIZER_TOKEN_OK, tokenCrypt, null);
+		auditor(INITIALIZER_TOKEN_OK, tokenCrypt, null, 2);
 
 		if (result != null && result.getToken().equals(tokenCrypt)) {
 
 			this.transfer = initEnv(token);
 			logTerm("INIT TRANSFER", this.transfer, true);
-			auditor(INITIALIZER_ENVIRONMENT_OK, null, null);
+			auditor(INITIALIZER_ENVIRONMENT_OK, null, null, 2);
 
 			sessionPrepare(session, this.transfer, result);
 			logTerm("SESSION CONFIG", session, true);
-			auditor(INITIALIZER_SESSION_PREPARE_OK, null, null);
+			auditor(INITIALIZER_SESSION_PREPARE_OK, null, null, 2);
 
 			return apiDocProtectorRedirect.forwardToGlass();
 		}
@@ -51,7 +51,7 @@ public class ApiDocProtectorInitializer extends ApiDocProtectorLibrary {
 			error = "user_is_not_active";
 		}
 
-		auditor(INITIALIZER_ERROR, null, null);
+		auditor(INITIALIZER_ERROR, null, null, 2);
 		return apiDocProtectorErrorRedirect.redirectInitializerError(error);
 	}
 
@@ -60,13 +60,13 @@ public class ApiDocProtectorInitializer extends ApiDocProtectorLibrary {
 	public String glass() {
 
 		logTerm("ACTIVATOR GLASS START", null, true);
-		auditor(INITIALIZER_GLASS_STARTED, null, null);
+		auditor(INITIALIZER_GLASS_STARTED, null, null, 2);
 
 		try {
 			return apiDocProtectorRedirect.redirectToForm();
 		} catch (RuntimeException re) {
 			logTerm("GLASS IN INITIALIZER [EXCEPTION]", re.getMessage(), true);
-			auditor(INITIALIZER_EXCEPTION, re.getMessage(), null);
+			auditor(INITIALIZER_EXCEPTION, re.getMessage(), null, 2);
 			return apiDocProtectorErrorRedirect.redirectInitializerError("sessionId");
 		}
 	}
@@ -79,14 +79,14 @@ public class ApiDocProtectorInitializer extends ApiDocProtectorLibrary {
 	public ModelAndView form(@PathVariable(value = "expired", required = false) String expired) {
 
 		logTerm("TRANSFER IN FORM", this.transfer, true);
-		auditor(INITIALIZER_FORM_STARTED, null, null);
+		auditor(INITIALIZER_FORM_STARTED, null, null, 2);
 
 		ApiDocProtectorEntity sessionData = findDataSession(this.transfer.getKeypart(), this.transfer.getSecret());
 		logTerm("SESSION-DATA FROM TRANSFER IN FORM", sessionData, true);
 
 		if (sessionData == null) {
 
-			auditor(INITIALIZER_SESSION_NOT_FOUND, null, null);
+			auditor(INITIALIZER_SESSION_NOT_FOUND, null, null, 2);
 
 			return apiDocProtectorViewer.error(
 					INVALID_SESSION.getMessage(),
@@ -109,13 +109,13 @@ public class ApiDocProtectorInitializer extends ApiDocProtectorLibrary {
 			if (!apiDocProtectorSecurity.burn(session, sessionData.getToken(), sessionId)) {
 
 				logTerm("NOT BURN FROM TRANSFER IN FORM", null, true);
-				auditor(INITIALIZER_SUCCESSFUL, null, sessionId);
+				auditor(INITIALIZER_SUCCESSFUL, null, sessionId, 2);
 
 				return apiDocProtectorViewer.form(session, sessionId);
 			}
 
 			logTerm("OPS! WAS BURN FROM TRANSFER IN FORM", null, true);
-			auditor(INITIALIZER_BURNED, null, sessionId);
+			auditor(INITIALIZER_BURNED, null, sessionId, 2);
 
 			return apiDocProtectorViewer.error(
 					BURN_ERROR.getMessage(),
@@ -125,7 +125,7 @@ public class ApiDocProtectorInitializer extends ApiDocProtectorLibrary {
 		} catch (RuntimeException re) {
 
 			logTerm("FORM INITIALIZER [EXCEPTION]", re.getMessage(), true);
-			auditor(INITIALIZER_EXCEPTION, re.getMessage(), null);
+			auditor(INITIALIZER_EXCEPTION, re.getMessage(), null, 2);
 
 			return apiDocProtectorViewer.error(
 					BURN_EXCEPTION.getMessage(),
@@ -137,14 +137,14 @@ public class ApiDocProtectorInitializer extends ApiDocProtectorLibrary {
 	@Operation(hidden = true)
 	@GetMapping(path = "${apidocprotector.custom.uri-login:/doc-protect/login}")
 	public String denied() {
-		auditor(INITIALIZER_DENIED, null, null);
+		auditor(INITIALIZER_DENIED, null, null, 2);
 		return apiDocProtectorErrorRedirect.redirectInitializerError("Missing_Token");
 	}
 
 	@Operation(hidden = true)
 	@GetMapping(path = "/doc-protect/initializer/error/{data}")
 	public ModelAndView error(@PathVariable(required = false) String data) {
-		auditor(INITIALIZER_EXCEPTION, data, null);
+		auditor(INITIALIZER_EXCEPTION, data, null, 2);
 		return apiDocProtectorViewer.error(
 				ApiDocProtectorLibraryEnum.INITIALIZER_ERROR.getMessage(),
 				data.replace("_", " "),

@@ -24,7 +24,7 @@ public class ApiDocProtectorActivator extends ApiDocProtectorLibrary {
 	public String activator(@PathVariable("token") String token) {
 
 		logTerm("ACTIVATOR IS START", null, true);
-		auditor(ACTIVATOR_STARTED, null, null);
+		auditor(ACTIVATOR_STARTED, null, null, 2);
 
 		String tokenCrypt = dataEncrypt(token);
 		ApiDocProtectorEntity result = findAccountByTokenAndActive(tokenCrypt, "no");
@@ -37,7 +37,7 @@ public class ApiDocProtectorActivator extends ApiDocProtectorLibrary {
 
 			if (alreadyActivated(token)) {
 				logTerm("ACCOUNT ALREADY ACTIVATED IN ACTIVATOR", token, true);
-				auditor(ACTIVATOR_ACCOUNT_ALREADY_ACTIVATED, "The token was expired: " + token, null);
+				auditor(ACTIVATOR_ACCOUNT_ALREADY_ACTIVATED, "The token was expired: " + token, null, 2);
 
 				response.setStatus(HttpStatus.CONFLICT.value());
 				return dataHtml
@@ -46,7 +46,7 @@ public class ApiDocProtectorActivator extends ApiDocProtectorLibrary {
 			}
 
 			logTerm("ACCOUNT NOT FOUND IN ACTIVATOR", null, true);
-			auditor(ACTIVATOR_ACCOUNT_NOT_FOUND, token, null);
+			auditor(ACTIVATOR_ACCOUNT_NOT_FOUND, token, null, 2);
 
 			response.setStatus(HttpStatus.NOT_FOUND.value());
 			return dataHtml
@@ -56,7 +56,7 @@ public class ApiDocProtectorActivator extends ApiDocProtectorLibrary {
 
 		if (activateExpired(token)) {
 			logTerm("ACCOUNT HAS BEEN EXPIRED TO ACTIVE IN ACTIVATOR", token, true);
-			auditor(ACTIVATOR_EXPIRED_ACCOUNT, "The token was expired: " + token, null);
+			auditor(ACTIVATOR_EXPIRED_ACCOUNT, "The token was expired: " + token, null, 2);
 
 			/*Generic (HTML Page)*/
 			String dataHtml = readFile("./src/main/resources/templates/apidocprotector/generic.html");
@@ -71,7 +71,7 @@ public class ApiDocProtectorActivator extends ApiDocProtectorLibrary {
 
 		result.setActive("yes");
 		apiDocProtectorRepository.save(result);
-		auditor(ACTIVATOR_TOKEN_OK, null, null);
+		auditor(ACTIVATOR_TOKEN_OK, null, null, 2);
 
 		String emailTo = result.getEmail();
 		String subject = apiDocProtectorMailSender.subjectMail(result.getUsername());
@@ -79,12 +79,12 @@ public class ApiDocProtectorActivator extends ApiDocProtectorLibrary {
 
 		apiDocProtectorMailSender.sendMailAttached(emailTo, subject, content);
 		logTerm("USER TOKEN HAS BEEN ACTIVATED IN ACTIVATOR", result, true);
-		auditor(ACTIVATOR_MAIL_SUCCESSFUL, null, null);
+		auditor(ACTIVATOR_MAIL_SUCCESSFUL, null, null, 2);
 
 		/*Activated (HTML Page)*/
 		String dataHtml = readFile("./src/main/resources/templates/apidocprotector/activated.html");
 		response.setStatus(HttpStatus.OK.value());
-		auditor(ACTIVATOR_FINISHED, null, null);
+		auditor(ACTIVATOR_FINISHED, null, null, 2);
 
 		return dataHtml.replace("@{apidoc_protector_username}", result.getName());
 	}
