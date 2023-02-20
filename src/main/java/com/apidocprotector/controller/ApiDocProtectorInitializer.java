@@ -31,7 +31,7 @@ public class ApiDocProtectorInitializer extends ApiDocProtectorLibrary {
 		ApiDocProtectorEntity result = findAccountByTokenAndActive(tokenCrypt, "yes");
 
 		logTerm("RESULT TOKEN", result, true);
-		auditor(INITIALIZER_TOKEN_OK, token, null);
+		auditor(INITIALIZER_TOKEN_OK, tokenCrypt, null);
 
 		if (result != null && result.getToken().equals(tokenCrypt)) {
 

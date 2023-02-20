@@ -122,7 +122,7 @@ public enum ApiDocProtectorAuditEnum {
     REDIRECT_TO_PASSWORD_FORM(106, "redirect: redirecting to form was running"),
     REDIRECT_TO_PASSWORD_FORM_TARGET(107, "{custom message}"),
     REDIRECT_TO_PASSWORD_RECOVERY_FORM(108, "redirect: redirecting to form was running"),
-    REDIRECT_TO_PASSWORD_RECOVERY_FORM_TARGET(109, "{custom message}"),
+    REDIRECT_TO_PASSWORD_RECOVERY_FORM_TARGET(109, "redirect: redirectToPasswordRecoveryForm"),
     REDIRECT_TO_FORM_STARTED(110, "recirect: redirectToForm was running"),
     REDIRECT_TO_FORM_EXPIRED(111, "The session ADP-EXPIRED-SESSION was not ok"),
     REDIRECT_TO_FORM_FINISHED(112, "recirect: redirectToForm was finished"),
@@ -135,7 +135,7 @@ public enum ApiDocProtectorAuditEnum {
     ROUTER_REDIRECT_TO_SWAGGER_UI(119, "The captor has been redirected to SWAGGER_UI"),
     ROUTER_REDIRECT_TO_PROTECTOR(120, "The captor has been redirected to PROTECTOR"),
     REDIRECT_LOGOUT_STARTED(121, "The logout has been started"),
-    REDIRECT_LOGOUT_TO_LOGIN(122, "{custom message}"),
+    REDIRECT_LOGOUT_TO_LOGIN(122, "redirect: logout"),
 
     LIBRARY_ENVIRONMENT_STARTED(123, "[IMPORTANT] The env was started"),
     LIBRARY_SESSION_PREPARED_OK(124, "Session created successful"),

@@ -53,7 +53,7 @@ public class ApiDocProtectorMailSender extends ApiDocProtectorLibrary {
 
             logTerm("[ EMAIL ]", message, true);
             logTerm("[ HELPER ]", helper, true);
-            auditor(MAILSENDER_STARTED, "mail to " + to, null);
+            auditor(MAILSENDER_STARTED, "subject " + subject, null);
 
             javaMailSender.send(message);
 

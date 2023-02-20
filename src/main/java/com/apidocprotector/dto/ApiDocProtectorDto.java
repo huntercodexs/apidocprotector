@@ -21,6 +21,7 @@ public class ApiDocProtectorDto {
     String secret;
     String keypart;
     String username;
+    String level;
     String password;
     Boolean authorized;
     Boolean authenticate;

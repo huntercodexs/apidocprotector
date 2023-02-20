@@ -109,7 +109,7 @@ public class ApiDocProtectorRedirect extends ApiDocProtectorLibrary {
         uriTarget = uriTarget + "/form/" + md5Token;
 
         logTerm("REDIRECT TO PASSWORD RECOVERY FORM", uriTarget, true);
-        auditor(REDIRECT_TO_PASSWORD_RECOVERY_FORM_TARGET, uriTarget, null);
+        auditor(REDIRECT_TO_PASSWORD_RECOVERY_FORM_TARGET, null, null);
 
         return "redirect:" + uriTarget;
     }
@@ -190,13 +190,19 @@ public class ApiDocProtectorRedirect extends ApiDocProtectorLibrary {
     public String logout(HttpSession session, String token) {
         auditor(REDIRECT_LOGOUT_STARTED, null, null);
         response.setHeader("ApiDoc-Protector-Active-User", null);
+        seesionDestroy();
+        String uriTarget = customUriLogin.replaceFirst("/$", "") + "/" + token;
+        if (!uriTarget.startsWith("/")) uriTarget = "/" + uriTarget;
+        auditor(REDIRECT_LOGOUT_TO_LOGIN, null, null);
+        return "redirect:"+uriTarget;
+    }
+
+    public void seesionDestroy() {
         session.removeAttribute("ADP-KEYPART");
         session.removeAttribute("ADP-SECRET");
         session.removeAttribute("ADP-KEYPART-REFRESH");
-        //session.removeAttribute("APIDOC-AUDITOR");
-        String uriTarget = customUriLogin.replaceFirst("/$", "") + "/" + token;
-        if (!uriTarget.startsWith("/")) uriTarget = "/" + uriTarget;
-        auditor(REDIRECT_LOGOUT_TO_LOGIN, uriTarget, null);
-        return "redirect:"+uriTarget;
+        session.removeAttribute("APIDOC-AUDITOR");
+        session.removeAttribute("APIDOC-AUDITOR-GET-USERNAME");
+        session.removeAttribute("APIDOC-AUDITOR-GET-ROLE");
     }
 }

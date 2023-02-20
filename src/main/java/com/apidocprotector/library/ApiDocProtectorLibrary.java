@@ -230,13 +230,13 @@ public abstract class ApiDocProtectorLibrary extends ApiDocProtectorDataLibrary 
         if (diffTime > 0) {
             sessionRenew(result, dateTimeNow);
             logTerm("SESSION EXPIRED", result.getSessionVal(), true);
-            auditor(LIBRARY_SESSION_EXPIRED, "Token " + token, null);
+            auditor(LIBRARY_SESSION_EXPIRED, "Token " + tokenCrypt, null);
             return true;
         }
 
         sessionRenew(result, dateTimeNow);
         logTerm("SESSION REFRESHED", result.getSessionVal(), true);
-        auditor(LIBRARY_SESSION_RENEWED, "Token " + token, null);
+        auditor(LIBRARY_SESSION_RENEWED, "Token " + tokenCrypt, null);
 
         return false;
     }
@@ -495,6 +495,7 @@ public abstract class ApiDocProtectorLibrary extends ApiDocProtectorDataLibrary 
     }
 
     public String dataEncrypt(String data) {
+        if (data == null) return null;
         if (dataCryptTpe.equals("md5")) {
             return md5(data);
         } else if (dataCryptTpe.equals("bcrypt")) {
@@ -562,8 +563,9 @@ public abstract class ApiDocProtectorLibrary extends ApiDocProtectorDataLibrary 
         if (apiDocAuditor) {
 
             String username = null;
-            String level = "auditor"; /*TODO: Turn on dynamic data*/
+            String level = "auditor";
             String token = null;
+            ApiDocProtectorAuditDto auditDto = new ApiDocProtectorAuditDto();
 
             if (sessionId != null && !sessionId.equals("")) {
                 ApiDocProtectorDto sessionData = ((ApiDocProtectorDto) session.getAttribute(sessionId));
@@ -571,28 +573,13 @@ public abstract class ApiDocProtectorLibrary extends ApiDocProtectorDataLibrary 
                 token = sessionData.getToken();
             }
 
-            ApiDocProtectorAuditDto auditDto = new ApiDocProtectorAuditDto();
-            auditDto.setUsername(username);
-            auditDto.setLevel(level);
-            auditDto.setToken(token);
-            auditDto.setDetail(auditEnum.name());
-            auditDto.setIp(request.getRemoteAddr());
-
-            if (customMessage == null) {
-                auditDto.setMessage(auditEnum.getMessage());
-            } else {
-                auditDto.setMessage(customMessage);
-            }
-
             if (session.getAttribute("APIDOC-AUDITOR") == null || session.getAttribute("APIDOC-AUDITOR").equals("")) {
 
-                auditDto.setTracker(guide(null));
-                session.setAttribute("APIDOC-AUDITOR", auditDto);
-
-            } else {
-
-                auditDto = ((ApiDocProtectorAuditDto) session.getAttribute("APIDOC-AUDITOR"));
+                auditDto.setUsername(username);
+                auditDto.setLevel(level);
+                auditDto.setToken(token);
                 auditDto.setDetail(auditEnum.name());
+                auditDto.setIp(request.getRemoteAddr());
 
                 if (customMessage == null) {
                     auditDto.setMessage(auditEnum.getMessage());
@@ -600,15 +587,50 @@ public abstract class ApiDocProtectorLibrary extends ApiDocProtectorDataLibrary 
                     auditDto.setMessage(customMessage);
                 }
 
+                auditDto.setTracker(guide(null));
+                session.setAttribute("APIDOC-AUDITOR", auditDto);
+
+                logTerm("NEW SESSION APIDOC-AUDITOR", auditDto, true);
+
+            } else {
+
+                auditDto = ((ApiDocProtectorAuditDto) session.getAttribute("APIDOC-AUDITOR"));
+                auditDto.setUsername(username);
+                auditDto.setLevel(level);
+                auditDto.setToken(token);
+                auditDto.setDetail(auditEnum.name());
+                auditDto.setIp(request.getRemoteAddr());
+
+                if (customMessage == null) {
+                    auditDto.setMessage(auditEnum.getMessage());
+                } else {
+                    auditDto.setMessage(customMessage);
+                }
+
+                logTerm("EXISTS SESSION APIDOC-AUDITOR", auditDto, true);
+
+            }
+
+            if (token != null && session.getAttribute("APIDOC-GET-ROLE") == null) {
+                ApiDocProtectorEntity user = apiDocProtectorRepository.findByToken(dataEncrypt(token));
+                session.setAttribute("APIDOC-AUDITOR-GET-USERNAME", user.getUsername());
+                session.setAttribute("APIDOC-AUDITOR-GET-ROLE", user.getRole());
+                auditDto.setUsername(user.getUsername());
+                auditDto.setLevel(user.getRole());
+            } else if (session.getAttribute("APIDOC-GET-ROLE") != null) {
+                auditDto.setUsername(session.getAttribute("APIDOC-AUDITOR-GET-USERNAME").toString());
+                auditDto.setLevel(session.getAttribute("APIDOC-AUDITOR-GET-ROLE").toString());
+            } else {
+                auditDto.setLevel(level);
             }
 
             LocalDateTime dateTime = LocalDateTime.now();
             String currentDate = dateTime.format(FORMATTER);
 
             ApiDocProtectorAuditEntity apiDocProtectorAuditEntity = new ApiDocProtectorAuditEntity();
-            apiDocProtectorAuditEntity.setUsername(((ApiDocProtectorAuditDto) session.getAttribute("APIDOC-AUDITOR")).getUsername());
+            apiDocProtectorAuditEntity.setUsername(auditDto.getUsername());
             apiDocProtectorAuditEntity.setLevel(auditDto.getLevel());
-            apiDocProtectorAuditEntity.setToken(auditDto.getToken());
+            apiDocProtectorAuditEntity.setToken(dataEncrypt(auditDto.getToken()));
             apiDocProtectorAuditEntity.setTracker(auditDto.getTracker());
             apiDocProtectorAuditEntity.setDetail(auditDto.getDetail());
             apiDocProtectorAuditEntity.setMessage(auditDto.getMessage());
@@ -616,9 +638,12 @@ public abstract class ApiDocProtectorLibrary extends ApiDocProtectorDataLibrary 
             apiDocProtectorAuditEntity.setIp(auditDto.getIp());
             apiDocProtectorAuditEntity.setCreatedAt(currentDate);
 
+            logTerm("ApiDocProtectorAuditEntity IS", apiDocProtectorAuditEntity, true);
+
             apiDocProtectorAuditRepository.save(apiDocProtectorAuditEntity);
             logFile("Auditor on APIDOC PROTECTOR is ok", "info");
             logFile(apiDocProtectorAuditEntity.toString(), "info");
+
         }
 
     }
