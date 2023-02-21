@@ -35,8 +35,6 @@ public abstract class ApiDocProtectorLibrary extends ApiDocProtectorDataLibrary 
 
     protected ApiDocProtectorDto transfer;
 
-    protected static final boolean APIDOC_PROTECTOR_DEBUG = true;
-
     protected static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("uuuu-MM-dd HH:mm:ss");
 
     @Value("${api.prefix:/error}")
@@ -113,6 +111,9 @@ public abstract class ApiDocProtectorLibrary extends ApiDocProtectorDataLibrary 
 
     @Value("${apidocprotector.logging.enabled:false}")
     protected boolean apiDocLogging;
+
+    @Value("${apidocprotector.debugger.enabled:false}")
+    protected boolean apiDocDebugger;
 
     @Value("${apidocprotector.custom.uri-account-active:/doc-protect/account/active}")
     protected String customUriAccountActive;
@@ -314,26 +315,18 @@ public abstract class ApiDocProtectorLibrary extends ApiDocProtectorDataLibrary 
     }
 
     public void logFile(String msg, String label) {
-        if (APIDOC_PROTECTOR_DEBUG) {
+        if (apiDocLogging) {
             switch (label) {
-                case "debug":
-                    log.debug(msg);
-                    break;
-                case "info":
-                    log.info(msg);
-                    break;
-                case "warn":
-                    log.warn(msg);
-                    break;
-                case "except":
-                    log.error(msg);
-                    break;
+                case "debug": log.debug(msg); break;
+                case "info": log.info(msg); break;
+                case "warn": log.warn(msg); break;
+                case "except": log.error(msg); break;
             }
         }
     }
 
     public void logTerm(String title, Object data, boolean line) {
-        if (APIDOC_PROTECTOR_DEBUG) {
+        if (apiDocDebugger) {
             System.out.println(title);
             if (data != null && !data.equals("")) {
                 System.out.println(data);

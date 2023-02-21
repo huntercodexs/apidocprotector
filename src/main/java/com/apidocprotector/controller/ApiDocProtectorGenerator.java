@@ -25,6 +25,7 @@ public class ApiDocProtectorGenerator extends ApiDocProtectorLibrary {
 	public String generator() {
 
 		logTerm("GENERATOR FORM IS START", null, true);
+		logFile("GENERATOR FORM IS START", "info");
 		auditor(GENERATOR_STARTED, null, null, 0);
 
 		try {
