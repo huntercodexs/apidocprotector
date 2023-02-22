@@ -31,14 +31,14 @@ public class ApiDocProtectorMailSender extends ApiDocProtectorLibrary {
         message.setSubject(subject);
         message.setText(content);
 
-        logTerm("JAVA MAIL SENDER", message, true);
+        debugger("JAVA MAIL SENDER", message, true);
         auditor(MAILSENDER_STARTED, null, null, 0);
 
         try {
             javaMailSender.send(message);
         } catch (RuntimeException re) {
-            logTerm("[ JAVA MAIL SENDER EXCEPTION ]", re.getMessage(), true);
-            logTerm("[ EMAIL ]", message, true);
+            debugger("[ JAVA MAIL SENDER EXCEPTION ]", re.getMessage(), true);
+            debugger("[ EMAIL ]", message, true);
         }
     }
 
@@ -51,18 +51,18 @@ public class ApiDocProtectorMailSender extends ApiDocProtectorLibrary {
             helper.setText(content, true);
             helper.addAttachment("huntercodexs-name-white.png", new ClassPathResource("/templates/apidocprotector/files/huntercodexs-name-white.png"));
 
-            logTerm("[ EMAIL ]", message, true);
-            logTerm("[ HELPER ]", helper, true);
+            debugger("[ EMAIL ]", message, true);
+            debugger("[ HELPER ]", helper, true);
             auditor(MAILSENDER_STARTED, "subject " + subject, null, 0);
 
             javaMailSender.send(message);
 
         } catch (MessagingException me) {
-            logTerm("JAVA MAIL SENDER [ATTACHED] [MESSAGING-EXCEPTION]", me.getMessage(), true);
+            debugger("JAVA MAIL SENDER [ATTACHED] [MESSAGING-EXCEPTION]", me.getMessage(), true);
             throw new RuntimeException(me.getMessage());
         }
 
-        logTerm("JAVA MAIL SENDER [ATTACHED] IS OK", "OK", true);
+        debugger("JAVA MAIL SENDER [ATTACHED] IS OK", "OK", true);
     }
 
     public String subjectMail(String username) {

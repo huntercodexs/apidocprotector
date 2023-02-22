@@ -32,7 +32,7 @@ public enum ApiDocProtectorAuditEnum {
 
     INITIALIZER_STARTED(24, "The INITIALIZER has been started"),
     INITIALIZER_TOKEN_OK(25, "{custom message}"),
-    INITIALIZER_ERROR(26, "The current user is not activated"),
+    INITIALIZER_ERROR(26, "The current user was not activated"),
     INITIALIZER_ENVIRONMENT_OK(27, "The environment has been inialized"),
     INITIALIZER_SESSION_PREPARE_OK(27, "The session has been configured"),
     INITIALIZER_GLASS_STARTED(28, "The INITIALIZER glass was called"),
@@ -206,7 +206,8 @@ public enum ApiDocProtectorAuditEnum {
     VIEW_PROTECTOR_ERROR(178, "{custom message}"),
     VIEW_PROTECTOR_EXCEPTION(179, "{custom message}"),
 
-    GENERIC_MESSAGE(20000, "");
+    GENERIC_MESSAGE(20000, ""),
+    NO_MAPPING_FOUND(20001, "No mappging found");
 
     public int code;
     public String message;

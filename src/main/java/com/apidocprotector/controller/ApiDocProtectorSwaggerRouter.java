@@ -32,12 +32,12 @@ public class ApiDocProtectorSwaggerRouter extends ApiDocProtectorLibrary {
 	@ResponseBody
 	public ModelAndView sign(@RequestParam Map<String, String> body) {
 
-		logTerm("SWAGGER ROUTER IS START", null, true);
+		debugger("SWAGGER ROUTER IS START", null, true);
 		auditor(SWAGGER_ROUTER_SIGN, null, null, 0);
 
 		if (!apiDocProtectorSecurity.shield(session)) {
 
-			logTerm("OPS! SIGN ERROR FROM POST (MISSING ADP-KEYPART SESSION)", "ERROR", true);
+			debugger("OPS! SIGN ERROR FROM POST (MISSING ADP-KEYPART SESSION)", "ERROR", true);
 			auditor(SWAGGER_ROUTER_STOPBY_SHIELD, null, null, 2);
 
 			return apiDocProtectorViewer.error(
@@ -47,19 +47,19 @@ public class ApiDocProtectorSwaggerRouter extends ApiDocProtectorLibrary {
 		}
 
 		String keypart = session.getAttribute("ADP-KEYPART").toString();
-		logTerm("KEYPART FROM POST IN SESSION", session.getAttribute("ADP-KEYPART"), true);
+		debugger("KEYPART FROM POST IN SESSION", session.getAttribute("ADP-KEYPART"), true);
 
 		String username = body.get("username");
 		String password = body.get("password");
 		String secret = body.get("apidocprotector_sec");
 		String token = body.get("apidocprotector_token");
 
-		logTerm("POST BODY", body, true);
+		debugger("POST BODY", body, true);
 		auditor(SWAGGER_ROUTER_DETAILS, "The username to current request: " + username, null, 2);
 
 		if (username == null || username.equals("")) {
 
-			logTerm(SWAGGER_ROUTER_MISSING_USERNAME.getMessage(), body, true);
+			debugger(SWAGGER_ROUTER_MISSING_USERNAME.getMessage(), body, true);
 			auditor(SWAGGER_ROUTER_MISSING_USERNAME, null, null, 2);
 
 			return apiDocProtectorViewer.error(
@@ -70,7 +70,7 @@ public class ApiDocProtectorSwaggerRouter extends ApiDocProtectorLibrary {
 
 		if (password == null || password.equals("")) {
 
-			logTerm(SWAGGER_ROUTER_MISSING_USERNAME.getMessage(), body, true);
+			debugger(SWAGGER_ROUTER_MISSING_USERNAME.getMessage(), body, true);
 			auditor(SWAGGER_ROUTER_MISSING_PASSWORD, null, null, 2);
 
 			return apiDocProtectorViewer.error(
@@ -81,7 +81,7 @@ public class ApiDocProtectorSwaggerRouter extends ApiDocProtectorLibrary {
 
 		if (sessionExpired(token)) {
 
-			logTerm(SWAGGER_ROUTER_EXPIRED_SESSION.getMessage(), null, true);
+			debugger(SWAGGER_ROUTER_EXPIRED_SESSION.getMessage(), null, true);
 			auditor(SWAGGER_ROUTER_EXPIRED_SESSION, null, null, 2);
 
 			try {
@@ -89,7 +89,7 @@ public class ApiDocProtectorSwaggerRouter extends ApiDocProtectorLibrary {
 				return null;
 			} catch (IOException e) {
 
-				logTerm("EXCEPTION", e.getMessage(), true);
+				debugger("EXCEPTION", e.getMessage(), true);
 				auditor(SWAGGER_ROUTER_EXCEPTION, e.getMessage(), null, 2);
 
 				return apiDocProtectorViewer.error(
@@ -100,17 +100,17 @@ public class ApiDocProtectorSwaggerRouter extends ApiDocProtectorLibrary {
 		}
 
 		String sessionKey = md5(keypart + secret).toUpperCase();
-		logTerm("SESSION-KEY FROM POST", sessionKey, true);
+		debugger("SESSION-KEY FROM POST", sessionKey, true);
 
 		ApiDocProtectorEntity sessionData = apiDocProtectorRepository.findBySessionKeyAndActive(sessionKey, "yes");
 		String sessionId = sessionData.getSessionVal();
 
-		logTerm("SESSION-ID FROM POST", sessionId, true);
-		logTerm("SESSION-CURRENT FROM POST", session.getAttribute(sessionId), true);
+		debugger("SESSION-ID FROM POST", sessionId, true);
+		debugger("SESSION-CURRENT FROM POST", session.getAttribute(sessionId), true);
 		auditor(SWAGGER_ROUTER_SESSION_FOUNDED, null, sessionId, 2);
 
 		ApiDocProtectorDto sessionTransfer = (ApiDocProtectorDto) session.getAttribute(sessionId);
-		logTerm("SESSION-TRANSFER FROM POST", sessionTransfer, true);
+		debugger("SESSION-TRANSFER FROM POST", sessionTransfer, true);
 
 		if (loginChecker(username, password, token)) {
 
@@ -119,7 +119,7 @@ public class ApiDocProtectorSwaggerRouter extends ApiDocProtectorLibrary {
 			sessionTransfer.setAuthenticate(true);
 
 			session.setAttribute(sessionId, sessionTransfer);
-			logTerm("SESSION-UPDATED FROM POST", session.getAttribute(sessionId), true);
+			debugger("SESSION-UPDATED FROM POST", session.getAttribute(sessionId), true);
 			response.setHeader("ApiDoc-Protector-Active-User", md5(username));
 			auditor(SWAGGER_ROUTER_LOGIN_OK, "Login successful to username " + username, sessionId, 2);
 
@@ -128,7 +128,7 @@ public class ApiDocProtectorSwaggerRouter extends ApiDocProtectorLibrary {
 		}
 
 		sessionTransfer.setAuthenticate(false);
-		logTerm("OPS! SIGN ERROR FROM POST", "ERROR", true);
+		debugger("OPS! SIGN ERROR FROM POST", "ERROR", true);
 		auditor(SWAGGER_ROUTER_LOGIN_ERROR, "The login was invalid to " + username, sessionId, 2);
 
 		return apiDocProtectorViewer.error(
@@ -142,26 +142,26 @@ public class ApiDocProtectorSwaggerRouter extends ApiDocProtectorLibrary {
 	@GetMapping(path = "${springdoc.swagger-ui.path:/swagger-ui}/protector")
 	public ModelAndView refresh() {
 
-		logTerm("REFRESH FROM MODEL-AND-VIEW", null, true);
-		logTerm("ADP-KEYPART SESSION", session.getAttribute("ADP-KEYPART"), true);
-		logTerm("ADP-SECRET SESSION", session.getAttribute("ADP-SECRET"), true);
-		logTerm("ADP-KEYPART-REFRESH SESSION", session.getAttribute("ADP-KEYPART-REFRESH"), true);
+		debugger("REFRESH FROM MODEL-AND-VIEW", null, true);
+		debugger("ADP-KEYPART SESSION", session.getAttribute("ADP-KEYPART"), true);
+		debugger("ADP-SECRET SESSION", session.getAttribute("ADP-SECRET"), true);
+		debugger("ADP-KEYPART-REFRESH SESSION", session.getAttribute("ADP-KEYPART-REFRESH"), true);
 		auditor(SWAGGER_ROUTER_REFRESH_STARTED, null, null, 2);
 
 		String keypart = session.getAttribute("ADP-KEYPART").toString();
-		logTerm("KEYPART IN REFRESH", keypart, true);
+		debugger("KEYPART IN REFRESH", keypart, true);
 
 		String secret = session.getAttribute("ADP-SECRET").toString();
-		logTerm("SECRET IN REFRESH", secret, true);
+		debugger("SECRET IN REFRESH", secret, true);
 
 		String sessionKey = md5(keypart + secret).toUpperCase();
-		logTerm("SESSION-KEY IN REFRESH", sessionKey, true);
+		debugger("SESSION-KEY IN REFRESH", sessionKey, true);
 
 		ApiDocProtectorEntity sessionData = apiDocProtectorRepository.findBySessionKeyAndActive(sessionKey, "yes");
-		logTerm("SESSION-DATA IN REFRESH", sessionData, true);
+		debugger("SESSION-DATA IN REFRESH", sessionData, true);
 
 		String sessionId = sessionData.getSessionVal();
-		logTerm("SESSION-ID IN REFRESH", sessionId, true);
+		debugger("SESSION-ID IN REFRESH", sessionId, true);
 		auditor(SWAGGER_ROUTER_REFRESH_OK, null, sessionId, 2);
 
 		return apiDocProtectorViewer.refresh(session, sessionId,"--refresh-page");
@@ -190,7 +190,7 @@ public class ApiDocProtectorSwaggerRouter extends ApiDocProtectorLibrary {
 			"/swagger-ui/index"
 	})
 	public String routes() {
-		logTerm("ROUTES FROM SWAGGER", null, true);
+		debugger("ROUTES FROM SWAGGER", null, true);
 		auditor(SWAGGER_ROUTER_ROUTES_STARTED, null, null, 2);
 		return apiDocProtectorRedirect.captor(session);
 	}

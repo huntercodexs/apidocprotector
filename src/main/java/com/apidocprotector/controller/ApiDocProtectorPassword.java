@@ -25,14 +25,17 @@ public class ApiDocProtectorPassword extends ApiDocProtectorLibrary {
 	@GetMapping(path = "${apidocprotector.custom.uri-password:/doc-protect/password}")
 	public String password() {
 
-		logTerm("PASSWORD FORM IS START", null, true);
+		debugger("PASSWORD FORM IS START", null, true);
 		auditor(PASSWORD_STARTED, null, null, 0);
 
 		try {
 			return apiDocProtectorRedirect.forwardToPasswordGlass();
 		} catch (RuntimeException re) {
-			logTerm("PASSWORD FORM [EXCEPTION]", re.getMessage(), true);
+
+			debugger("PASSWORD FORM [EXCEPTION]", re.getMessage(), true);
+			logger("PASSWORD FORM [EXCEPTION]: " + re.getMessage(), "except");
 			auditor(PASSWORD_EXCEPTION, re.getMessage(), null, 1);
+
 			return apiDocProtectorErrorRedirect.redirectPasswordError("error_to_load_form_password");
 		}
 
@@ -42,14 +45,17 @@ public class ApiDocProtectorPassword extends ApiDocProtectorLibrary {
 	@GetMapping(path = "/doc-protect/protector/password/glass")
 	public String glass() {
 
-		logTerm("PASSWORD IN GLASS START", null, true);
+		debugger("PASSWORD IN GLASS START", null, true);
 		auditor(PASSWORD_GLASS_STARTED, null, null, 0);
 
 		try {
 			return apiDocProtectorRedirect.redirectToPasswordForm();
 		} catch (RuntimeException re) {
-			logTerm("PASSWORD IN GLASS [EXCEPTION]", re.getMessage(), true);
+
+			debugger("PASSWORD IN GLASS [EXCEPTION]", re.getMessage(), true);
+			logger("PASSWORD IN GLASS [EXCEPTION]: " + re.getMessage(), "except");
 			auditor(PASSWORD_GLASS_EXCEPTION, re.getMessage(), null, 1);
+
 			return apiDocProtectorErrorRedirect.redirectPasswordError("unknown");
 		}
 	}
@@ -58,11 +64,13 @@ public class ApiDocProtectorPassword extends ApiDocProtectorLibrary {
 	@GetMapping(path = "${apidocprotector.custom.uri-password:/doc-protect/password}/form")
 	public ModelAndView form() {
 
-		logTerm("FORM IN PASSWORD IS START", null, true);
+		debugger("FORM IN PASSWORD IS START", null, true);
 		auditor(PASSWORD_FORM_STARTED, null, null, 0);
 
 		if (session.getAttribute("ADP-USER-PASSWORD") == null || !session.getAttribute("ADP-USER-PASSWORD").equals("1")) {
 
+			debugger("PASSWORD FORM ERROR: ", PASSWORD_FORM_INVALID_ACCCESS.getMessage(), true);
+			logger("PASSWORD FORM ERROR: " + PASSWORD_FORM_INVALID_ACCCESS.getMessage(), "except");
 			auditor(PASSWORD_FORM_INVALID_ACCCESS, null, null, 2);
 
 			return apiDocProtectorViewer.error(
@@ -75,7 +83,11 @@ public class ApiDocProtectorPassword extends ApiDocProtectorLibrary {
 
 			if (session.getAttribute("ADP-ACCOUNT-PASSWORD-SUCCESSFUL") != null) {
 				if (session.getAttribute("ADP-ACCOUNT-PASSWORD-SUCCESSFUL").equals("1")) {
+
+					debugger("PASSWORD CHANGE: ", PASSWORD_CHANGED_SUCCESSFUL.getMessage(), true);
+					logger("PASSWORD CHANGE: " + PASSWORD_CHANGED_SUCCESSFUL.getMessage(), "except");
 					auditor(PASSWORD_CHANGED_SUCCESSFUL, null, null, 2);
+
 					return apiDocProtectorViewer.password(true);
 				}
 			}
@@ -84,8 +96,11 @@ public class ApiDocProtectorPassword extends ApiDocProtectorLibrary {
 			return apiDocProtectorViewer.password(false);
 
 		} catch (RuntimeException re) {
-			logTerm("FORM IN PASSWORD [EXCEPTION]", re.getMessage(), true);
+
+			debugger("FORM IN PASSWORD [EXCEPTION]", re.getMessage(), true);
+			logger("FORM IN PASSWORD [EXCEPTION]" + re.getMessage(), "except");
 			auditor(PASSWORD_EXCEPTION, re.getMessage(), null, 1);
+
 			return apiDocProtectorViewer.error(
 					PASSWORD_ERROR.getMessage(),
 					"The request has caused a exception",
@@ -100,19 +115,26 @@ public class ApiDocProtectorPassword extends ApiDocProtectorLibrary {
 	)
 	public String update(@Valid @RequestParam Map<String, String> body) throws IOException {
 
-		logTerm("PASSWORD USER IS START", null, true);
+		debugger("PASSWORD USER IS START", null, true);
 		auditor(PASSWORD_DATA_POST, null, null, 0);
 
 		if (session.getAttribute("ADP-USER-PASSWORD") == null || !session.getAttribute("ADP-USER-PASSWORD").equals("1")) {
-			logTerm("INVALID SESSION FROM PASSWORD USER", null, true);
+
+			debugger("INVALID SESSION FROM PASSWORD USER", PASSWORD_FORM_INVALID_SESSION.getMessage(), true);
+			logger("INVALID SESSION FROM PASSWORD USER: " + PASSWORD_FORM_INVALID_SESSION.getMessage(), "info");
 			auditor(PASSWORD_FORM_INVALID_SESSION, null, null, 2);
+
 			return apiDocProtectorErrorRedirect.redirectPasswordError("invalid_session_user_password");
 		}
 
 		ApiDocProtectorEntity user = apiDocProtectorRepository.findByEmail(body.get("email"));
 
 		if (user == null) {
+
+			debugger("ACCOUNT NOT FOUND", PASSWORD_ACCOUNT_NOT_FOUND.getMessage(), true);
+			logger("ACCOUNT NOT FOUND: " + PASSWORD_ACCOUNT_NOT_FOUND.getMessage(), "info");
 			auditor(PASSWORD_ACCOUNT_NOT_FOUND, "The account was not found " + body.get("email"), null, 2);
+
 			session.setAttribute("ADP-ACCOUNT-PASSWORD-SUCCESSFUL", null);
 			return apiDocProtectorErrorRedirect.redirectPasswordError("user_not_found_password");
 		}
@@ -124,16 +146,20 @@ public class ApiDocProtectorPassword extends ApiDocProtectorLibrary {
 
 			apiDocProtectorMailSender.sendMailAttached(user.getEmail(), subject, content);
 			session.setAttribute("ADP-ACCOUNT-PASSWORD-SUCCESSFUL", "1");
+
+			debugger("MAIL SENDER", PASSWORD_MAIL_SENDER_OK.getMessage(), true);
+			logger("MAIL SENDER: " + PASSWORD_MAIL_SENDER_OK.getMessage(), "info");
 			auditor(PASSWORD_MAIL_SENDER_OK, null, null, 0);
 
 			return apiDocProtectorRedirect.redirectToPasswordForm();
 
 		} catch (RuntimeException re) {
 
-			session.setAttribute("ADP-ACCOUNT-PASSWORD-SUCCESSFUL", null);
-			logTerm("CREATE IN PASSWORD [EXCEPTION]", re.getMessage(), true);
+			debugger("UPDATE IN PASSWORD [EXCEPTION]", re.getMessage(), true);
+			logger("UPDATE IN PASSWORD [EXCEPTION]: " + re.getMessage(), "info");
 			auditor(PASSWORD_EXCEPTION, re.getMessage(), null, 1);
 
+			session.setAttribute("ADP-ACCOUNT-PASSWORD-SUCCESSFUL", null);
 			return apiDocProtectorErrorRedirect.redirectPasswordError("password_recovery_error");
 		}
 	}
@@ -141,7 +167,11 @@ public class ApiDocProtectorPassword extends ApiDocProtectorLibrary {
 	@Operation(hidden = true)
 	@GetMapping(path = "/doc-protect/password/error/{data}")
 	public ModelAndView error(@PathVariable(required = false) String data) {
+
+		debugger("PASSWORD ERROR", PASSWORD_EXCEPTION.getCode(), true);
+		logger("PASSWORD ERROR: " + PASSWORD_EXCEPTION.getMessage(), "except");
 		auditor(PASSWORD_EXCEPTION, data, null, 1);
+
 		return apiDocProtectorViewer.error(
 				PASSWORD_ERROR.getMessage(),
 				data.replace("_", " "),

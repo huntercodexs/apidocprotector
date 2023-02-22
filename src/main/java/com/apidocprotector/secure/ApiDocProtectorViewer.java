@@ -173,13 +173,13 @@ public class ApiDocProtectorViewer extends ApiDocProtectorLibrary {
 
         try {
             apiDocProtectorSecurity.firewall(session, body, sessionId);
-            logTerm("FIREWALL IS DONE IN FORM", null, true);
+            debugger("FIREWALL IS DONE IN FORM", null, true);
 
             String secret = ((ApiDocProtectorDto) session.getAttribute(sessionId)).getSecret();
-            logTerm("SECRET IN FORM", secret, true);
+            debugger("SECRET IN FORM", secret, true);
 
             String token = ((ApiDocProtectorDto) session.getAttribute(sessionId)).getToken();
-            logTerm("TOKEN IN FORM", token, true);
+            debugger("TOKEN IN FORM", token, true);
 
             if (apiDocProtectorType.equals("swagger")) {
                 ModelAndView modelAndView = new ModelAndView("apidocprotector/login");
@@ -211,8 +211,8 @@ public class ApiDocProtectorViewer extends ApiDocProtectorLibrary {
 
         auditor(VIEW_FORM_STARTED, null, null, 1);
 
-        logTerm("INDEX VIEWER START", null, true);
-        logTerm("PROTECTOR-TYPE VIEWER IN INDEX", apiDocProtectorType, true);
+        debugger("INDEX VIEWER START", null, true);
+        debugger("PROTECTOR-TYPE VIEWER IN INDEX", apiDocProtectorType, true);
 
         if (apiDocProtectorType.equals("swagger")) {
             ModelAndView modelAndView = new ModelAndView("apidocprotector/swagger-ui/index");
@@ -238,7 +238,7 @@ public class ApiDocProtectorViewer extends ApiDocProtectorLibrary {
 
     public ModelAndView refresh(HttpSession session, String sessionId, String flag) {
 
-        logTerm("REFRESH VIEWER START", session.getAttribute("ADP-KEYPART-REFRESH"), true);
+        debugger("REFRESH VIEWER START", session.getAttribute("ADP-KEYPART-REFRESH"), true);
         auditor(VIEW_REFRESHED_STARTED, null, null, 1);
 
         Map<String, String> body = new HashMap<>();
@@ -248,19 +248,19 @@ public class ApiDocProtectorViewer extends ApiDocProtectorLibrary {
 
             String username = ((ApiDocProtectorDto) session.getAttribute(sessionId)).getUsername();
             response.setHeader("ApiDoc-Protector-Active-User", md5(username));
-            logTerm("USERNAME CURRENT IN REFRESH", username, true);
+            debugger("USERNAME CURRENT IN REFRESH", username, true);
 
             apiDocProtectorSecurity.firewall(session, body, sessionId);
 
             String token = ((ApiDocProtectorDto) session.getAttribute(sessionId)).getToken();
-            logTerm("TOKEN CURRENT IN REFRESH", token, true);
+            debugger("TOKEN CURRENT IN REFRESH", token, true);
 
             if (sessionExpired(token)) {
                 try {
                     apiDocProtectorRedirect.redirectExpiredSession(token);
                     return null;
                 } catch (IOException e) {
-                    logTerm("EXCEPTION", e.getMessage(), true);
+                    debugger("EXCEPTION", e.getMessage(), true);
                 }
                 return apiDocProtectorViewer.error(
                         EXPIRED_SESSION.getMessage(),
@@ -294,7 +294,7 @@ public class ApiDocProtectorViewer extends ApiDocProtectorLibrary {
 
     public ModelAndView protector(HttpSession session, String sessionId) {
 
-        logTerm("PROTECTOR VIEWER START", session.getAttribute(sessionId), true);
+        debugger("PROTECTOR VIEWER START", session.getAttribute(sessionId), true);
         auditor(VIEW_PROTECTOR_STARTED, null, sessionId, 1);
 
         Map<String, String> body = new HashMap<>();
@@ -303,22 +303,22 @@ public class ApiDocProtectorViewer extends ApiDocProtectorLibrary {
         try {
             apiDocProtectorSecurity.firewall(session, body, sessionId);
 
-            logTerm("FIREWALL IS DONE", null, true);
-            logTerm("SESSION CURRENT IN PROTECTOR", session.getAttribute(sessionId), true);
-            logTerm("KEYPART CURRENT IN PROTECTOR", session.getAttribute("ADP-KEYPART"), true);
+            debugger("FIREWALL IS DONE", null, true);
+            debugger("SESSION CURRENT IN PROTECTOR", session.getAttribute(sessionId), true);
+            debugger("KEYPART CURRENT IN PROTECTOR", session.getAttribute("ADP-KEYPART"), true);
 
             String secret = ((ApiDocProtectorDto) session.getAttribute(sessionId)).getSecret();
-            logTerm("SECRET CURRENT IN PROTECTOR", secret, true);
+            debugger("SECRET CURRENT IN PROTECTOR", secret, true);
 
             String token = ((ApiDocProtectorDto) session.getAttribute(sessionId)).getToken();
-            logTerm("SECRET CURRENT IN PROTECTOR", token, true);
+            debugger("SECRET CURRENT IN PROTECTOR", token, true);
 
             auditor(VIEW_PROTECTOR_FINISHED, null, null, 1);
             return index(token);
 
         } catch (RuntimeException re) {
 
-            logTerm("[EXCEPTION] PROTECTOR VIEWER", re.getMessage(), true);
+            debugger("[EXCEPTION] PROTECTOR VIEWER", re.getMessage(), true);
             auditor(VIEW_PROTECTOR_EXCEPTION, re.getMessage(), null, 1);
 
             return error(

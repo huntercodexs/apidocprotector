@@ -24,23 +24,28 @@ public class ApiDocProtectorInitializer extends ApiDocProtectorLibrary {
 	@GetMapping(path = "${apidocprotector.custom.uri-login:/doc-protect/login}/{token}")
 	public String initializer(@PathVariable("token") String token) {
 
-		logTerm("INITIALIZER IS START", null, true);
+		debugger("INITIALIZER IS START", null, true);
 		auditor(INITIALIZER_STARTED, null, null, 2);
 
 		String tokenCrypt = dataEncrypt(token);
 		ApiDocProtectorEntity result = findAccountByTokenAndActive(tokenCrypt, "yes");
 
-		logTerm("RESULT TOKEN", result, true);
+		debugger("RESULT TOKEN", result, true);
+		logger("RESULT TOKEN: " + result, "info");
 		auditor(INITIALIZER_TOKEN_OK, tokenCrypt, null, 2);
 
 		if (result != null && result.getToken().equals(tokenCrypt)) {
 
 			this.transfer = initEnv(token);
-			logTerm("INIT TRANSFER", this.transfer, true);
+
+			debugger("INIT TRANSFER", this.transfer, true);
+			logger("INIT TRANSFER: " + this.transfer, "info");
 			auditor(INITIALIZER_ENVIRONMENT_OK, null, null, 2);
 
 			sessionPrepare(session, this.transfer, result);
-			logTerm("SESSION CONFIG", session, true);
+
+			debugger("SESSION CONFIGURE", session, true);
+			logger("SERSSION CONFIGURE: " + session, "info");
 			auditor(INITIALIZER_SESSION_PREPARE_OK, null, null, 2);
 
 			return apiDocProtectorRedirect.forwardToGlass();
@@ -51,7 +56,10 @@ public class ApiDocProtectorInitializer extends ApiDocProtectorLibrary {
 			error = "user_is_not_active";
 		}
 
+		debugger("INITIALIZER ERROR", INITIALIZER_ERROR.getMessage(), true);
+		logger("INITIALIZER ERROR: " + INITIALIZER_ERROR.getMessage(), "info");
 		auditor(INITIALIZER_ERROR, null, null, 2);
+
 		return apiDocProtectorErrorRedirect.redirectInitializerError(error);
 	}
 
@@ -59,14 +67,17 @@ public class ApiDocProtectorInitializer extends ApiDocProtectorLibrary {
 	@GetMapping(path = "/doc-protect/protector/glass")
 	public String glass() {
 
-		logTerm("ACTIVATOR GLASS START", null, true);
+		debugger("ACTIVATOR GLASS START", null, true);
 		auditor(INITIALIZER_GLASS_STARTED, null, null, 2);
 
 		try {
 			return apiDocProtectorRedirect.redirectToForm();
 		} catch (RuntimeException re) {
-			logTerm("GLASS IN INITIALIZER [EXCEPTION]", re.getMessage(), true);
+
+			debugger("GLASS IN INITIALIZER [EXCEPTION]", re.getMessage(), true);
+			logger("GLASS IN INITIALIZER [EXCEPTION]: " + re.getMessage(), "except");
 			auditor(INITIALIZER_EXCEPTION, re.getMessage(), null, 2);
+
 			return apiDocProtectorErrorRedirect.redirectInitializerError("sessionId");
 		}
 	}
@@ -78,14 +89,16 @@ public class ApiDocProtectorInitializer extends ApiDocProtectorLibrary {
 	})
 	public ModelAndView form(@PathVariable(value = "expired", required = false) String expired) {
 
-		logTerm("TRANSFER IN FORM", this.transfer, true);
-		auditor(INITIALIZER_FORM_STARTED, null, null, 2);
-
 		ApiDocProtectorEntity sessionData = findDataSession(this.transfer.getKeypart(), this.transfer.getSecret());
-		logTerm("SESSION-DATA FROM TRANSFER IN FORM", sessionData, true);
+
+		debugger("TRANSFER IN FORM", this.transfer, true);
+		debugger("SESSION-DATA FROM TRANSFER IN FORM", sessionData, true);
+		auditor(INITIALIZER_FORM_STARTED, null, null, 2);
 
 		if (sessionData == null) {
 
+			debugger("SESSION ERROR", INITIALIZER_SESSION_NOT_FOUND.getMessage(), true);
+			logger("SESSION ERROR: " + INITIALIZER_SESSION_NOT_FOUND.getMessage(), "info");
 			auditor(INITIALIZER_SESSION_NOT_FOUND, null, null, 2);
 
 			return apiDocProtectorViewer.error(
@@ -95,26 +108,27 @@ public class ApiDocProtectorInitializer extends ApiDocProtectorLibrary {
 		}
 
 		String sessionId = sessionData.getSessionVal();
-		logTerm("SESSION-ID FROM TRANSFER IN FORM", sessionId, true);
-		logTerm("SESSION-CURRENT FROM TRANSFER IN FORM", session.getAttribute(sessionId), true);
-
 		session.setAttribute("ADP-KEYPART", this.transfer.getKeypart());
-		logTerm("SESSION-ADP-KEYPART FROM TRANSFER IN FORM", session.getAttribute("ADP-KEYPART"), true);
-
 		session.setAttribute("ADP-SECRET", this.transfer.getSecret());
-		logTerm("SESSION-ADP-SECRET FROM TRANSFER IN FORM", session.getAttribute("ADP-SECRET"), true);
+
+		debugger("SESSION-ID FROM TRANSFER IN FORM", sessionId, true);
+		debugger("SESSION-CURRENT FROM TRANSFER IN FORM", session.getAttribute(sessionId), true);
+		debugger("SESSION-ADP-KEYPART FROM TRANSFER IN FORM", session.getAttribute("ADP-KEYPART"), true);
+		debugger("SESSION-ADP-SECRET FROM TRANSFER IN FORM", session.getAttribute("ADP-SECRET"), true);
 
 		try {
 
 			if (!apiDocProtectorSecurity.burn(session, sessionData.getToken(), sessionId)) {
 
-				logTerm("NOT BURN FROM TRANSFER IN FORM", null, true);
+				debugger("NOT BURN FROM TRANSFER IN FORM", null, true);
+				logger(INITIALIZER_SUCCESSFUL.getMessage(), "info");
 				auditor(INITIALIZER_SUCCESSFUL, null, sessionId, 2);
 
 				return apiDocProtectorViewer.form(session, sessionId);
 			}
 
-			logTerm("OPS! WAS BURN FROM TRANSFER IN FORM", null, true);
+			debugger("OPS! WAS BURN FROM TRANSFER IN FORM", null, true);
+			logger(INITIALIZER_BURNED.getMessage(), "info");
 			auditor(INITIALIZER_BURNED, null, sessionId, 2);
 
 			return apiDocProtectorViewer.error(
@@ -124,7 +138,8 @@ public class ApiDocProtectorInitializer extends ApiDocProtectorLibrary {
 
 		} catch (RuntimeException re) {
 
-			logTerm("FORM INITIALIZER [EXCEPTION]", re.getMessage(), true);
+			debugger("FORM INITIALIZER [EXCEPTION]", re.getMessage(), true);
+			logger("FORM INITIALIZER [EXCEPTION]: " + re.getMessage(), "except");
 			auditor(INITIALIZER_EXCEPTION, re.getMessage(), null, 2);
 
 			return apiDocProtectorViewer.error(
@@ -137,14 +152,22 @@ public class ApiDocProtectorInitializer extends ApiDocProtectorLibrary {
 	@Operation(hidden = true)
 	@GetMapping(path = "${apidocprotector.custom.uri-login:/doc-protect/login}")
 	public String denied() {
+
+		debugger("ACCESS DENIED", INITIALIZER_DENIED.getMessage(), true);
+		logger(INITIALIZER_DENIED.getMessage(), "info");
 		auditor(INITIALIZER_DENIED, null, null, 2);
+
 		return apiDocProtectorErrorRedirect.redirectInitializerError("Missing_Token");
 	}
 
 	@Operation(hidden = true)
 	@GetMapping(path = "/doc-protect/initializer/error/{data}")
 	public ModelAndView error(@PathVariable(required = false) String data) {
+
+		debugger(INITIALIZER_EXCEPTION.getMessage(), data, true);
+		logger(INITIALIZER_EXCEPTION.getMessage(), "except");
 		auditor(INITIALIZER_EXCEPTION, data, null, 2);
+
 		return apiDocProtectorViewer.error(
 				ApiDocProtectorLibraryEnum.INITIALIZER_ERROR.getMessage(),
 				data.replace("_", " "),

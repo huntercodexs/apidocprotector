@@ -26,10 +26,10 @@ public class ApiDocProtectorSentinel extends ApiDocProtectorLibrary {
 	@GetMapping(path = {"/"})
 	public void allowed(ServletResponse servletResponse) throws IOException, ServletException {
 
-		logTerm("ALLOWED", null, true);
-		logTerm("API-PREFIX", apiPrefix, true);
-		logTerm("CURRENT-URI", request.getRequestURI(), true);
-		logTerm("REFERER", request.getHeader("Referer"), true);
+		debugger("ALLOWED", null, true);
+		debugger("API-PREFIX", apiPrefix, true);
+		debugger("CURRENT-URI", request.getRequestURI(), true);
+		debugger("REFERER", request.getHeader("Referer"), true);
 		auditor(SENTINEL_ALLOWED_STARTED, null, null, 0);
 
 		String prefix = apiPrefix.replaceFirst("/$", "") + "/";
@@ -53,10 +53,10 @@ public class ApiDocProtectorSentinel extends ApiDocProtectorLibrary {
 	})
 	public String docs() {
 
-		logTerm("API-DOCS FROM SENTINEL", null, true);
-		logTerm("SESSION-ADP-KEYPART IN API-DOCS FROM SENTINEL", session.getAttribute("ADP-KEYPART"), true);
-		logTerm("URI", request.getRequestURI(), true);
-		logTerm("REFERER", request.getHeader("Referer"), true);
+		debugger("API-DOCS FROM SENTINEL", null, true);
+		debugger("SESSION-ADP-KEYPART IN API-DOCS FROM SENTINEL", session.getAttribute("ADP-KEYPART"), true);
+		debugger("URI", request.getRequestURI(), true);
+		debugger("REFERER", request.getHeader("Referer"), true);
 		auditor(SENTINEL_DOCS_STARTED, null, null, 0);
 
 		if (session.getAttribute("ADP-KEYPART") != null && !session.getAttribute("ADP-KEYPART").equals("")) {
@@ -84,7 +84,7 @@ public class ApiDocProtectorSentinel extends ApiDocProtectorLibrary {
 			"/doc-protect/swagger-ui/index.html"
 	})
 	public String protect() {
-		logTerm("SESSION-ADP-KEYPART IN API-DOCS FROM SENTINEL", session.getAttribute("ADP-KEYPART"), true);
+		debugger("SESSION-ADP-KEYPART IN API-DOCS FROM SENTINEL", session.getAttribute("ADP-KEYPART"), true);
 		auditor(SENTINEL_PROTECT_STARTED, null, null, 0);
 		return apiDocProtectorRedirect.captor(session);
 	}
@@ -92,7 +92,7 @@ public class ApiDocProtectorSentinel extends ApiDocProtectorLibrary {
 	@Operation(hidden = true)
 	@GetMapping(path = "/doc-protect/router")
 	public String router() {
-		logTerm("ROUTER FROM SENTINEL", null, true);
+		debugger("ROUTER FROM SENTINEL", null, true);
 		auditor(SENTINEL_ROUTER_STARTED, null, null, 0);
 		return apiDocProtectorRedirect.router(session);
 	}
@@ -100,7 +100,7 @@ public class ApiDocProtectorSentinel extends ApiDocProtectorLibrary {
 	@Operation(hidden = true)
 	@GetMapping(path = "${apidocprotector.custom.uri-logout:/doc-protect/logout}/{token}")
 	public String logout(@PathVariable("token") String token) {
-		logTerm("LOGOUT FROM SENTINEL", null, true);
+		debugger("LOGOUT FROM SENTINEL", null, true);
 		auditor(SENTINEL_LOGOUT_STARTED, null, null, 0);
 		return apiDocProtectorRedirect.logout(session, token);
 	}
@@ -108,7 +108,7 @@ public class ApiDocProtectorSentinel extends ApiDocProtectorLibrary {
 	@Operation(hidden = true)
 	@GetMapping(path = "/doc-protect/protector")
 	public ModelAndView protector() {
-		logTerm("PROTECTOR FROM SENTINEL", null, true);
+		debugger("PROTECTOR FROM SENTINEL", null, true);
 		auditor(SENTINEL_PROTECTOR_STARTED, null, null, 0);
 		return apiDocProtectorViewer.protector(session, null);
 	}

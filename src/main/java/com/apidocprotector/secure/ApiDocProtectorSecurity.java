@@ -15,12 +15,12 @@ public class ApiDocProtectorSecurity extends ApiDocProtectorLibrary {
 
     public void firewall(HttpSession session, Map<String, String> body, String sessionId) {
 
-        logTerm("FIREWALL IS RUNNING", "INFO", true);
-        logTerm("FIREWALL IS RUNNING", response.getHeader("ApiDoc-Protector-Active-User"), true);
+        debugger("FIREWALL IS RUNNING", "INFO", true);
+        debugger("FIREWALL IS RUNNING", response.getHeader("ApiDoc-Protector-Active-User"), true);
         auditor(SECURITY_FIREWALL_STARTED, null, sessionId, 2);
 
         ApiDocProtectorDto sessionTransfer = (ApiDocProtectorDto) session.getAttribute(sessionId);
-        logTerm("SESSION TRANSFER IN FIREWALL", sessionTransfer, true);
+        debugger("SESSION TRANSFER IN FIREWALL", sessionTransfer, true);
 
         String secretForm;
 
@@ -43,110 +43,110 @@ public class ApiDocProtectorSecurity extends ApiDocProtectorLibrary {
 
         try {
             headerRequestHost = request.getHeader("Host");
-            logTerm("(HEADER) Host: " + headerRequestHost, "INFO", true);
+            debugger("(HEADER) Host: " + headerRequestHost, "INFO", true);
         } catch (RuntimeException re) {
-            logTerm("(HEADER) Host " + re.getMessage(), "ERROR", true);
+            debugger("(HEADER) Host " + re.getMessage(), "ERROR", true);
         }
 
         try {
             headerRequestUserAgent = request.getHeader("User-Agent");
-            logTerm("(HEADER) User-Agent: " + headerRequestUserAgent, "INFO", true);
+            debugger("(HEADER) User-Agent: " + headerRequestUserAgent, "INFO", true);
         } catch (RuntimeException re) {
-            logTerm("(HEADER) User-Agent " + re.getMessage(), "ERROR", true);
+            debugger("(HEADER) User-Agent " + re.getMessage(), "ERROR", true);
         }
 
         try {
             headerSecFetchDest = request.getHeader("Sec-Fetch-Dest");
-            logTerm("(HEADER) Sec-Fetch-Dest: " + headerSecFetchDest, "INFO", true);
+            debugger("(HEADER) Sec-Fetch-Dest: " + headerSecFetchDest, "INFO", true);
         } catch (RuntimeException re) {
-            logTerm("(HEADER) Sec-Fetch-Dest " + re.getMessage(), "ERROR", true);
+            debugger("(HEADER) Sec-Fetch-Dest " + re.getMessage(), "ERROR", true);
         }
 
         try {
             headerSecFetchMode = request.getHeader("Sec-Fetch-Mode");
-            logTerm("(HEADER) Sec-Fetch-Mode: " + headerSecFetchMode, "INFO", true);
+            debugger("(HEADER) Sec-Fetch-Mode: " + headerSecFetchMode, "INFO", true);
         } catch (RuntimeException re) {
-            logTerm("(HEADER) Sec-Fetch-Mode " + re.getMessage(), "ERROR", true);
+            debugger("(HEADER) Sec-Fetch-Mode " + re.getMessage(), "ERROR", true);
         }
 
         try {
             headerRequestContentType = request.getHeader("Content-Type");
-            logTerm("(HEADER) Content-Type: " + headerRequestContentType, "INFO", true);
+            debugger("(HEADER) Content-Type: " + headerRequestContentType, "INFO", true);
         } catch (RuntimeException re) {
-            logTerm("(HEADER) Content-Type " + re.getMessage(), "ERROR", true);
+            debugger("(HEADER) Content-Type " + re.getMessage(), "ERROR", true);
         }
 
         try {
             headerRequestOrigin = request.getHeader("Origin");
-            logTerm("(HEADER) Origin: " + headerRequestOrigin, "INFO", true);
+            debugger("(HEADER) Origin: " + headerRequestOrigin, "INFO", true);
         } catch (RuntimeException re) {
-            logTerm("(HEADER) Origin " + re.getMessage(), "ERROR", true);
+            debugger("(HEADER) Origin " + re.getMessage(), "ERROR", true);
         }
 
         try {
             headerRequestReferer = request.getHeader("Referer");
-            logTerm("(HEADER) Referer: " + headerRequestReferer, "INFO", true);
+            debugger("(HEADER) Referer: " + headerRequestReferer, "INFO", true);
         } catch (RuntimeException re) {
-            logTerm("(HEADER) Referer " + re.getMessage(), "ERROR", true);
+            debugger("(HEADER) Referer " + re.getMessage(), "ERROR", true);
         }
 
         try {
             requestMethod = request.getMethod();
-            logTerm("getMethod: "+requestMethod, "INFO", true);
+            debugger("getMethod: "+requestMethod, "INFO", true);
         } catch (RuntimeException re) {
-            logTerm("(SERVLET) getMethod " + re.getMessage(), "ERROR", true);
+            debugger("(SERVLET) getMethod " + re.getMessage(), "ERROR", true);
         }
 
         try {
             remoteAddr = request.getRemoteAddr();
-            logTerm("getRemoteAddr: "+remoteAddr, "INFO", true);
+            debugger("getRemoteAddr: "+remoteAddr, "INFO", true);
         } catch (RuntimeException re) {
-            logTerm("(SERVLET) getRemoteAddr " + re.getMessage(), "ERROR", true);
+            debugger("(SERVLET) getRemoteAddr " + re.getMessage(), "ERROR", true);
         }
 
         try {
             remoteHost = request.getRemoteHost();
-            logTerm("getRemoteHost: "+remoteHost, "INFO", true);
+            debugger("getRemoteHost: "+remoteHost, "INFO", true);
         } catch (RuntimeException re) {
-            logTerm("(SERVLET) getRemoteHost " + re.getMessage(), "ERROR", true);
+            debugger("(SERVLET) getRemoteHost " + re.getMessage(), "ERROR", true);
         }
 
         try {
             serverName = request.getServerName();
-            logTerm("getServerName: "+serverName, "INFO", true);
+            debugger("getServerName: "+serverName, "INFO", true);
         } catch (RuntimeException re) {
-            logTerm("(SERVLET) getServerName" + re.getMessage(), "ERROR", true);
+            debugger("(SERVLET) getServerName" + re.getMessage(), "ERROR", true);
         }
 
         try {
             servletPath = request.getServletPath();
-            logTerm("getServletPath: "+servletPath, "INFO", true);
+            debugger("getServletPath: "+servletPath, "INFO", true);
         } catch (RuntimeException re) {
-            logTerm("(SERVLET) getServletPath " + re.getMessage(), "ERROR", true);
+            debugger("(SERVLET) getServletPath " + re.getMessage(), "ERROR", true);
         }
 
         try {
             authorization = request.getHeader("Authorization");
-            logTerm("Authorization: " + authorization, "INFO", true);
+            debugger("Authorization: " + authorization, "INFO", true);
         } catch (RuntimeException re) {
-            logTerm("(SERVLET) Authorization " + re.getMessage(), "ERROR", true);
+            debugger("(SERVLET) Authorization " + re.getMessage(), "ERROR", true);
         }
 
         try {
             userAgent = request.getHeader("User-Agent");
-            logTerm("User-Agent: " + userAgent, "INFO", true);
+            debugger("User-Agent: " + userAgent, "INFO", true);
         } catch (RuntimeException re) {
-            logTerm("(SERVLET) User-Agent " + re.getMessage(), "ERROR", true);
+            debugger("(SERVLET) User-Agent " + re.getMessage(), "ERROR", true);
         }
 
         try {
             postmanToken = request.getHeader("Postman-Token");
-            logTerm("Postman-Token: " + postmanToken, "INFO", true);
+            debugger("Postman-Token: " + postmanToken, "INFO", true);
         } catch (RuntimeException re) {
-            logTerm("(SERVLET) Postman-Token " + re.getMessage(), "ERROR", true);
+            debugger("(SERVLET) Postman-Token " + re.getMessage(), "ERROR", true);
         }
 
-        logTerm("REQUEST-METHOD", requestMethod, true);
+        debugger("REQUEST-METHOD", requestMethod, true);
 
         if (requestMethod != null && requestMethod.equals("GET")) {
 
@@ -171,14 +171,14 @@ public class ApiDocProtectorSecurity extends ApiDocProtectorLibrary {
 
             try {
                 secretForm = body.get("apidocprotector_sec");
-                logTerm("[FORM] Secret: " + secretForm, "INFO", true);
+                debugger("[FORM] Secret: " + secretForm, "INFO", true);
 
                 if (!secretForm.equals(sessionId)) {
                     throw new RuntimeException(INVALID_FORM_FIREWALL.getMessage());
                 }
 
             } catch (RuntimeException re) {
-                logTerm("[FORM] Secret: " + re.getMessage(), "ERROR", true);
+                debugger("[FORM] Secret: " + re.getMessage(), "ERROR", true);
             }
 
             if (headerRequestContentType != null && !headerRequestContentType.equals("application/x-www-form-urlencoded")) {
@@ -245,7 +245,7 @@ public class ApiDocProtectorSecurity extends ApiDocProtectorLibrary {
 
         }
 
-        logTerm("ACTIVE USER IN HEADER", response.getHeader("ApiDoc-Protector-Active-User"), true);
+        debugger("ACTIVE USER IN HEADER", response.getHeader("ApiDoc-Protector-Active-User"), true);
 
         if(response.getHeader("ApiDoc-Protector-Active-User") == null) {
             if (!body.get("condition").equals("--init-login-form")) {
@@ -269,9 +269,9 @@ public class ApiDocProtectorSecurity extends ApiDocProtectorLibrary {
             }
         }
 
-        logTerm("FIREWALL PASSED", "INFO", true);
-        logTerm("JSESSIONID IS: "+session.getId(), "INFO", true);
-        logTerm("TOKEN IS: "+sessionTransfer.getToken(), "INFO", true);
+        debugger("FIREWALL PASSED", "INFO", true);
+        debugger("JSESSIONID IS: "+session.getId(), "INFO", true);
+        debugger("TOKEN IS: "+sessionTransfer.getToken(), "INFO", true);
         auditor(SECURITY_FIREWALL_FINISHED, null, sessionId, 2);
     }
 
@@ -298,16 +298,16 @@ public class ApiDocProtectorSecurity extends ApiDocProtectorLibrary {
         auditor(SECURITY_SHIELD_STARTED, null, null, 2);
         try {
             if (session.getAttribute("ADP-KEYPART").toString().equals("")) {
-                logTerm("MISSING ADP-KEYPART SESSION IN SHIELD", null, true);
+                debugger("MISSING ADP-KEYPART SESSION IN SHIELD", null, true);
                 return false;
             }
             if (session.getAttribute("ADP-SECRET").toString().equals("")) {
-                logTerm("MISSING ADP-SECRET SESSION IN SHIELD", null, true);
+                debugger("MISSING ADP-SECRET SESSION IN SHIELD", null, true);
                 return false;
             }
             return true;
         } catch (RuntimeException re) {
-            logTerm("EXCEPTION IN SHIELD", re.getMessage(), true);
+            debugger("EXCEPTION IN SHIELD", re.getMessage(), true);
             return false;
         }
     }
