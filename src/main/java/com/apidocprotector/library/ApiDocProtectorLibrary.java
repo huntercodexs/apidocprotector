@@ -2,7 +2,7 @@ package com.apidocprotector.library;
 
 import com.apidocprotector.dto.ApiDocProtectorAuditDto;
 import com.apidocprotector.dto.ApiDocProtectorDto;
-import com.apidocprotector.enumerator.ApiDocProtectorAuditEnum;
+import com.apidocprotector.enumerator.ApiDocProtectorRegisterEnum;
 import com.apidocprotector.model.ApiDocProtectorAuditEntity;
 import com.apidocprotector.model.ApiDocProtectorEntity;
 import com.apidocprotector.repository.ApiDocProtectorAuditRepository;
@@ -27,7 +27,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
-import static com.apidocprotector.enumerator.ApiDocProtectorAuditEnum.*;
+import static com.apidocprotector.enumerator.ApiDocProtectorRegisterEnum.*;
 
 @Slf4j
 @Service
@@ -568,7 +568,7 @@ public abstract class ApiDocProtectorLibrary extends ApiDocProtectorDataLibrary 
         return dataHtml.toString();
     }
 
-    public void auditor(ApiDocProtectorAuditEnum auditEnum, String customMessage, String sessionId, int auditLevel) {
+    public void auditor(ApiDocProtectorRegisterEnum registerEnum, String customMessage, String sessionId, int auditLevel) {
 
         if (apiDocAuditor && auditLevel <= apiDocAuditorLevel) {
 
@@ -588,11 +588,11 @@ public abstract class ApiDocProtectorLibrary extends ApiDocProtectorDataLibrary 
                 auditDto.setUsername(username);
                 auditDto.setLevel(level);
                 auditDto.setToken(token);
-                auditDto.setDetail(auditEnum.name());
+                auditDto.setDetail(registerEnum.name());
                 auditDto.setIp(request.getRemoteAddr());
 
                 if (customMessage == null) {
-                    auditDto.setMessage(auditEnum.getMessage());
+                    auditDto.setMessage(registerEnum.getMessage());
                 } else {
                     auditDto.setMessage(customMessage);
                 }
@@ -608,11 +608,11 @@ public abstract class ApiDocProtectorLibrary extends ApiDocProtectorDataLibrary 
                 auditDto.setUsername(username);
                 auditDto.setLevel(level);
                 auditDto.setToken(token);
-                auditDto.setDetail(auditEnum.name());
+                auditDto.setDetail(registerEnum.name());
                 auditDto.setIp(request.getRemoteAddr());
 
                 if (customMessage == null) {
-                    auditDto.setMessage(auditEnum.getMessage());
+                    auditDto.setMessage(registerEnum.getMessage());
                 } else {
                     auditDto.setMessage(customMessage);
                 }
@@ -644,7 +644,7 @@ public abstract class ApiDocProtectorLibrary extends ApiDocProtectorDataLibrary 
             apiDocProtectorAuditEntity.setTracker(auditDto.getTracker());
             apiDocProtectorAuditEntity.setDetail(auditDto.getDetail());
             apiDocProtectorAuditEntity.setMessage(auditDto.getMessage());
-            apiDocProtectorAuditEntity.setCode(auditEnum.getCode());
+            apiDocProtectorAuditEntity.setCode(registerEnum.getCode());
             apiDocProtectorAuditEntity.setIp(auditDto.getIp());
             apiDocProtectorAuditEntity.setCreatedAt(currentDate);
 
@@ -656,6 +656,18 @@ public abstract class ApiDocProtectorLibrary extends ApiDocProtectorDataLibrary 
 
         }
 
+    }
+
+    public void register(
+        ApiDocProtectorRegisterEnum registerEnum,
+        String sessionId,
+        String label,
+        int auditLevel,
+        String custom
+        ) {
+        debugger(registerEnum.name(), registerEnum.getMessage() + " - " + custom, true);
+        logger(registerEnum.name() +" : "+ registerEnum.getMessage() + " - " + custom, label);
+        if (!registerEnum.name().equals("NO_AUDITOR")) auditor(registerEnum, custom, sessionId, auditLevel);
     }
 
 }

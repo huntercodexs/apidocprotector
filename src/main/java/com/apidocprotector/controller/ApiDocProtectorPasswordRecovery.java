@@ -13,7 +13,7 @@ import javax.validation.Valid;
 import java.io.IOException;
 import java.util.Map;
 
-import static com.apidocprotector.enumerator.ApiDocProtectorAuditEnum.*;
+import static com.apidocprotector.enumerator.ApiDocProtectorRegisterEnum.*;
 import static com.apidocprotector.enumerator.ApiDocProtectorLibraryEnum.PASSWORD_RECOVERY_ERROR;
 
 @Hidden
@@ -83,7 +83,11 @@ public class ApiDocProtectorPasswordRecovery extends ApiDocProtectorLibrary {
 
 			if (session.getAttribute("ADP-ACCOUNT-PASSWORD-RECOVERY-SUCCESSFUL") != null) {
 				if (session.getAttribute("ADP-ACCOUNT-PASSWORD-RECOVERY-SUCCESSFUL").equals("1")) {
+
+					debugger("PASSWORD RECOVERY", PASSWORD_RECOVERY_SUCCESSFUL.getMessage(), true);
+					logger(PASSWORD_RECOVERY_SUCCESSFUL.getMessage(), "info");
 					auditor(PASSWORD_RECOVERY_SUCCESSFUL, null, null, 2);
+
 					return apiDocProtectorViewer.passwordRecovery(true, md5Token);
 				}
 			}
@@ -92,8 +96,11 @@ public class ApiDocProtectorPasswordRecovery extends ApiDocProtectorLibrary {
 			return apiDocProtectorViewer.passwordRecovery(false, md5Token);
 
 		} catch (RuntimeException re) {
+
 			debugger("FORM IN PASSWORD RECOVERY [EXCEPTION]", re.getMessage(), true);
+			logger("FORM IN PASSWORD RECOVERY [EXCEPTION]: " + re.getMessage(), "except");
 			auditor(PASSWORD_RECOVERY_EXCEPTION, re.getMessage(), null, 1);
+
 			return apiDocProtectorViewer.error(
 					PASSWORD_RECOVERY_ERROR.getMessage(),
 					"The request has caused a exception",
@@ -112,23 +119,34 @@ public class ApiDocProtectorPasswordRecovery extends ApiDocProtectorLibrary {
 		auditor(PASSWORD_RECOVERY_DATA_POST, null, null, 0);
 
 		if (session.getAttribute("ADP-USER-PASSWORD-RECOVERY") == null || !session.getAttribute("ADP-USER-PASSWORD-RECOVERY").equals("1")) {
-			debugger("INVALID SESSION FROM PASSWORD RECOVERY USER", null, true);
+
+			debugger("INVALID SESSION", PASSWORD_RECOVERY_FORM_INVALID_SESSION.getMessage(), true);
+			logger("INVALID SESSION: " + PASSWORD_RECOVERY_FORM_INVALID_SESSION.getMessage(), "info");
 			auditor(PASSWORD_RECOVERY_FORM_INVALID_SESSION, null, null, 2);
+
 			return apiDocProtectorErrorRedirect.redirectPasswordRecoveryError("invalid_session_user_password_recovery");
 		}
 
 		ApiDocProtectorEntity user = apiDocProtectorRepository.findByToken(body.get("token"));
 
 		if (user == null) {
-			session.setAttribute("ADP-ACCOUNT-PASSWORD-RECOVERY-SUCCESSFUL", null);
+
+			debugger("USER NOT FOUND", PASSWORD_RECOVERY_USER_NOT_FOUND.getMessage(), true);
+			logger("USER NOT FOUND: " + PASSWORD_RECOVERY_USER_NOT_FOUND.getMessage(), "info");
 			auditor(PASSWORD_RECOVERY_USER_NOT_FOUND, "User not found (using token) " + body.get("token"), null, 2);
+
+			session.setAttribute("ADP-ACCOUNT-PASSWORD-RECOVERY-SUCCESSFUL", null);
 			return apiDocProtectorErrorRedirect.redirectPasswordRecoveryError("user_not_found");
 		}
 
 		String newToken = userPasswordUpdate(body, user);
 
 		if (newToken == null) {
+
+			debugger("PASSWORD RECOVERY", "Error to password recovery, newToken is null", true);
+			logger("Error to password recovery, newToken is null", "info");
 			auditor(PASSWORD_RECOVERY_EXCEPTION, "Error to password recovery", null, 1);
+
 			return apiDocProtectorErrorRedirect.redirectPasswordRecoveryError("error_to_password_recovery");
 		}
 
@@ -139,16 +157,20 @@ public class ApiDocProtectorPasswordRecovery extends ApiDocProtectorLibrary {
 
 			apiDocProtectorMailSender.sendMailAttached(user.getEmail(), subject, content);
 			session.setAttribute("ADP-ACCOUNT-PASSWORD-RECOVERY-SUCCESSFUL", "1");
+
+			debugger("MAIL SENDER", PASSWORD_RECOVERY_MAIL_SENDER_OK.getMessage(), true);
+			logger("MAIL SENDER: " + PASSWORD_RECOVERY_MAIL_SENDER_OK.getMessage(), "info");
 			auditor(PASSWORD_RECOVERY_MAIL_SENDER_OK, null, null, 0);
 
 			return apiDocProtectorRedirect.redirectToPasswordRecoveryForm(newToken);
 
 		} catch (RuntimeException re) {
 
-			session.setAttribute("ADP-ACCOUNT-PASSWORD-RECOVERY-SUCCESSFUL", null);
 			debugger("CREATE IN PASSWORD RECOVERY [EXCEPTION]", re.getMessage(), true);
+			logger("CREATE IN PASSWORD RECOVERY [EXCEPTION]: " + re.getMessage(), "except");
 			auditor(PASSWORD_RECOVERY_EXCEPTION, re.getMessage(), null, 1);
 
+			session.setAttribute("ADP-ACCOUNT-PASSWORD-RECOVERY-SUCCESSFUL", null);
 			return apiDocProtectorErrorRedirect.redirectPasswordRecoveryError("password_recovery_error");
 		}
 	}
@@ -156,7 +178,11 @@ public class ApiDocProtectorPasswordRecovery extends ApiDocProtectorLibrary {
 	@Operation(hidden = true)
 	@GetMapping(path = "/doc-protect/password/recovery/error/{data}")
 	public ModelAndView error(@PathVariable(required = false) String data) {
+
+		debugger(PASSWORD_RECOVERY_EXCEPTION.getMessage(), data, true);
+		logger(PASSWORD_RECOVERY_EXCEPTION.getMessage() + " " + data, "except");
 		auditor(PASSWORD_RECOVERY_EXCEPTION, data, null, 2);
+
 		return apiDocProtectorViewer.error(
 				PASSWORD_RECOVERY_ERROR.getMessage(),
 				data.replace("_", " "),

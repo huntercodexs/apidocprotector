@@ -7,12 +7,12 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public enum ApiDocProtectorAuditEnum {
+public enum ApiDocProtectorRegisterEnum {
 
     GENERATOR_STARTED(1, "The GENERATOR form to new account has been started"),
     GENERATOR_GLASS_STARTED(3, "The GENERATOR glass has been started"),
-    GENERATOR_EXCEPTION(5, "{custom message}"),
-    GENERATOR_GLASS_EXCEPTION(6, "{custom message}"),
+    GENERATOR_EXCEPTION(5, "Occurs an error on GENERATOR process"),
+    GENERATOR_GLASS_EXCEPTION(6, "Occurs an error on GENERATOR GLASS process"),
     GENERATOR_FORM_STARTED(7, "The GENERATOR form to new account has been loaded"),
     GENERATOR_FORM_INVALID_ACCCESS(8, "The APD-USER-GENERATOR session was not ok"),
     GENERATOR_VIEW_FORM(9, "View Form was called by GENERATOR"),
@@ -28,15 +28,15 @@ public enum ApiDocProtectorAuditEnum {
     ACTIVATOR_FINISHED(20, "The ACTIVATOR finished successful"),
     ACTIVATOR_EXPIRED_ACCOUNT(21, "Expired Account Token"),
     ACTIVATOR_ACCOUNT_ALREADY_ACTIVATED(22, "The account was already activated"),
-    ACTIVATOR_ACCOUNT_NOT_FOUND(23, "{custom message}"),
+    ACTIVATOR_ACCOUNT_NOT_FOUND(23, "Account not found to activate"),
 
     INITIALIZER_STARTED(24, "The INITIALIZER has been started"),
-    INITIALIZER_TOKEN_OK(25, "{custom message}"),
+    INITIALIZER_TOKEN_OK(25, "Token started successful in the INITIALIZER"),
     INITIALIZER_ERROR(26, "The current user was not activated"),
     INITIALIZER_ENVIRONMENT_OK(27, "The environment has been inialized"),
     INITIALIZER_SESSION_PREPARE_OK(27, "The session has been configured"),
     INITIALIZER_GLASS_STARTED(28, "The INITIALIZER glass was called"),
-    INITIALIZER_EXCEPTION(29, "{custom message}"),
+    INITIALIZER_EXCEPTION(29, "Occurs an error on INITIALIZER process"),
     INITIALIZER_DENIED(30, "Access denied, missing token"),
     INITIALIZER_BURNED(31, "The INITIALIZER was burned"),
     INITIALIZER_SUCCESSFUL(32, "The INITIALIZER has been finished"),
@@ -74,7 +74,7 @@ public enum ApiDocProtectorAuditEnum {
 
     PASSWORD_RECOVERY_STARTED(62, "The PASSWORD RECOVERY process has been started"),
     PASSWORD_RECOVERY_GLASS_STARTED(63, "The PASSWORD RECOVERY glass has been started"),
-    PASSWORD_RECOVERY_EXCEPTION(64, "{custom message}"),
+    PASSWORD_RECOVERY_EXCEPTION(64, "PASSWORD RECOVERY EXCEPTION"),
     PASSWORD_RECOVERY_GLASS_EXCEPTION(65, "{custom message}"),
     PASSWORD_RECOVERY_FORM_STARTED(66, "The PASSWORD RECOVERY form has been loaded"),
     PASSWORD_RECOVERY_FORM_INVALID_ACCCESS(67, "The APD-USER-PASSWORD-RECOVERY session was not ok"),
@@ -207,7 +207,8 @@ public enum ApiDocProtectorAuditEnum {
     VIEW_PROTECTOR_EXCEPTION(179, "{custom message}"),
 
     GENERIC_MESSAGE(20000, ""),
-    NO_MAPPING_FOUND(20001, "No mappging found");
+    NO_MAPPING_FOUND(20001, "No mappging found"),
+    NO_AUDITOR(20002, null);
 
     public int code;
     public String message;
