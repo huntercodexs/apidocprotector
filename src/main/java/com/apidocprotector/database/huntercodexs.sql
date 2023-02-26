@@ -1,30 +1,34 @@
 DROP TABLE IF EXISTS `apidoc_protector`;
 CREATE TABLE `apidoc_protector` (
   `id` bigint NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) DEFAULT NULL,
-  `username` varchar(255) DEFAULT NULL,
-  `email` varchar(255) DEFAULT NULL,
-  `role` varchar(255) DEFAULT NULL,
-  `password` varchar(255) DEFAULT NULL,
-  `token` varchar(255) DEFAULT NULL,
-  `active` varchar(255) DEFAULT NULL,
-  `sessionKey` varchar(255) DEFAULT NULL,
-  `sessionVal` varchar(255) DEFAULT NULL,
-  `sessionCreatedAt` varchar(255) DEFAULT NULL,
-  `createdAt` varchar(255) DEFAULT NULL,
-  `updatedAt` varchar(255) DEFAULT NULL,
-  `deletedAt` varchar(255) DEFAULT NULL,
+  `name` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `username` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `email` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `role` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `password` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `token` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `active` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `sessionKey` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `sessionVal` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `sessionCreatedAt` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `createdAt` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `updatedAt` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `deletedAt` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=0 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 DROP TABLE IF EXISTS `apidoc_protector_audit`;
 CREATE TABLE `apidoc_protector_audit` (
   `id` bigint NOT NULL AUTO_INCREMENT,
-  `username` varchar(255) DEFAULT NULL,
-  `level` varchar(255) DEFAULT NULL,
-  `token` varchar(255) DEFAULT NULL,
-  `detail` varchar(255) DEFAULT NULL,
-  `createdAt` varchar(255) DEFAULT NULL,
+  `username` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `level` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `token` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `detail` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `createdAt` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `message` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `tracker` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `ip` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `code` int DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 

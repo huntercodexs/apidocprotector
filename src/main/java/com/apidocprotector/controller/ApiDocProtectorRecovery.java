@@ -13,7 +13,8 @@ import javax.validation.Valid;
 import java.io.IOException;
 import java.util.Map;
 
-import static com.apidocprotector.library.ApiDocProtectorErrorLibrary.GENERATOR_ERROR;
+import static com.apidocprotector.enumerator.ApiDocProtectorLibraryEnum.RECOVERY_ERROR;
+import static com.apidocprotector.enumerator.ApiDocProtectorRegisterEnum.*;
 
 @Hidden
 @Controller
@@ -24,57 +25,71 @@ public class ApiDocProtectorRecovery extends ApiDocProtectorLibrary {
 	@GetMapping(path = "${apidocprotector.custom.uri-recovery:/doc-protect/recovery}")
 	public String recovery() {
 
-		logTerm("RECOVERY FORM IS START", null, true);
+		register(RECOVERY_STARTED, null, "info", 0, "");
 
 		try {
 			return apiDocProtectorRedirect.forwardToRecoveryGlass();
 		} catch (RuntimeException re) {
-			logTerm("RECOVERY FORM [EXCEPTION]", re.getMessage(), true);
+
+			register(RECOVERY_EXCEPTION, null, "except", 1, re.getMessage());
+
+			return apiDocProtectorErrorRedirect.redirectRecoveryError("error_to_load_form_recovery");
 		}
 
-		return apiDocProtectorErrorRedirect.redirectRecoveryError("error_to_load_form_recovery");
 	}
 
 	@Operation(hidden = true)
 	@GetMapping(path = "/doc-protect/protector/recovery/glass")
 	public String glass() {
 
-		logTerm("RECOVERY IN GLASS START", null, true);
+		register(RECOVERY_GLASS_STARTED, null, "info", 0, "");
 
 		try {
 			return apiDocProtectorRedirect.redirectToRecoveryForm();
 		} catch (RuntimeException re) {
-			logTerm("RECOVERY IN GLASS [EXCEPTION]", re.getMessage(), true);
+
+			register(RECOVERY_GLASS_EXCEPTION, null, "except", 1, re.getMessage());
+
+			return apiDocProtectorErrorRedirect.redirectRecoveryError("unknown");
 		}
-		return apiDocProtectorErrorRedirect.redirectRecoveryError("unknown");
 	}
 
 	@Operation(hidden = true)
 	@GetMapping(path = "${apidocprotector.custom.uri-recovery:/doc-protect/recovery}/form")
 	public ModelAndView form() {
 
-		logTerm("FORM IN RECOVERY IS START", null, true);
+		register(RECOVERY_FORM_STARTED, null, "info", 0, "");
 
 		if (session.getAttribute("ADP-USER-RECOVERY") == null || !session.getAttribute("ADP-USER-RECOVERY").equals("1")) {
+
+			register(RECOVERY_FORM_INVALID_SESSION, null, "error", 2, "Invalid Session");
+
 			return apiDocProtectorViewer.error(
-					GENERATOR_ERROR.getMessage(),
+					RECOVERY_ERROR.getMessage(),
 					"invalid access in form recovery ",
-					GENERATOR_ERROR.getStatusCode());
+					RECOVERY_ERROR.getStatusCode());
 		}
 
 		try {
+
 			if (session.getAttribute("ADP-ACCOUNT-RECOVERY-SUCCESSFUL") != null) {
 				if (session.getAttribute("ADP-ACCOUNT-RECOVERY-SUCCESSFUL").equals("1")) {
+					auditor(RECOVERY_ACCOUNT_SUCCESSFUL, null, null, 2);
 					return apiDocProtectorViewer.recovery(true);
 				}
 			}
+
+			register(RECOVERY_VIEW_FORM, null, "info", 2, "");
 			return apiDocProtectorViewer.recovery(false);
+
 		} catch (RuntimeException re) {
-			logTerm("FORM IN RECOVERY [EXCEPTION]", re.getMessage(), true);
+
+			register(RECOVERY_EXCEPTION, null, "except", 1, re.getMessage());
+
 			return apiDocProtectorViewer.error(
-					GENERATOR_ERROR.getMessage(),
+					RECOVERY_ERROR.getMessage(),
 					"The request has caused a exception",
-					GENERATOR_ERROR.getStatusCode());
+					RECOVERY_ERROR.getStatusCode());
 		}
 	}
 
@@ -85,16 +100,21 @@ public class ApiDocProtectorRecovery extends ApiDocProtectorLibrary {
 	)
 	public String update(@Valid @RequestParam Map<String, String> body) throws IOException {
 
-		logTerm("RECOVERY USER IS START", null, true);
+		register(RECOVERY_DATA_POST, null, "info", 0, "");
 
 		if (session.getAttribute("ADP-USER-RECOVERY") == null || !session.getAttribute("ADP-USER-RECOVERY").equals("1")) {
-			logTerm("INVALID SESSION FROM RECOVERY USER", null, true);
+
+			register(RECOVERY_FORM_INVALID_SESSION, null, "error", 2, "Ivalid Session");
+
 			return apiDocProtectorErrorRedirect.redirectRecoveryError("invalid_session_user_recovery");
 		}
 
 		ApiDocProtectorEntity user = apiDocProtectorRepository.findByEmail(body.get("email"));
 
 		if (user == null) {
+
+			register(PASSWORD_RECOVERY_USER_NOT_FOUND, null, "error", 2, "User not found " + body.get("email"));
+
 			session.setAttribute("ADP-ACCOUNT-RECOVERY-SUCCESSFUL", null);
 			return apiDocProtectorErrorRedirect.redirectRecoveryError("user_not_found");
 		}
@@ -107,13 +127,16 @@ public class ApiDocProtectorRecovery extends ApiDocProtectorLibrary {
 			String content = apiDocProtectorMailSender.contentMailRecoveryUser(user.getName(), userToken);
 
 			apiDocProtectorMailSender.sendMailAttached(emailTo, subject, content);
-
 			session.setAttribute("ADP-ACCOUNT-RECOVERY-SUCCESSFUL", "1");
+
+			register(PASSWORD_RECOVERY_MAIL_SENDER_OK, null, "info", 0, "");
 			return apiDocProtectorRedirect.redirectToRecoveryForm();
 
 		} catch (RuntimeException re) {
+
+			register(RECOVERY_EXCEPTION, null, "info", 1, re.getMessage());
+
 			session.setAttribute("ADP-ACCOUNT-RECOVERY-SUCCESSFUL", null);
-			logTerm("CREATE IN RECOVERY [EXCEPTION]", re.getMessage(), true);
 			return apiDocProtectorErrorRedirect.redirectRecoveryError("account_recovery_error");
 		}
 	}
@@ -121,10 +144,13 @@ public class ApiDocProtectorRecovery extends ApiDocProtectorLibrary {
 	@Operation(hidden = true)
 	@GetMapping(path = "/doc-protect/recovery/error/{data}")
 	public ModelAndView error(@PathVariable(required = false) String data) {
+
+		register(RECOVERY_EXCEPTION, null, "error", 1, data);
+
 		return apiDocProtectorViewer.error(
-				GENERATOR_ERROR.getMessage(),
+				RECOVERY_ERROR.getMessage(),
 				data.replace("_", " "),
-				GENERATOR_ERROR.getStatusCode());
+				RECOVERY_ERROR.getStatusCode());
 	}
 
 }

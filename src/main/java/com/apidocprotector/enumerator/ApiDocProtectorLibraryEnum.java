@@ -1,4 +1,4 @@
-package com.apidocprotector.library;
+package com.apidocprotector.enumerator;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -8,7 +8,7 @@ import org.springframework.http.HttpStatus;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public enum ApiDocProtectorErrorLibrary {
+public enum ApiDocProtectorLibraryEnum {
     BURN_ERROR(
             HttpStatus.BAD_REQUEST,
             10000,
@@ -19,7 +19,7 @@ public enum ApiDocProtectorErrorLibrary {
             10001,
             "Process error"),
 
-    INITIALIZE_ERROR(
+    INITIALIZER_ERROR(
             HttpStatus.BAD_REQUEST,
             10002,
             "Initial process error"),
@@ -83,6 +83,26 @@ public enum ApiDocProtectorErrorLibrary {
             HttpStatus.REQUEST_TIMEOUT,
             10014,
             "Access Violation"),
+
+    PASSWORD_ERROR(
+            HttpStatus.INTERNAL_SERVER_ERROR,
+            10015,
+            "Password process error"),
+
+    PASSWORD_RECOVERY_ERROR(
+            HttpStatus.INTERNAL_SERVER_ERROR,
+            10016,
+            "Password Recovery process error"),
+
+    RECOVERY_ERROR(
+            HttpStatus.INTERNAL_SERVER_ERROR,
+            10017,
+            "Recovery process error"),
+
+    SWAGGER_ROUTE_ERROR(
+            HttpStatus.INTERNAL_SERVER_ERROR,
+            10017,
+            "Swagger Route process error"),
 
     UNAUTHORIZED_FIREWALL(
             HttpStatus.UNAUTHORIZED,
