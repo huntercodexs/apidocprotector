@@ -14,8 +14,8 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-import static com.apidocprotector.enumerator.ApiDocProtectorRegisterEnum.*;
 import static com.apidocprotector.enumerator.ApiDocProtectorLibraryEnum.SENTINEL_ERROR;
+import static com.apidocprotector.enumerator.ApiDocProtectorRegisterEnum.*;
 
 @Hidden
 @Controller
@@ -26,18 +26,15 @@ public class ApiDocProtectorSentinel extends ApiDocProtectorLibrary {
 	@GetMapping(path = {"/"})
 	public void allowed(ServletResponse servletResponse) throws IOException, ServletException {
 
-		debugger("ALLOWED", null, true);
-		debugger("API-PREFIX", apiPrefix, true);
-		debugger("CURRENT-URI", request.getRequestURI(), true);
-		debugger("REFERER", request.getHeader("Referer"), true);
-		auditor(SENTINEL_ALLOWED_STARTED, null, null, 0);
+		register(SENTINEL_ALLOWED_STARTED, null, "info", 0, "URI: "+request.getRequestURI());
 
 		String prefix = apiPrefix.replaceFirst("/$", "") + "/";
 		if (!prefix.startsWith("/")) prefix = "/" + prefix;
 
 		HttpServletResponse httpResponse = (HttpServletResponse) servletResponse;
 		httpResponse.sendRedirect(prefix);
-		auditor(SENTINEL_ALLOWED_FINISHED, null, null, 0);
+
+		register(SENTINEL_ALLOWED_FINISHED, null, "info", 0, "");
 	}
 
 	@Operation(hidden = true)
@@ -53,18 +50,16 @@ public class ApiDocProtectorSentinel extends ApiDocProtectorLibrary {
 	})
 	public String docs() {
 
-		debugger("API-DOCS FROM SENTINEL", null, true);
-		debugger("SESSION-ADP-KEYPART IN API-DOCS FROM SENTINEL", session.getAttribute("ADP-KEYPART"), true);
-		debugger("URI", request.getRequestURI(), true);
-		debugger("REFERER", request.getHeader("Referer"), true);
-		auditor(SENTINEL_DOCS_STARTED, null, null, 0);
+		register(SENTINEL_DOCS_STARTED, null, "info", 0, "URI: " + request.getRequestURI());
 
 		if (session.getAttribute("ADP-KEYPART") != null && !session.getAttribute("ADP-KEYPART").equals("")) {
-			auditor(SENTINEL_DOCS_FINISHED_FORM, null, null, 2);
+
+			register(SENTINEL_DOCS_FINISHED_FORM, null, "info", 2, "");
+
 			return apiDocProtectorRedirect.redirectToForm();
 		}
 
-		auditor(SENTINEL_DOCS_FINISHED_CAPTOR, null, null, 0);
+		register(SENTINEL_DOCS_FINISHED_CAPTOR, null, "info", 0, "");
 		return apiDocProtectorRedirect.captor(session);
 	}
 
@@ -84,39 +79,37 @@ public class ApiDocProtectorSentinel extends ApiDocProtectorLibrary {
 			"/doc-protect/swagger-ui/index.html"
 	})
 	public String protect() {
-		debugger("SESSION-ADP-KEYPART IN API-DOCS FROM SENTINEL", session.getAttribute("ADP-KEYPART"), true);
-		auditor(SENTINEL_PROTECT_STARTED, null, null, 0);
+		register(SENTINEL_PROTECT_STARTED, null, "info", 0, "");
 		return apiDocProtectorRedirect.captor(session);
 	}
 
 	@Operation(hidden = true)
 	@GetMapping(path = "/doc-protect/router")
 	public String router() {
-		debugger("ROUTER FROM SENTINEL", null, true);
-		auditor(SENTINEL_ROUTER_STARTED, null, null, 0);
+		register(SENTINEL_ROUTER_STARTED, null, "info", 0, "");
 		return apiDocProtectorRedirect.router(session);
 	}
 
 	@Operation(hidden = true)
 	@GetMapping(path = "${apidocprotector.custom.uri-logout:/doc-protect/logout}/{token}")
 	public String logout(@PathVariable("token") String token) {
-		debugger("LOGOUT FROM SENTINEL", null, true);
-		auditor(SENTINEL_LOGOUT_STARTED, null, null, 0);
+		register(SENTINEL_LOGOUT_STARTED, null, "info", 0,"");
 		return apiDocProtectorRedirect.logout(session, token);
 	}
 
 	@Operation(hidden = true)
 	@GetMapping(path = "/doc-protect/protector")
 	public ModelAndView protector() {
-		debugger("PROTECTOR FROM SENTINEL", null, true);
-		auditor(SENTINEL_PROTECTOR_STARTED, null, null, 0);
+		register(SENTINEL_PROTECTOR_STARTED, null, "info", 0, "");
 		return apiDocProtectorViewer.protector(session, null);
 	}
 
 	@Operation(hidden = true)
 	@GetMapping(path = "/doc-protect/sentinel/error/{error}")
 	public ModelAndView error(@PathVariable("error") String error) {
-		auditor(SENTINEL_ERROR_STARTED, null, null, 1);
+
+		register(SENTINEL_ERROR_STARTED, null, "error", 1, error);
+
 		return apiDocProtectorViewer.error(
 				SENTINEL_ERROR.getMessage(),
 				error.replaceAll("_", " "),

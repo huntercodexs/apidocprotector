@@ -45,7 +45,7 @@ public enum ApiDocProtectorRegisterEnum {
 
     SWAGGER_ROUTER_SIGN(35, "The SWAGGER ROUTER was posted to sign"),
     SWAGGER_ROUTER_DETAILS(36, "{custom message}"),
-    SWAGGER_ROUTER_STOPBY_SHIELD(37, "The request has been stopped by shiled"),
+    SWAGGER_ROUTER_STOPPED_BY_SHIELD(37, "The request has been stopped by shiled"),
     SWAGGER_ROUTER_MISSING_USERNAME(38, "The username received was empty in SWAGGER ROUTER"),
     SWAGGER_ROUTER_MISSING_PASSWORD(39, "The password received was empty in SWAGGER ROUTER"),
     SWAGGER_ROUTER_EXPIRED_SESSION(40, "The session was expired in SWAGGER ROUTER"),

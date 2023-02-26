@@ -11,25 +11,29 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.apidocprotector.enumerator.ApiDocProtectorRegisterEnum.*;
 import static com.apidocprotector.enumerator.ApiDocProtectorLibraryEnum.*;
+import static com.apidocprotector.enumerator.ApiDocProtectorRegisterEnum.*;
 
 @Service
 public class ApiDocProtectorViewer extends ApiDocProtectorLibrary {
 
     public ModelAndView error(String title, String info, HttpStatus statusCode) {
-        auditor(VIEW_ERROR_STARTED, null, null, 1);
+
+        register(VIEW_ERROR_STARTED, null, "info", 1, "");
+
         response.setStatus(statusCode.value());
         ModelAndView modelAndView = new ModelAndView("apidocprotector/error");
         modelAndView.addObject("apidoc_protector_error_title", title);
         modelAndView.addObject("apidoc_protector_error_info", info);
-        auditor(VIEW_ERROR_FINISHED, null, null, 1);
+
+        register(VIEW_ERROR_FINISHED, null, "info", 1, "");
+
         return modelAndView;
     }
 
     public ModelAndView generator(boolean userCreatedSuccessful) {
 
-        auditor(VIEW_GENERATOR_STARTED, null, null, 1);
+        register(VIEW_GENERATOR_STARTED, null, "info", 1, "");
 
         try {
 
@@ -42,11 +46,13 @@ public class ApiDocProtectorViewer extends ApiDocProtectorLibrary {
                     modelAndView.addObject("apidoc_protector_created", "Account Created Successful");
                 }
 
-                auditor(VIEW_GENERATOR_FINISHED, null, null, 1);
+                register(VIEW_GENERATOR_FINISHED, null, "info", 1, "");
+
                 return modelAndView;
             }
 
-            auditor(VIEW_GENERATOR_ERROR, "Occurs an critical error on form", null, 1);
+            register(VIEW_GENERATOR_ERROR, null, "error", 1, "Occurs an critical error on form");
+
             return error(
                     FORM_VIEW_ERROR.getMessage(),
                     "Occurs an critical error on form",
@@ -54,7 +60,8 @@ public class ApiDocProtectorViewer extends ApiDocProtectorLibrary {
 
         } catch (RuntimeException re) {
 
-            auditor(VIEW_GENERATOR_EXCEPTION, re.getMessage(), null, 1);
+            register(VIEW_GENERATOR_EXCEPTION, null, "info", 1, re.getMessage());
+
             return error(
                     FORM_ERROR.getMessage(),
                     re.getMessage(),
@@ -64,7 +71,7 @@ public class ApiDocProtectorViewer extends ApiDocProtectorLibrary {
 
     public ModelAndView recovery(boolean userRecoverySuccessful) {
 
-        auditor(VIEW_RECOVERY_STARTED, null, null, 1);
+        register(VIEW_RECOVERY_STARTED, null, "info", 1, "");
 
         try {
 
@@ -76,19 +83,22 @@ public class ApiDocProtectorViewer extends ApiDocProtectorLibrary {
                     modelAndView.addObject("apidoc_protector_recovery", "Check your email !");
                 }
 
-                auditor(VIEW_RECOVERY_FINISHED, null, null, 1);
+                register(VIEW_RECOVERY_FINISHED, null, "info", 1, "");
 
                 return modelAndView;
             }
 
-            auditor(VIEW_RECOVERY_ERROR, "Occurs an critical error on form", null, 1);
+            register(VIEW_RECOVERY_ERROR, null, "error", 1, "Occurs an critical error on form");
+
             return error(
                     FORM_VIEW_ERROR.getMessage(),
                     "Occurs an critical error on form recovery",
                     FORM_VIEW_ERROR.getStatusCode());
 
         } catch (RuntimeException re) {
-            auditor(VIEW_RECOVERY_EXCEPTION, re.getMessage(), null, 1);
+
+            register(VIEW_RECOVERY_EXCEPTION, null, "error", 1, re.getMessage());
+
             return error(
                     FORM_ERROR.getMessage(),
                     re.getMessage(),
@@ -98,7 +108,7 @@ public class ApiDocProtectorViewer extends ApiDocProtectorLibrary {
 
     public ModelAndView password(boolean userRecoverySuccessful) {
 
-        auditor(VIEW_PASSWORD_STARTED, null, null, 1);
+        register(VIEW_PASSWORD_STARTED, null, "info", 1, "");
 
         try {
 
@@ -110,18 +120,22 @@ public class ApiDocProtectorViewer extends ApiDocProtectorLibrary {
                     modelAndView.addObject("apidoc_protector_password", "Check your email !");
                 }
 
-                auditor(VIEW_PASSWORD_FINISHED, null, null, 1);
+                register(VIEW_PASSWORD_FINISHED, null, "info", 1, "");
+
                 return modelAndView;
             }
 
-            auditor(VIEW_PASSWORD_ERROR, "Occurs an critical error on form", null, 1);
+            register(VIEW_PASSWORD_ERROR, null, "error", 1, "Occurs an critical error on form");
+
             return error(
                     FORM_VIEW_ERROR.getMessage(),
                     "Occurs an critical error on form password",
                     FORM_VIEW_ERROR.getStatusCode());
 
         } catch (RuntimeException re) {
-            auditor(VIEW_PASSWORD_EXCEPTION, re.getMessage(), null, 1);
+
+            register(VIEW_PASSWORD_EXCEPTION, null, "error", 1, re.getMessage());
+
             return error(
                     FORM_ERROR.getMessage(),
                     re.getMessage(),
@@ -131,7 +145,7 @@ public class ApiDocProtectorViewer extends ApiDocProtectorLibrary {
 
     public ModelAndView passwordRecovery(boolean userRecoverySuccessful, String currentToken) {
 
-        auditor(VIEW_PASSWORD_RECOVERY_STARTED, null, null, 1);
+        register(VIEW_PASSWORD_RECOVERY_STARTED, null, "info", 1, "");
 
         try {
 
@@ -145,18 +159,22 @@ public class ApiDocProtectorViewer extends ApiDocProtectorLibrary {
                     modelAndView.addObject("apidoc_protector_token", currentToken);
                 }
 
-                auditor(VIEW_PASSWORD_RECOVERY_FINISHED, null, null, 1);
+                register(VIEW_PASSWORD_RECOVERY_FINISHED, null, "info", 1, "");
+
                 return modelAndView;
             }
 
-            auditor(VIEW_PASSWORD_RECOVERY_ERROR, "Occurs an critical error on form", null, 1);
+            register(VIEW_PASSWORD_RECOVERY_ERROR, null, "error", 1, "Occurs an critical error on form");
+
             return error(
                     FORM_VIEW_ERROR.getMessage(),
                     "Occurs an critical error on form password recovery",
                     FORM_VIEW_ERROR.getStatusCode());
 
         } catch (RuntimeException re) {
-            auditor(VIEW_PASSWORD_RECOVERY_EXCEPTION, re.getMessage(), null, 1);
+
+            register(VIEW_PASSWORD_RECOVERY_EXCEPTION, null, "error", 1, re.getMessage());
+
             return error(
                     FORM_ERROR.getMessage(),
                     re.getMessage(),
@@ -166,7 +184,7 @@ public class ApiDocProtectorViewer extends ApiDocProtectorLibrary {
 
     public ModelAndView form(HttpSession session, String sessionId) {
 
-        auditor(VIEW_FORM_STARTED, null, null, 1);
+        register(VIEW_FORM_STARTED, sessionId, "info", 1, "");
 
         Map<String, String> body = new HashMap<>();
         body.put("condition", "--init-login-form");
@@ -188,18 +206,22 @@ public class ApiDocProtectorViewer extends ApiDocProtectorLibrary {
                 modelAndView.addObject("apidoc_protector_token", token);
                 modelAndView.addObject("apidoc_protector_form_password", customUriPassword);
 
-                auditor(VIEW_FORM_FINISHED, null, null, 1);
+                register(VIEW_FORM_FINISHED, sessionId, "info", 1, "");
+
                 return modelAndView;
             }
 
-            auditor(VIEW_FORM_ERROR, "Occurs an critical error on form", null, 1);
+            register(VIEW_FORM_ERROR, sessionId, "error", 1, "Occurs an critical error on form");
+
             return error(
                     FORM_VIEW_ERROR.getMessage(),
                     "Occurs an critical error on form",
                     FORM_VIEW_ERROR.getStatusCode());
 
         } catch (RuntimeException re) {
-            auditor(VIEW_FORM_EXCEPTION, re.getMessage(), null, 1);
+
+            register(VIEW_FORM_EXCEPTION, sessionId, "error", 1, re.getMessage());
+
             return error(
                     FORM_ERROR.getMessage(),
                     re.getMessage(),
@@ -209,10 +231,7 @@ public class ApiDocProtectorViewer extends ApiDocProtectorLibrary {
 
     public ModelAndView index(String token) {
 
-        auditor(VIEW_FORM_STARTED, null, null, 1);
-
-        debugger("INDEX VIEWER START", null, true);
-        debugger("PROTECTOR-TYPE VIEWER IN INDEX", apiDocProtectorType, true);
+        register(VIEW_FORM_STARTED, null, "info", 1, "");
 
         if (apiDocProtectorType.equals("swagger")) {
             ModelAndView modelAndView = new ModelAndView("apidocprotector/swagger-ui/index");
@@ -224,12 +243,14 @@ public class ApiDocProtectorViewer extends ApiDocProtectorLibrary {
             if (!uriLogout.startsWith("/")) uriLogout = "/" + uriLogout;
 
             modelAndView.addObject("apidoc_protector_logout_token", uriLogout+token);
-            auditor(VIEW_INDEX_FINISHED, null, null, 1);
+
+            register(VIEW_INDEX_FINISHED, null, "info", 1, "");
 
             return modelAndView;
         }
 
-        auditor(VIEW_INDEX_ERROR, "Occurs an critical error on form", null, 1);
+        register(VIEW_INDEX_ERROR, null, "error", 1, "Occurs an critical error on form");
+
         return error(
                 INVALID_PROTECTOR.getMessage(),
                 apiDocProtectorType,
@@ -238,8 +259,7 @@ public class ApiDocProtectorViewer extends ApiDocProtectorLibrary {
 
     public ModelAndView refresh(HttpSession session, String sessionId, String flag) {
 
-        debugger("REFRESH VIEWER START", session.getAttribute("ADP-KEYPART-REFRESH"), true);
-        auditor(VIEW_REFRESHED_STARTED, null, null, 1);
+        register(VIEW_REFRESHED_STARTED, sessionId, "info", 1, "");
 
         Map<String, String> body = new HashMap<>();
         body.put("condition", flag);
@@ -248,7 +268,8 @@ public class ApiDocProtectorViewer extends ApiDocProtectorLibrary {
 
             String username = ((ApiDocProtectorDto) session.getAttribute(sessionId)).getUsername();
             response.setHeader("ApiDoc-Protector-Active-User", md5(username));
-            debugger("USERNAME CURRENT IN REFRESH", username, true);
+
+            register(NO_AUDITOR, sessionId, "info", 0, "");
 
             apiDocProtectorSecurity.firewall(session, body, sessionId);
 
@@ -269,11 +290,12 @@ public class ApiDocProtectorViewer extends ApiDocProtectorLibrary {
             }
 
             if (apiDocProtectorType.equals("swagger")) {
-                auditor(VIEW_REFRESHED_FINISHED, null, null, 1);
+                register(VIEW_REFRESHED_FINISHED, sessionId, "info", 1, "");
                 return index(token);
             }
 
-            auditor(VIEW_REFRESHED_ERROR, null, null, 1);
+            register(VIEW_REFRESHED_ERROR, sessionId, "error", 1, "");
+
             return error(
                     INVALID_PROTECTOR.getMessage(),
                     apiDocProtectorType,
@@ -283,7 +305,7 @@ public class ApiDocProtectorViewer extends ApiDocProtectorLibrary {
             String error = re.getMessage();
             if (error == null) error = "Maybe invalid/expired session";
 
-            auditor(VIEW_REFRESHED_EXCEPTION, re.getMessage(), null, 1);
+            register(VIEW_REFRESHED_EXCEPTION, sessionId, "error", 1, re.getMessage());
 
             return error(
                     REFRESH_ERROR.getMessage(),
@@ -294,8 +316,7 @@ public class ApiDocProtectorViewer extends ApiDocProtectorLibrary {
 
     public ModelAndView protector(HttpSession session, String sessionId) {
 
-        debugger("PROTECTOR VIEWER START", session.getAttribute(sessionId), true);
-        auditor(VIEW_PROTECTOR_STARTED, null, sessionId, 1);
+        register(VIEW_PROTECTOR_STARTED, sessionId, "info", 1, "");
 
         Map<String, String> body = new HashMap<>();
         body.put("condition", "--login-success");
@@ -313,13 +334,13 @@ public class ApiDocProtectorViewer extends ApiDocProtectorLibrary {
             String token = ((ApiDocProtectorDto) session.getAttribute(sessionId)).getToken();
             debugger("SECRET CURRENT IN PROTECTOR", token, true);
 
-            auditor(VIEW_PROTECTOR_FINISHED, null, null, 1);
+            register(VIEW_PROTECTOR_FINISHED, sessionId, "info", 1, "");
+
             return index(token);
 
         } catch (RuntimeException re) {
 
-            debugger("[EXCEPTION] PROTECTOR VIEWER", re.getMessage(), true);
-            auditor(VIEW_PROTECTOR_EXCEPTION, re.getMessage(), null, 1);
+            register(VIEW_PROTECTOR_EXCEPTION, sessionId, "error", 1, re.getMessage());
 
             return error(
                     PROTECTOR_ERROR.getMessage(),

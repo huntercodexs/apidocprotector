@@ -31,14 +31,12 @@ public class ApiDocProtectorMailSender extends ApiDocProtectorLibrary {
         message.setSubject(subject);
         message.setText(content);
 
-        debugger("JAVA MAIL SENDER", message, true);
-        auditor(MAILSENDER_STARTED, null, null, 0);
+        register(MAILSENDER_STARTED, null, "info", 0, "");
 
         try {
             javaMailSender.send(message);
         } catch (RuntimeException re) {
-            debugger("[ JAVA MAIL SENDER EXCEPTION ]", re.getMessage(), true);
-            debugger("[ EMAIL ]", message, true);
+            register(NO_AUDITOR, null, "except", 0, re.getMessage());
         }
     }
 
@@ -51,18 +49,13 @@ public class ApiDocProtectorMailSender extends ApiDocProtectorLibrary {
             helper.setText(content, true);
             helper.addAttachment("huntercodexs-name-white.png", new ClassPathResource("/templates/apidocprotector/files/huntercodexs-name-white.png"));
 
-            debugger("[ EMAIL ]", message, true);
-            debugger("[ HELPER ]", helper, true);
-            auditor(MAILSENDER_STARTED, "subject " + subject, null, 0);
+            register(MAILSENDER_STARTED, null, "info", 0, "");
 
             javaMailSender.send(message);
 
         } catch (MessagingException me) {
-            debugger("JAVA MAIL SENDER [ATTACHED] [MESSAGING-EXCEPTION]", me.getMessage(), true);
-            throw new RuntimeException(me.getMessage());
+            register(NO_AUDITOR, null, "except", 0, me.getMessage());
         }
-
-        debugger("JAVA MAIL SENDER [ATTACHED] IS OK", "OK", true);
     }
 
     public String subjectMail(String username) {
@@ -78,7 +71,8 @@ public class ApiDocProtectorMailSender extends ApiDocProtectorLibrary {
         /*Activate (HTML Mail)*/
         String dataHtml = readFile("./src/main/resources/templates/apidocprotector/mail/activate.html");
         String emailTime = String.valueOf(expireTimeEmail) + " minutes";
-        auditor(MAILSENDER_CONTENT, "mail to " + username, null, 2);
+
+        register(MAILSENDER_CONTENT, null, "info", 2, "mail to " + username);
 
         return dataHtml
                 .replace("@{apidoc_protector_username}", username)
@@ -95,7 +89,8 @@ public class ApiDocProtectorMailSender extends ApiDocProtectorLibrary {
         /*Activate (HTML Mail)*/
         String dataHtml = readFile("./src/main/resources/templates/apidocprotector/mail/activate.html");
         String emailTime = String.valueOf(expireTimeEmail) + " minutes";
-        auditor(MAILSENDER_CONTENT, "mail to " + username, null, 2);
+
+        register(MAILSENDER_CONTENT, null, "info", 2, "mail to " + username);
 
         return dataHtml
                 .replace("@{apidoc_protector_username}", username)
@@ -112,7 +107,8 @@ public class ApiDocProtectorMailSender extends ApiDocProtectorLibrary {
         /*Password Recovery (HTML Mail)*/
         String dataHtml = readFile("./src/main/resources/templates/apidocprotector/mail/password.html");
         String emailTime = String.valueOf(expireTimeEmail) + " minutes";
-        auditor(MAILSENDER_CONTENT, "mail to " + user.getUsername(), null, 2);
+
+        register(MAILSENDER_CONTENT, null, "info", 2, "mail to " + user.getUsername());
 
         return dataHtml
                 .replace("@{apidoc_protector_username}", user.getName())
@@ -128,7 +124,8 @@ public class ApiDocProtectorMailSender extends ApiDocProtectorLibrary {
 
         /*Password Recovery (HTML Mail)*/
         String dataHtml = readFile("./src/main/resources/templates/apidocprotector/mail/password-recovery.html");
-        auditor(MAILSENDER_CONTENT, "mail to " + user.getUsername(), null, 2);
+
+        register(MAILSENDER_CONTENT, null, "info", 2, "mail to " + user.getUsername());
 
         return dataHtml
                 .replace("@{apidoc_protector_username}", user.getName())
@@ -143,7 +140,8 @@ public class ApiDocProtectorMailSender extends ApiDocProtectorLibrary {
 
         /*Welcome (HTML Mail)*/
         String dataHtml = readFile("./src/main/resources/templates/apidocprotector/mail/welcome.html");
-        auditor(MAILSENDER_CONTENT, "mail to " + username, null, 2);
+
+        register(MAILSENDER_CONTENT, null, "info", 2, "mail to " + username);
 
         return dataHtml
                 .replace("@{apidoc_protector_username}", username)

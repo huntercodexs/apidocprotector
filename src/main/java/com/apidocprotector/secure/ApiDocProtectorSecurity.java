@@ -7,20 +7,19 @@ import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpSession;
 import java.util.Map;
 
-import static com.apidocprotector.enumerator.ApiDocProtectorRegisterEnum.*;
 import static com.apidocprotector.enumerator.ApiDocProtectorLibraryEnum.*;
+import static com.apidocprotector.enumerator.ApiDocProtectorRegisterEnum.*;
 
 @Service
 public class ApiDocProtectorSecurity extends ApiDocProtectorLibrary {
 
     public void firewall(HttpSession session, Map<String, String> body, String sessionId) {
 
-        debugger("FIREWALL IS RUNNING", "INFO", true);
-        debugger("FIREWALL IS RUNNING", response.getHeader("ApiDoc-Protector-Active-User"), true);
-        auditor(SECURITY_FIREWALL_STARTED, null, sessionId, 2);
+        register(SECURITY_FIREWALL_STARTED, sessionId, "info", 2, "FIREWALL IS RUNNING");
 
         ApiDocProtectorDto sessionTransfer = (ApiDocProtectorDto) session.getAttribute(sessionId);
-        debugger("SESSION TRANSFER IN FIREWALL", sessionTransfer, true);
+
+        register(NO_AUDITOR, sessionId, "info", 2, "SESSION TRANSFER IN FIREWALL: " + sessionTransfer);
 
         String secretForm;
 
@@ -272,7 +271,7 @@ public class ApiDocProtectorSecurity extends ApiDocProtectorLibrary {
         debugger("FIREWALL PASSED", "INFO", true);
         debugger("JSESSIONID IS: "+session.getId(), "INFO", true);
         debugger("TOKEN IS: "+sessionTransfer.getToken(), "INFO", true);
-        auditor(SECURITY_FIREWALL_FINISHED, null, sessionId, 2);
+        register(SECURITY_FIREWALL_FINISHED, sessionId, "info", 2, "FIREWALL PASSED: " + sessionTransfer.getToken());
     }
 
     public boolean burn(HttpSession session, String tokenCrypt, String sessionId) {
@@ -285,29 +284,30 @@ public class ApiDocProtectorSecurity extends ApiDocProtectorLibrary {
                 !session.getAttribute("ADP-KEYPART").equals(sessionTransfer.getKeypart())
         ) {
             doAuthorized(session, sessionId, false);
-            auditor(SECURITY_BURN_FINISHED_TRUE, null, sessionId, 2);
+            register(SECURITY_BURN_FINISHED_TRUE, sessionId, "error", 2, "");
             return true;
         }
 
-        auditor(SECURITY_BURN_FINISHED_FALSE, null, sessionId, 2);
+        register(SECURITY_BURN_FINISHED_FALSE, sessionId, "info", 2, "");
 
         return false;
     }
 
     public boolean shield(HttpSession session) {
-        auditor(SECURITY_SHIELD_STARTED, null, null, 2);
+        register(SECURITY_SHIELD_STARTED, null, "info", 2, "");
+
         try {
             if (session.getAttribute("ADP-KEYPART").toString().equals("")) {
-                debugger("MISSING ADP-KEYPART SESSION IN SHIELD", null, true);
+                register(NO_AUDITOR, null, "info", 2, "MISSING ADP-KEYPART SESSION IN SHIELD");
                 return false;
             }
             if (session.getAttribute("ADP-SECRET").toString().equals("")) {
-                debugger("MISSING ADP-SECRET SESSION IN SHIELD", null, true);
+                register(NO_AUDITOR, null, "info", 2, "MISSING ADP-SECRET SESSION IN SHIELD");
                 return false;
             }
             return true;
         } catch (RuntimeException re) {
-            debugger("EXCEPTION IN SHIELD", re.getMessage(), true);
+            register(NO_AUDITOR, null, "info", 2, "EXCEPTION IN SHIELD: " + re.getMessage());
             return false;
         }
     }
