@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import static com.apidocprotector.enumerator.ApiDocProtectorRegisterEnum.*;
+
 @Hidden
 @Controller
 @CrossOrigin(origins = "*")
@@ -21,11 +23,12 @@ public class ApiDocProtectorActivator extends ApiDocProtectorLibrary {
 	@ResponseBody
 	public String activator(@PathVariable("token") String token) {
 
-		logTerm("ACTIVATOR IS START", null, true);
+		register(ACTIVATOR_STARTED, null, "info", 2, "");
 
 		String tokenCrypt = dataEncrypt(token);
 		ApiDocProtectorEntity result = findAccountByTokenAndActive(tokenCrypt, "no");
-		logTerm("RESULT TOKEN", result, true);
+
+		register(NO_AUDITOR, null, "info", 2, "RESULT TOKEN " + result.getName());
 
 		if (result == null) {
 
@@ -33,28 +36,32 @@ public class ApiDocProtectorActivator extends ApiDocProtectorLibrary {
 			String dataHtml = readFile("./src/main/resources/templates/apidocprotector/generic.html");
 
 			if (alreadyActivated(token)) {
-				logTerm("ACCOUNT ALREADY ACTIVATED IN ACTIVATOR", token, true);
 
+				register(ACTIVATOR_ACCOUNT_ALREADY_ACTIVATED, null, "info", 2, "Account token: " + token);
 				response.setStatus(HttpStatus.CONFLICT.value());
+
 				return dataHtml
 						.replace("@{apidoc_protector_title}", "Activation Failure")
 						.replace("@{apidoc_protector_content}", "The account has been already activated");
 			}
 
-			logTerm("ACCOUNT NOT FOUND IN ACTIVATOR", null, true);
+			register(ACTIVATOR_ACCOUNT_NOT_FOUND,  null, "info", 2, "Account not found in activator: " + token);
 
 			response.setStatus(HttpStatus.NOT_FOUND.value());
+
 			return dataHtml
 					.replace("@{apidoc_protector_title}", "Activation Failure")
 					.replace("@{apidoc_protector_content}", "The account was not found");
 		}
 
 		if (activateExpired(token)) {
-			logTerm("ACCOUNT HAS BEEN EXPIRED TO ACTIVE IN ACTIVATOR", token, true);
+
+			register(ACTIVATOR_EXPIRED_ACCOUNT, null, "info", 2, "Account token has been expired: " + token);
 
 			/*Generic (HTML Page)*/
 			String dataHtml = readFile("./src/main/resources/templates/apidocprotector/generic.html");
 			response.setStatus(HttpStatus.NOT_ACCEPTABLE.value());
+
 			return dataHtml
 					.replace("@{apidoc_protector_title}", "Activation Failure")
 					.replace("@{apidoc_protector_content}", "" +
@@ -69,14 +76,16 @@ public class ApiDocProtectorActivator extends ApiDocProtectorLibrary {
 		String emailTo = result.getEmail();
 		String subject = apiDocProtectorMailSender.subjectMail(result.getUsername());
 		String content = apiDocProtectorMailSender.contentMailActivatedUser(result.getName(), token);
-
 		apiDocProtectorMailSender.sendMailAttached(emailTo, subject, content);
 
-		logTerm("USER TOKEN HAS BEEN ACTIVATED IN ACTIVATOR", result, true);
+		register(ACTIVATOR_MAIL_SUCCESSFUL, null, "info", 2, "User activated ok: " + result.getName());
 
 		/*Activated (HTML Page)*/
 		String dataHtml = readFile("./src/main/resources/templates/apidocprotector/activated.html");
 		response.setStatus(HttpStatus.OK.value());
+
+		register(ACTIVATOR_FINISHED, null, "info", 2, "");
+
 		return dataHtml.replace("@{apidoc_protector_username}", result.getName());
 	}
 

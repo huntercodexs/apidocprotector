@@ -30,8 +30,11 @@ public abstract class ApiDocProtectorDataLibrary {
         return dateTime.format(formatter);
     }
 
-    public String guide() {
-        return UUID.randomUUID().toString();
+    public String guide(String guide) {
+        if (guide == null) {
+            return UUID.randomUUID().toString();
+        }
+        return guide;
     }
 
     public String md5(String data) {

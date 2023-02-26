@@ -27,7 +27,19 @@ public class ApiDocProtectorAuditEntity {
     String token;
 
     @Column
+    String tracker;
+
+    @Column
     String detail;
+
+    @Column
+    String message;
+
+    @Column
+    int code;
+
+    @Column
+    String ip;
 
     @Column
     String createdAt;

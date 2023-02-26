@@ -86,8 +86,8 @@ Java HotSpot(TM) 64-Bit Server VM (build 25.212-b10, mixed mode)
 
 # Workflow Code Details
 
-To clarify and explain with more details about the workflow code, lets started a series of diagrams and the respective 
-text about it. In each diagram you can see the initial request until the intecept by APIDOC-PROTECTOR and finally 
+To clarify and explain with more details about the workflow code, lets started a series of diagrams and the respective
+text about it. In each diagram you can see the initial request until the intecept by APIDOC-PROTECTOR and finally
 arrive in any place previously configured in the application.properties file.
 
 - Generator
@@ -106,8 +106,8 @@ to Account Activation after the correct generate Account in the Account Generato
 
 - Initializer
 
-The initializer process is used always the user need to access the documentation that is protected by APIDOC-PROTECTOR. 
-This process should be used as explained in this session, e.g., an URL + Token sended by email to right account access. 
+The initializer process is used always the user need to access the documentation that is protected by APIDOC-PROTECTOR.
+This process should be used as explained in this session, e.g., an URL + Token sended by email to right account access.
 
 ![img.png](./midias/apidocprotector-diagram-initializer.png)
 
@@ -223,7 +223,7 @@ Set up the pom.xml with the dependencies below
 
 </code>
 
-In this release 1.0.0, the unique way to use the APIDOC-PROTECTOR it that showed below, please pay attention when you 
+In this release 1.0.0, the unique way to use the APIDOC-PROTECTOR it that showed below, please pay attention when you
 implement this solution in your application to avoid mistakes or forgot anything.
 
 Let's start...
@@ -298,10 +298,18 @@ apidocprotector.data.crypt.type=md5
 apidocprotector.url.show=true
 #time to expire session (in minutes): 0,1,3,5,6,7, .... 15,60,148, etc...
 apidocprotector.session.expire-time=1
-#time to expire email to account activation (in minutes): 20,40,60, etc...
+#time to expire email to account activation (in minutes):0(not expires),1,2...20,40,60...
 apidocprotector.email.expire-time=1
 #custom server domain
 apidocprotector.custom.server-domain=http://localhost:31303
+#true, false
+apidocprotector.audit.enabled=true
+#0(easy:short-log:default),1(middle:commom-log),2(hard:full-log)
+apidocprotector.audit.level=2
+#true, false(default)
+apidocprotector.logging.enabled=true
+#true, false(default)
+apidocprotector.debugger.enabled=true
 #custom uri
 apidocprotector.custom.uri-login=/doc-protect/login
 apidocprotector.custom.uri-logout=/doc-protect/logout
@@ -337,88 +345,88 @@ spring.mail.properties.mail.smtp.socketFactory.class=javax.net.ssl.SSLSocketFact
 > NOTE: you can personlize the all options/features to get more confidente and security in the application implementation,
 > main in the custome.uri path
 
-There is a many settings tha can be made in the application.properties file, but we can talk about the options on  
+There is a many settings tha can be made in the application.properties file, but we can talk about the options on
 
 <pre>
 ## APIDOC PROTECTOR
 ## APIDOC PROTECTOR (JAVA MAIL SENDER)
 </pre>
 
-- APIDOC PROTECTOR OPTIONS 
-  - apidocprotector.enabled: 
-    - Use true or false to enabled/disable the APIDOC PROTECTOR
-  - apidocprotector.server-name: 
-    - Define where the application is running and will be used by Firewall in the APIDOC PROTECTOR
-  - apidocprotector.type: 
-    - Define wich kind of OPENAPI will be used, swagger, abode-aem or authentiq
-  - apidocprotector.data.crypt.type: 
-    - Set the kind of algorithm to data cipher
-  - apidocprotector.url.show: 
-    - Use true or false to mean if the doc-path url should be view
-  - apidocprotector.session.expire-time: 
-    - Define the time to session expire (in minutes), if value is 0 then expired time will be disabled
-  - apidocprotector.email.expire-time: 
-    - Define the time to email expire (in minutes), if value is 0 then expired time will be disabled
-  - apidocprotector.custom.server-domain: 
-    - Define where the APIDOC PROTECTOR is running 
-  - apidocprotector.custom.uri-login: 
-    - URI to redirect login form, default is /doc-protect/login 
-  - apidocprotector.custom.uri-logout: 
-    - URI to redirect user after logout, default is /doc-protect/logout 
-  - apidocprotector.custom.uri-form: 
-    - URI to redirect user to make a login, default is /doc-protect/protector/form 
-  - apidocprotector.custom.uri-user-generator: 
-    - URI defined to generator new account, default is /doc-protect/generator/user 
-  - apidocprotector.custom.uri-user-recovery: 
-    - URI that refer to recovery functionaly, default is /doc-protect/recovery/user 
-  - apidocprotector.custom.uri-user-password: 
-    - URI to user define a new password, default is /doc-protect/password/user 
-  - apidocprotector.custom.uri-user-password-recovery: 
-    - URI to user recovery the forgot password, default is /doc-protect/password/recovery/user 
-  - apidocprotector.custom.uri-generator: 
-    - URI to generate a form generator and generate an new user, default is /doc-protect/generator 
-  - apidocprotector.custom.uri-account-active: 
-    - URI to active account when it is required by email, default is /doc-protect/account/active 
-  - apidocprotector.custom.uri-recovery: 
-    - URI to account recovery, default is /doc-protect/recovery 
-  - apidocprotector.custom.uri-password: 
-    - URI to password, default is /doc-protect/password 
-  - apidocprotector.custom.uri-password-recovery: 
-    - URI to password recovery, default is /doc-protect/password/recovery
+- APIDOC PROTECTOR OPTIONS
+    - apidocprotector.enabled:
+        - Use true or false to enabled/disable the APIDOC PROTECTOR
+    - apidocprotector.server-name:
+        - Define where the application is running and will be used by Firewall in the APIDOC PROTECTOR
+    - apidocprotector.type:
+        - Define wich kind of OPENAPI will be used, swagger, abode-aem or authentiq
+    - apidocprotector.data.crypt.type:
+        - Set the kind of algorithm to data cipher
+    - apidocprotector.url.show:
+        - Use true or false to mean if the doc-path url should be view
+    - apidocprotector.session.expire-time:
+        - Define the time to session expire (in minutes), if value is 0 then expired time will be disabled
+    - apidocprotector.email.expire-time:
+        - Define the time to email expire (in minutes), if value is 0 then expired time will be disabled
+    - apidocprotector.custom.server-domain:
+        - Define where the APIDOC PROTECTOR is running
+    - apidocprotector.custom.uri-login:
+        - URI to redirect login form, default is /doc-protect/login
+    - apidocprotector.custom.uri-logout:
+        - URI to redirect user after logout, default is /doc-protect/logout
+    - apidocprotector.custom.uri-form:
+        - URI to redirect user to make a login, default is /doc-protect/protector/form
+    - apidocprotector.custom.uri-user-generator:
+        - URI defined to generator new account, default is /doc-protect/generator/user
+    - apidocprotector.custom.uri-user-recovery:
+        - URI that refer to recovery functionaly, default is /doc-protect/recovery/user
+    - apidocprotector.custom.uri-user-password:
+        - URI to user define a new password, default is /doc-protect/password/user
+    - apidocprotector.custom.uri-user-password-recovery:
+        - URI to user recovery the forgot password, default is /doc-protect/password/recovery/user
+    - apidocprotector.custom.uri-generator:
+        - URI to generate a form generator and generate an new user, default is /doc-protect/generator
+    - apidocprotector.custom.uri-account-active:
+        - URI to active account when it is required by email, default is /doc-protect/account/active
+    - apidocprotector.custom.uri-recovery:
+        - URI to account recovery, default is /doc-protect/recovery
+    - apidocprotector.custom.uri-password:
+        - URI to password, default is /doc-protect/password
+    - apidocprotector.custom.uri-password-recovery:
+        - URI to password recovery, default is /doc-protect/password/recovery
 
 
 - APIDOC PROTECTOR (JAVA MAIL SENDER)
-  - spring.mail.host:
-    - Set the hostname or IP Address to host mail server, example: 192.168.0.174 
-  - spring.mail.port:
-    - Set the port to host mail server, example: 31025 
-  - spring.mail.username:
-    - Set the origin mail to send mail, example: huntercodexs@mail.com 
-  - spring.mail.password:
-    - Set the password to mail sender if required, example: @gmail.com
-  - spring.mail.properties.mail.smtp.auth:
-    - Set if mail server required Authentication, use true or false 
-  - spring.mail.properties.mail.smtp.starttls.enable:
-    - Set if mail server require TLS secure layer, use true or false 
-  - spring.mail.properties.mail.smtp.connectiontimeout:
-    - Set time to connection timeout, example: 5000 
-  - spring.mail.properties.mail.smtp.timeout:
-    - Set time to send mail timeout, example: 5000 
-  - spring.mail.properties.mail.smtp.writetimeout:
-    - Set time to write mail timeout, example 5000 
-  - spring.mail.properties.mail.smtp.socketFactory.port:
-    - Set the port to communication between client and server mail, example: 31025 
-  - spring.mail.properties.mail.smtp.socketFactory.class:
-    - Set the kind of SSL socket, use javax.net.ssl.SSLSocketFactory if you don't know
+    - spring.mail.host:
+        - Set the hostname or IP Address to host mail server, example: 192.168.0.174
+    - spring.mail.port:
+        - Set the port to host mail server, example: 31025
+    - spring.mail.username:
+        - Set the origin mail to send mail, example: huntercodexs@mail.com
+    - spring.mail.password:
+        - Set the password to mail sender if required, example: @gmail.com
+    - spring.mail.properties.mail.smtp.auth:
+        - Set if mail server required Authentication, use true or false
+    - spring.mail.properties.mail.smtp.starttls.enable:
+        - Set if mail server require TLS secure layer, use true or false
+    - spring.mail.properties.mail.smtp.connectiontimeout:
+        - Set time to connection timeout, example: 5000
+    - spring.mail.properties.mail.smtp.timeout:
+        - Set time to send mail timeout, example: 5000
+    - spring.mail.properties.mail.smtp.writetimeout:
+        - Set time to write mail timeout, example 5000
+    - spring.mail.properties.mail.smtp.socketFactory.port:
+        - Set the port to communication between client and server mail, example: 31025
+    - spring.mail.properties.mail.smtp.socketFactory.class:
+        - Set the kind of SSL socket, use javax.net.ssl.SSLSocketFactory if you don't know
 
 > Tip: Use a mail server test as the MailHog (see more in docker-series ion GitHub huntercodexs account)
 
 # Database Details
 
-APIDOC PROTECTOR use the MySQL by JPA to manager access and data audit in the project, so will be checkout and warranty that 
-this dependecies are been installed in the project and environment. Once of installed the project can be running without 
-problems. One table called apidoc_protector will be created in the database, where the user data will be record and 
-storaged in that table, and other table called apidoc_protector_audit will be created to make an audit of all process that 
+APIDOC PROTECTOR use the MySQL by JPA to manager access and data audit in the project, so will be checkout and warranty that
+this dependecies are been installed in the project and environment. Once of installed the project can be running without
+problems. One table called apidoc_protector will be created in the database, where the user data will be record and
+storaged in that table, and other table called apidoc_protector_audit will be created to make an audit of all process that
 occurs in the application.
 
 The table apidoc_protector have the follow fields:
@@ -443,56 +451,79 @@ Let me explain the more importants fields in this context.
 
 ***sessionCreatedAt:*** This is a date data, used to contol the user session (timeout or session expired)
 
+> APIDOC PROTECTOR AUDITOR
+
+The table apidoc_protector_audit have the follow fields:
+
+<pre>
+id;username;level;token;tracker;detail;message;ip;createdAt;
+</pre>
+
+About these fields above we can say wich the most importants:
+
+***tracker:*** Tracker code to track the request information
+
+***detail:*** Details about the tracker code
+
+***message:*** Message refer the tracker code
+
 > To more details, see the source code from APIDOC PROTECTOR
 
 # Account Creation
 
-- Get the URL to User Generator
-  - http://localhost:31303/doc-protect/generator
-- Access email to activate account
-  - Click on the link (Activate Account)
-- After clicking on the link to activate the account
-  - Check welcome email to APIDOC PROTECTOR
-  - Click on the link (click here) to access the account
-- Access the account (via link sent by email)
+> NOTE: Use Account Recovery if account was expired
+
+- Get the URL to User Generator: http://localhost:31303/doc-protect/generator
+- Fill the form and click in "Sign Up"
+- Check your email address to account activate
+- Click on the link (Activate Account)
+- Check your email and find the email "Welcome to APIDOC PROTECTOR"
+- Click on the link "click here" to access the account
+  - Save this link or email to future access
+- You will be directioned to login url, as example:
   - http://localhost:31303/doc-protect/protector/form#x-padlock
+- Enter with your username and password and click in "Sign"
+  - You should be viewed the Swagger-UI page protected by APIDOC PROTECTOR
+- There's a button on right top in the screen (one blue arrow) that can be used when you need make a logout in the APIDOC PROTECTOR
 
 # Account Recovery
 
-- Access form to generate new user
-  - http://localhost:31303/doc-protect/generator
-- Click on Account Recovery
-  - http://localhost:31303/doc-protect/recovery/form#x-padlock
-  - Enter a valid email (which was used for registration)
-  - Check email
-  - Click on the Activate Account link
-  - A new email will be sent to access the account with a new token
-  - Inform username and password
+- Get the URL to User Generator: http://localhost:31303/doc-protect/generator
+- Click in "Account Recovery" hiperlink: http://localhost:31303/doc-protect/recovery/form#x-padlock
+- Enter with a valid email (the same that was used for registration) and click in "Send" button
+- Now, check your email and find out if you have been received the email about the Account Recovery
+- Click in the "Activate Account" hiperlink
+- One new page will be open to mean that your account has been activated
+- Next, a new email will be sent to access the account with a new token
+  - More one time don't forgot of save this email ou link to future access
+- Enter with your username and password and click in "Sign"
+    - You should be viewed the Swagger-UI page protected by APIDOC PROTECTOR
+- There's a button on right top in the screen (one blue arrow) that can be used when you need make a logout in the APIDOC PROTECTOR
 
 # Login
 
 > NOTE: It is not possible to login without going through the login form
 
 - To access the login form, you need to know the access link with the valid token, this link may be
-  saved in your email, or be recovered in the Account Recovery process, example:
-- http://localhost:31303/doc-protect/login/287891be-aa00-4422-88cd-b52ae7645d0b
+  saved in your email, or be recovered in the "Account Recovery" process. 
+- An example to login url can be: http://localhost:31303/doc-protect/login/287891be-aa00-4422-88cd-b52ae7645d0b
+- Once you get an logn page, enter with your username and password and click in "Sign"
+    - You should be viewed the Swagger-UI page protected by APIDOC PROTECTOR
+- There's a button on right top in the screen (one blue arrow) that can be used when you need make a logout in the APIDOC PROTECTOR
 
 # Password Recovery
 
-- On the login screen click on "change password"
-  - http://localhost:31303/doc-protect/password
-  - A screen will open asking for the email address
-    - Enter the email to start the password recovery process
-    - Check your email to set a new password
-    - Enter your new password on the password recovery screen
-    - A new link will be generated for access, example:
-      - http://localhost:31303/doc-protect/login/6a27a71d-2d4c-40e0-bcd6-d782db72b9a8
-    - Click on the link and login with the new password
+- On the login screen click on "change password": http://localhost:31303/doc-protect/password
+- One screen will be open to input your email address
+- Enter the email to start the "Password Recovery" process
+- Check your email to set a new password click in "Password Recovery" hiperlink
+- Enter with your new password on the "Password Recovery" screen
+- A new link will be generated for access, example: http://localhost:31303/doc-protect/login/6a27a71d-2d4c-40e0-bcd6-d782db72b9a8
+- Click on the link and login with the new password
 
 #  Account Expired
 
-> There is time to access the account for the first time after a user generated by the account generator form,
-> therefore it is necessary to check carefully what the email says about the time for account activation
+> There's a time to access the account for the first time after a user generated by the account generator form, therefore it is necessary to check carefully what the email says about the time for account activation
 
 # Invalid Account
 
@@ -500,12 +531,11 @@ If an account is invalid or not found, an error or exception will be thrown on t
 
 # Session Expired
 
-When the session expires, the user is directed to the login screen.
+When the session expires, the user is directed to the login screen or one specific error page
 
 # Intercepted flow
 
-All endpoints that will be intercepted can be seen in the application.properties configuration file, and the others
-endpoints to be intercepted can be seen in the file ApiDocProtectorSentinel.java and ApiDocProtectorSwaggerRouter.java
+All endpoints that will be intercepted can be seen in the application.properties configuration file, and the others endpoints to be intercepted can be seen in the file ApiDocProtectorSentinel.java and ApiDocProtectorSwaggerRouter.java. See more above in the session "APIDOC PROTECTOR OPTIONS".
 
 # Advanced
 
@@ -551,3 +581,33 @@ project as showed below...
     }
 
 </code>
+
+# Logger
+
+Application Properties
+
+<pre>
+#true, false(default)
+apidocprotector.logging.enabled=true
+</pre>
+
+# Debbuger
+
+Application Properties
+
+<pre>
+#true, false(default)
+apidocprotector.debugger.enabled=true
+</pre>
+
+# Auditor
+
+Application Properties
+
+<pre>
+#true, false
+apidocprotector.audit.enabled=true
+#0(easy:short-log:default),1(middle:commom-log),2(hard:full-log)
+apidocprotector.audit.level=2
+</pre>
+
