@@ -28,7 +28,7 @@ public class ApiDocProtectorActivator extends ApiDocProtectorLibrary {
 		String tokenCrypt = dataEncrypt(token);
 		ApiDocProtectorEntity result = findAccountByTokenAndActive(tokenCrypt, "no");
 
-		register(NO_AUDITOR, null, "info", 2, "RESULT TOKEN " + result);
+		register(NO_AUDITOR, null, "info", 2, "RESULT TOKEN " + result.getName());
 
 		if (result == null) {
 
@@ -78,7 +78,7 @@ public class ApiDocProtectorActivator extends ApiDocProtectorLibrary {
 		String content = apiDocProtectorMailSender.contentMailActivatedUser(result.getName(), token);
 		apiDocProtectorMailSender.sendMailAttached(emailTo, subject, content);
 
-		register(ACTIVATOR_MAIL_SUCCESSFUL, null, "info", 2, "User activated ok: " + result);
+		register(ACTIVATOR_MAIL_SUCCESSFUL, null, "info", 2, "User activated ok: " + result.getName());
 
 		/*Activated (HTML Page)*/
 		String dataHtml = readFile("./src/main/resources/templates/apidocprotector/activated.html");

@@ -96,7 +96,7 @@ public class ApiDocProtectorSwaggerRouter extends ApiDocProtectorLibrary {
 		String sessionId = sessionData.getSessionVal();
 		ApiDocProtectorDto sessionTransfer = (ApiDocProtectorDto) session.getAttribute(sessionId);
 
-		register(SWAGGER_ROUTER_SESSION_FOUNDED, sessionId, "info", 2, "Session Transfer: " + sessionTransfer);
+		register(SWAGGER_ROUTER_SESSION_FOUNDED, sessionId, "info", 2, "Session Transfer: " + sessionTransfer.getUsername());
 
 		if (loginChecker(username, password, token)) {
 

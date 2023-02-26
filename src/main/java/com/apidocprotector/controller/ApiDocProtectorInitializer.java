@@ -29,12 +29,12 @@ public class ApiDocProtectorInitializer extends ApiDocProtectorLibrary {
 		String tokenCrypt = dataEncrypt(token);
 		ApiDocProtectorEntity result = findAccountByTokenAndActive(tokenCrypt, "yes");
 
-		register(INITIALIZER_TOKEN_OK, null, "info", 2, "Result token: " + result);
+		register(INITIALIZER_TOKEN_OK, null, "info", 2, "Result token: " + result.getName());
 
 		if (result != null && result.getToken().equals(tokenCrypt)) {
 
 			this.transfer = initEnv(token);
-			register(INITIALIZER_ENVIRONMENT_OK, null, "info", 2, "Init Transfer: " + this.transfer);
+			register(INITIALIZER_ENVIRONMENT_OK, null, "info", 2, "Init Transfer: " + this.transfer.getUsername());
 
 			sessionPrepare(session, this.transfer, result);
 			register(INITIALIZER_SESSION_PREPARE_OK, null, "info", 2, "Session configured: " + session);

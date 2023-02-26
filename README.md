@@ -298,10 +298,18 @@ apidocprotector.data.crypt.type=md5
 apidocprotector.url.show=true
 #time to expire session (in minutes): 0,1,3,5,6,7, .... 15,60,148, etc...
 apidocprotector.session.expire-time=1
-#time to expire email to account activation (in minutes): 20,40,60, etc...
+#time to expire email to account activation (in minutes):0(not expires),1,2...20,40,60...
 apidocprotector.email.expire-time=1
 #custom server domain
 apidocprotector.custom.server-domain=http://localhost:31303
+#true, false
+apidocprotector.audit.enabled=true
+#0(easy:short-log:default),1(middle:commom-log),2(hard:full-log)
+apidocprotector.audit.level=2
+#true, false(default)
+apidocprotector.logging.enabled=true
+#true, false(default)
+apidocprotector.debugger.enabled=true
 #custom uri
 apidocprotector.custom.uri-login=/doc-protect/login
 apidocprotector.custom.uri-logout=/doc-protect/logout
@@ -576,12 +584,30 @@ project as showed below...
 
 # Logger
 
+Application Properties
+
+<pre>
+#true, false(default)
+apidocprotector.logging.enabled=true
+</pre>
+
 # Debbuger
+
+Application Properties
+
+<pre>
+#true, false(default)
+apidocprotector.debugger.enabled=true
+</pre>
 
 # Auditor
 
-- Audit Level
+Application Properties
 
-0 = 20 records +/-
-1 = 100 records +/-
-2 = 260 records +/- 
+<pre>
+#true, false
+apidocprotector.audit.enabled=true
+#0(easy:short-log:default),1(middle:commom-log),2(hard:full-log)
+apidocprotector.audit.level=2
+</pre>
+

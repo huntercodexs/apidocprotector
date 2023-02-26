@@ -183,7 +183,7 @@ public abstract class ApiDocProtectorLibrary extends ApiDocProtectorDataLibrary 
         /*This is a main session (security)*/
         session.setAttribute(sessionVal, transfer);
 
-        register(LIBRARY_SESSION_PREPARED_OK, null, "info", 2, "Session Created: " + session.getAttribute(sessionVal));
+        register(LIBRARY_SESSION_PREPARED_OK, null, "info", 2, "Session Created: " + ((ApiDocProtectorDto) session.getAttribute(sessionVal)).getUsername());
     }
 
     public void sessionRenew(ApiDocProtectorEntity result, LocalDateTime dateTimeNow) {
@@ -652,6 +652,9 @@ public abstract class ApiDocProtectorLibrary extends ApiDocProtectorDataLibrary 
             apiDocProtectorAuditEntity.setCode(registerEnum.getCode());
             apiDocProtectorAuditEntity.setIp(auditDto.getIp());
             apiDocProtectorAuditEntity.setCreatedAt(currentDate);
+
+            System.out.println("MESSAGE TESTING");
+            System.out.println(auditDto.getMessage());
 
             debugger("ApiDocProtectorAuditEntity IS", apiDocProtectorAuditEntity, true);
 
