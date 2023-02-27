@@ -240,19 +240,19 @@ user@host$: cd /home/user/sample-project/src/main/java/com
 - Get the project files from GitHub inside the current path
 
 <pre>
-user@host$: git clone https://github.com/huntercodexs/apidoc-protector.git
+user@host$: git clone https://github.com/huntercodexs/apidocprotector.git
 </pre>
 
 - Get a current release: 1.0.1
 
 <pre>
+user@host$: cd apidocprotector/
 user@host$: git checkout release_1.0.1
 </pre>
 
 - Remove unnecessary files
 
 <pre>
-user@host$: cd apidocprotector
 user@host$: rm -rf .git .gitignore
 user@host$: cd ..
 </pre>
