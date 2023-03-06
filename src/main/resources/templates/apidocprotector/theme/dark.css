@@ -46,7 +46,8 @@ body {
     font-size: 74px;
 }
 #body_generator input[type=text],
-#body_generator input[type=password] {
+#body_generator input[type=password],
+#body_generator #role {
     width: 100%;
     color: #888;
     font-size: 18px;
@@ -110,10 +111,6 @@ body {
 #body_generator #p_account_recovery a {
     color: #ff8300 !important;
 }
-
-#body_generator #role_field_name {}
-
-#body_generator #role_field_value {}
 
 /*ACTIVATED, GENERIC*/
 
@@ -511,12 +508,24 @@ body {
 
 #body_error #error-box {
     color: #F1F1F1;
-    width: 450px;
-    height: 300px;
+    width: 96% !important;
+    height: auto;
     margin: 100px auto;
     text-align: center;
     font-family: arial;
 }
 #body_error strong {
     color: #F80000;
+}
+#body_error h4 {
+    margin: 30px;
+}
+
+#body_error #div_error_message {
+    width: 90%;
+    margin: 0px auto;
+    padding: 10px;
+    border: solid #880000 1px;
+    border-radius: 5px;
+    background: #622C3D;
 }

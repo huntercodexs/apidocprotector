@@ -15,7 +15,7 @@ public class ApiDocProtectorErrorPath extends ApiDocProtectorLibrary implements 
     @RequestMapping(path = "/error")
     public String getErrorPath() {
         register(NO_MAPPING_FOUND, null, "warn", 0, "No mapping found");
-        return apiDocProtectorErrorRedirect.forwardSentinelError("No Mapping Found");
+        return apiDocProtectorErrorRedirect.forwardSentinelError(base64Encode("No Mapping Found"));
     }
 }
 

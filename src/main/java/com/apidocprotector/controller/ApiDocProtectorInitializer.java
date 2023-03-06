@@ -29,9 +29,19 @@ public class ApiDocProtectorInitializer extends ApiDocProtectorLibrary {
 		String tokenCrypt = dataEncrypt(token);
 		ApiDocProtectorEntity result = findAccountByTokenAndActive(tokenCrypt, "yes");
 
-		register(INITIALIZER_TOKEN_OK, null, "info", 2, "Result token: " + result.getName());
+		register(INITIALIZER_TOKEN_OK, null, "info", 2, "token: " + token);
 
-		if (result != null && result.getToken().equals(tokenCrypt)) {
+		if (findAccountByTokenAndActive(tokenCrypt, "no") != null) {
+			register(INITIALIZER_ERROR, null, "info", 2, "User token is not active");
+			return apiDocProtectorErrorRedirect.redirectInitializerError(base64Encode("User token is not active"));
+		}
+
+		if (result == null) {
+			register(INITIALIZER_ERROR, null, "info", 2, "Invalid token");
+			return apiDocProtectorErrorRedirect.redirectInitializerError(base64Encode("Invalid Token " + token));
+		}
+
+		if (result.getToken() != null && result.getToken().equals(tokenCrypt)) {
 
 			this.transfer = initEnv(token);
 			register(INITIALIZER_ENVIRONMENT_OK, null, "info", 2, "Init Transfer: " + this.transfer.getUsername());
@@ -42,14 +52,9 @@ public class ApiDocProtectorInitializer extends ApiDocProtectorLibrary {
 			return apiDocProtectorRedirect.forwardToGlass();
 		}
 
-		String error = token;
-		if (findAccountByTokenAndActive(tokenCrypt, "no") != null) {
-			error = "user_is_not_active";
-		}
+		register(INITIALIZER_ERROR, null, "info", 2, "Unknown Error");
 
-		register(INITIALIZER_ERROR, null, "info", 2, "Initializer Error");
-
-		return apiDocProtectorErrorRedirect.redirectInitializerError(error);
+		return apiDocProtectorErrorRedirect.redirectInitializerError(base64Encode("Unknown Error"));
 	}
 
 	@Operation(hidden = true)
@@ -64,7 +69,7 @@ public class ApiDocProtectorInitializer extends ApiDocProtectorLibrary {
 
 			register(INITIALIZER_EXCEPTION, null, "except", 2, "Initializer glass: " + re.getMessage());
 
-			return apiDocProtectorErrorRedirect.redirectInitializerError("sessionId");
+			return apiDocProtectorErrorRedirect.redirectInitializerError(base64Encode(re.getMessage()));
 		}
 	}
 
@@ -87,7 +92,7 @@ public class ApiDocProtectorInitializer extends ApiDocProtectorLibrary {
 
 			return apiDocProtectorViewer.error(
 					INVALID_SESSION.getMessage(),
-					"The request is not valid",
+					base64Encode("The request is not valid"),
 					INVALID_SESSION.getStatusCode());
 		}
 
@@ -109,7 +114,7 @@ public class ApiDocProtectorInitializer extends ApiDocProtectorLibrary {
 
 			return apiDocProtectorViewer.error(
 					BURN_ERROR.getMessage(),
-					"The request is burned",
+					base64Encode("The request is burned"),
 					BURN_ERROR.getStatusCode());
 
 		} catch (RuntimeException re) {
@@ -118,7 +123,7 @@ public class ApiDocProtectorInitializer extends ApiDocProtectorLibrary {
 
 			return apiDocProtectorViewer.error(
 					BURN_EXCEPTION.getMessage(),
-					"The request has caused a exception",
+					base64Encode("The request has caused a exception"),
 					BURN_EXCEPTION.getStatusCode());
 		}
 	}
@@ -127,7 +132,7 @@ public class ApiDocProtectorInitializer extends ApiDocProtectorLibrary {
 	@GetMapping(path = "${apidocprotector.custom.uri-login:/doc-protect/login}")
 	public String denied() {
 		register(INITIALIZER_DENIED, null, "info", 2, "Access Denied");
-		return apiDocProtectorErrorRedirect.redirectInitializerError("Missing_Token");
+		return apiDocProtectorErrorRedirect.redirectInitializerError(base64Encode("Missing_Token"));
 	}
 
 	@Operation(hidden = true)
@@ -138,7 +143,7 @@ public class ApiDocProtectorInitializer extends ApiDocProtectorLibrary {
 
 		return apiDocProtectorViewer.error(
 				ApiDocProtectorLibraryEnum.INITIALIZER_ERROR.getMessage(),
-				data.replace("_", " "),
+				data,
 				ApiDocProtectorLibraryEnum.INITIALIZER_ERROR.getStatusCode());
 	}
 

@@ -113,13 +113,13 @@ public class ApiDocProtectorSentinel extends ApiDocProtectorLibrary {
 
 	@Operation(hidden = true)
 	@GetMapping(path = "/doc-protect/sentinel/error/{error}")
-	public ModelAndView error(@PathVariable("error") String error) {
+	public ModelAndView error(@PathVariable("error") String data) {
 
-		register(SENTINEL_ERROR_STARTED, null, "error", 1, error);
+		register(SENTINEL_ERROR_STARTED, null, "error", 1, data);
 
 		return apiDocProtectorViewer.error(
 				SENTINEL_ERROR.getMessage(),
-				error.replaceAll("_", " "),
+				data,
 				SENTINEL_ERROR.getStatusCode());
 	}
 

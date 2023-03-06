@@ -33,7 +33,7 @@ public class ApiDocProtectorPasswordRecovery extends ApiDocProtectorLibrary {
 
 			register(PASSWORD_EXCEPTION, null, "except", 1, re.getMessage());
 
-			return apiDocProtectorErrorRedirect.redirectPasswordRecoveryError("error_to_load_form_password");
+			return apiDocProtectorErrorRedirect.redirectPasswordRecoveryError(base64Encode(re.getMessage()));
 		}
 
 	}
@@ -50,7 +50,7 @@ public class ApiDocProtectorPasswordRecovery extends ApiDocProtectorLibrary {
 
 			register(PASSWORD_RECOVERY_GLASS_EXCEPTION, null, "except", 1, re.getMessage());
 
-			return apiDocProtectorErrorRedirect.redirectPasswordRecoveryError("unknown");
+			return apiDocProtectorErrorRedirect.redirectPasswordRecoveryError(base64Encode(re.getMessage()));
 		}
 	}
 
@@ -66,7 +66,7 @@ public class ApiDocProtectorPasswordRecovery extends ApiDocProtectorLibrary {
 
 			return apiDocProtectorViewer.error(
 					PASSWORD_RECOVERY_ERROR.getMessage(),
-					"invalid access in form password",
+					base64Encode("invalid access in form password"),
 					PASSWORD_RECOVERY_ERROR.getStatusCode());
 		}
 
@@ -90,7 +90,7 @@ public class ApiDocProtectorPasswordRecovery extends ApiDocProtectorLibrary {
 
 			return apiDocProtectorViewer.error(
 					PASSWORD_RECOVERY_ERROR.getMessage(),
-					"The request has caused a exception",
+					base64Encode("The request has caused a exception " + re.getMessage()),
 					PASSWORD_RECOVERY_ERROR.getStatusCode());
 		}
 	}
@@ -108,7 +108,7 @@ public class ApiDocProtectorPasswordRecovery extends ApiDocProtectorLibrary {
 
 			register(PASSWORD_RECOVERY_FORM_INVALID_SESSION, null, "error", 2, "Invalid Session");
 
-			return apiDocProtectorErrorRedirect.redirectPasswordRecoveryError("invalid_session_user_password_recovery");
+			return apiDocProtectorErrorRedirect.redirectPasswordRecoveryError(base64Encode("invalid_session_user_password_recovery"));
 		}
 
 		ApiDocProtectorEntity user = apiDocProtectorRepository.findByToken(body.get("token"));
@@ -118,7 +118,7 @@ public class ApiDocProtectorPasswordRecovery extends ApiDocProtectorLibrary {
 			register(PASSWORD_RECOVERY_USER_NOT_FOUND, null, "error", 2, "User not found (using token) " + body.get("token"));
 
 			session.setAttribute("ADP-ACCOUNT-PASSWORD-RECOVERY-SUCCESSFUL", null);
-			return apiDocProtectorErrorRedirect.redirectPasswordRecoveryError("user_not_found");
+			return apiDocProtectorErrorRedirect.redirectPasswordRecoveryError(base64Encode("user_not_found"));
 		}
 
 		String newToken = userPasswordUpdate(body, user);
@@ -127,7 +127,7 @@ public class ApiDocProtectorPasswordRecovery extends ApiDocProtectorLibrary {
 
 			register(PASSWORD_RECOVERY_EXCEPTION, null, "info", 1, "Password Recovery");
 
-			return apiDocProtectorErrorRedirect.redirectPasswordRecoveryError("error_to_password_recovery");
+			return apiDocProtectorErrorRedirect.redirectPasswordRecoveryError(base64Encode("error_to_password_recovery"));
 
 		}
 
@@ -148,7 +148,7 @@ public class ApiDocProtectorPasswordRecovery extends ApiDocProtectorLibrary {
 			register(PASSWORD_RECOVERY_EXCEPTION, null, "except", 1, re.getMessage());
 
 			session.setAttribute("ADP-ACCOUNT-PASSWORD-RECOVERY-SUCCESSFUL", null);
-			return apiDocProtectorErrorRedirect.redirectPasswordRecoveryError("password_recovery_error");
+			return apiDocProtectorErrorRedirect.redirectPasswordRecoveryError(base64Encode(re.getMessage()));
 		}
 	}
 
@@ -160,7 +160,7 @@ public class ApiDocProtectorPasswordRecovery extends ApiDocProtectorLibrary {
 
 		return apiDocProtectorViewer.error(
 				PASSWORD_RECOVERY_ERROR.getMessage(),
-				data.replace("_", " "),
+				data,
 				PASSWORD_RECOVERY_ERROR.getStatusCode());
 	}
 

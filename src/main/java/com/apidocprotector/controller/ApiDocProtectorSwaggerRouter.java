@@ -40,7 +40,7 @@ public class ApiDocProtectorSwaggerRouter extends ApiDocProtectorLibrary {
 
 			return apiDocProtectorViewer.error(
 					INVALID_ACCESS.getMessage(),
-					"session is needed",
+					base64Encode("session required"),
 					INVALID_ACCESS.getStatusCode());
 		}
 
@@ -58,7 +58,7 @@ public class ApiDocProtectorSwaggerRouter extends ApiDocProtectorLibrary {
 
 			return apiDocProtectorViewer.error(
 					INVALID_ACCESS.getMessage(),
-					"missing username",
+					base64Encode("missing username"),
 					INVALID_ACCESS.getStatusCode());
 		}
 
@@ -68,7 +68,7 @@ public class ApiDocProtectorSwaggerRouter extends ApiDocProtectorLibrary {
 
 			return apiDocProtectorViewer.error(
 					INVALID_ACCESS.getMessage(),
-					"missing password",
+					base64Encode("missing password"),
 					INVALID_ACCESS.getStatusCode());
 		}
 
@@ -85,7 +85,7 @@ public class ApiDocProtectorSwaggerRouter extends ApiDocProtectorLibrary {
 
 				return apiDocProtectorViewer.error(
 						EXPIRED_SESSION.getMessage(),
-						"session expired",
+						base64Encode("session expired"),
 						EXPIRED_SESSION.getStatusCode());
 			}
 		}
@@ -119,7 +119,7 @@ public class ApiDocProtectorSwaggerRouter extends ApiDocProtectorLibrary {
 
 		return apiDocProtectorViewer.error(
 				INVALID_ACCESS.getMessage(),
-				"login failure to "+username,
+				base64Encode("login failure to "+username),
 				INVALID_ACCESS.getStatusCode());
 
 	}
@@ -175,18 +175,18 @@ public class ApiDocProtectorSwaggerRouter extends ApiDocProtectorLibrary {
 		register(SWAGGER_ROUTER_DENIED_STARTED, null, "info", 2, "");
 
 		httpResponse.setStatus(HttpStatus.NOT_ACCEPTABLE.value());
-		return apiDocProtectorErrorRedirect.forwardSentinelError("Operation not allowed");
+		return apiDocProtectorErrorRedirect.forwardSentinelError(base64Encode("Operation not allowed"));
 	}
 
 	@Operation(hidden = true)
 	@GetMapping(path = "/doc-protect/login/error/{username}")
-	public ModelAndView error(@PathVariable(required = false) String username) {
+	public ModelAndView error(@PathVariable(required = false) String data) {
 
-		register(SWAGGER_ROUTER_ERROR_STARTED, null, "error", 2, username);
+		register(SWAGGER_ROUTER_ERROR_STARTED, null, "error", 2, data);
 
 		return apiDocProtectorViewer.error(
 				INVALID_LOGIN.getMessage(),
-				username,
+				data,
 				INVALID_LOGIN.getStatusCode());
 	}
 }

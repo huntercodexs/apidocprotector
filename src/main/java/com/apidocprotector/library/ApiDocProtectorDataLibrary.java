@@ -8,6 +8,8 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
+import java.util.Base64;
 import java.util.UUID;
 
 @Service
@@ -44,6 +46,15 @@ public abstract class ApiDocProtectorDataLibrary {
     public String bcrypt(String data) {
         BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
         return bCryptPasswordEncoder.encode(data);
+    }
+
+    public String base64Encode(String input) {
+        return Base64.getEncoder().encodeToString(input.getBytes());
+    }
+
+    public String base64Decode(String input) {
+        byte[] result = Base64.getDecoder().decode(input);
+        return new String(result);
     }
 
 }

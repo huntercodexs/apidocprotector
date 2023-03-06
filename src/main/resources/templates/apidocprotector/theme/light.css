@@ -49,7 +49,9 @@ body {
     color: #939397;
     font-size: 74px;
 }
-#body_generator input[type=text], input[type=password] {
+#body_generator input[type=text],
+#body_generator input[type=password],
+#body_generator #role {
     width: 100%;
     color: #888;
     font-size: 18px;
@@ -143,7 +145,8 @@ body {
     color: #939397;
     border-bottom: solid 1px;
 }
-#body_login input[type=text], input[type=password] {
+#body_login input[type=text],
+#body_login input[type=password] {
     width: 100%;
     color: #888;
     font-size: 18px;
@@ -235,7 +238,8 @@ body {
     color: #939397;
     font-size: 74px;
 }
-#body_password input[type=text], input[type=password] {
+#body_password input[type=text],
+#body_password input[type=password] {
     width: 100%;
     color: #888;
     font-size: 18px;
@@ -330,7 +334,8 @@ body {
     color: #939397;
     font-size: 74px;
 }
-#body_password_recovery input[type=text], input[type=password] {
+#body_password_recovery input[type=text],
+#body_password_recovery input[type=password] {
     width: 100%;
     color: #888;
     font-size: 18px;
@@ -426,7 +431,8 @@ body {
     color: #939397;
     font-size: 74px;
 }
-#body_recovery input[type=text], input[type=password] {
+#body_recovery input[type=text],
+#body_recovery input[type=password] {
     width: 100%;
     color: #888;
     font-size: 18px;
@@ -491,12 +497,25 @@ body {
 }
 
 #body_error #error-box {
-    width: 450px;
-    height: 300px;
+    color: #F1F1F1;
+    width: 96% !important;
+    height: auto;
     margin: 100px auto;
     text-align: center;
     font-family: arial;
 }
 #body_error strong {
     color: #F80000;
+}
+#body_error h4 {
+    margin: 30px;
+}
+
+#body_error  #div_error_message {
+    width: 90%;
+    margin: 0px auto;
+    padding: 10px;
+    border: solid #880000 1px;
+    border-radius: 5px;
+    background: #D9ADBB;
 }
