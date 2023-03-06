@@ -81,7 +81,7 @@ public class ApiDocProtectorActivator extends ApiDocProtectorLibrary {
 		register(ACTIVATOR_MAIL_SUCCESSFUL, null, "info", 2, "User activated ok: " + result.getName());
 
 		/*Activated (HTML Page)*/
-		String dataHtml = readFile("./src/main/resources/templates/apidocprotector/activated.html");
+		String dataHtml = readFile("./src/main/resources/templates/apidocprotector/mail/activated.html");
 		response.setStatus(HttpStatus.OK.value());
 
 		register(ACTIVATOR_FINISHED, null, "info", 2, "");

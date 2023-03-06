@@ -1,0 +1,511 @@
+
+/*GENERAL*/
+
+* {
+    margin: 0;
+    padding: 0;
+    font-family: arial !important;
+}
+body {
+    overflow: hidden;
+    background: #221f1c !important;
+    font-family: arial !important;
+}
+
+/*GENERATOR*/
+
+#body_generator > form:nth-child(1) > p:nth-child(1) {
+    width: 100%;
+    text-align: center;
+    font-size: 54px;
+    color: #888;
+}
+#body_generator > form:nth-child(1) > p {
+    text-align: left;
+}
+
+#body_generator h5 {
+    font-size: 20px;
+    padding: 25px;
+    color: #F1F1F1;
+    text-shadow: 1px 2px 3px #000000;
+}
+#body_generator form {
+    width: 500px;
+    height: auto;
+    padding: 20px;
+    margin: 0px auto;
+    text-align: center;
+}
+#body_generator h3 {
+    text-align: center !important;
+    margin-bottom: 25px;
+    padding: 20px;
+    color: #FFF;
+    color: #595959;
+    font-size: 74px;
+}
+#body_generator input[type=text], input[type=password] {
+    width: 100%;
+    color: #888;
+    font-size: 18px;
+    margin: 5px auto;
+    box-sizing: border-box;
+    padding: 15px !important;
+    margin-bottom: 25px;
+}
+#body_generator #bt-signup {
+    margin-top: 50px;
+    padding: 13px 13px;
+    background: #313131;
+    color: #FFF;
+    width: 140px;
+    border: none;
+    border-radius: 9px;
+    font-size: 18px;
+    font-weight: bold;
+    box-shadow: 1px 2px 3px #000000;
+}
+#body_generator .title-field {
+    color: #F1F1F1;
+    text-align: left;
+}
+#body_generator #img-logo-huntercodexs {
+    width: 200px;
+}
+#body_generator #p-button {
+    text-align: center;
+}
+#body_generator #left-side {
+    width: 30%;
+    height: 1200px;
+    background-color: #353535;
+    color: #9D9D9D;
+}
+#body_generator #right-side {
+    width: 70%;
+    float: right;
+    text-align: center;
+    padding-top: 200px;
+}
+#body_generator #apidoc-protector-icon {
+     width: 100%;
+     text-align: center;
+     font-size: 154px;
+     color: #666043;
+     text-shadow: 1px 2px 3px #000;
+}
+#body_generator #post-message {
+    color: #ff6c00;
+    margin: 40px;
+}
+#body_generator #left-side > form:nth-child(2) > p:nth-child(11) {
+    text-align: left !important;
+}
+#body_generator #left-side > form:nth-child(2) > p:nth-child(11) a {
+    color: #0000FF
+}
+
+#body_generator #p_account_recovery a {
+    color: #ff8300 !important;
+}
+
+/*ACTIVATED, GENERIC*/
+
+#body_generic #container {
+    padding: 20px;
+}
+
+#body_generic #header-mail {
+    width:100%;
+    padding:5px;
+    text-align:center;
+    background-color:#222;
+    color:#FFF;
+    box-sizing: border-box;
+}
+
+/*LOGIN*/
+
+#body_login {
+    background: #C9C9CA;
+}
+#body_login form {
+    width: 500px;
+    height: 300px;
+    padding: 20px;
+    margin: 70px auto;
+    text-align: center;
+}
+#body_login h3 {
+    text-align: center !important;
+    margin-bottom: 25px;
+    padding: 20px;
+    color: #FFF;
+    color: #939397;
+    border-bottom: solid 1px;
+}
+#body_login input[type=text], input[type=password] {
+    width: 100%;
+    color: #888;
+    font-size: 18px;
+    margin: 5px auto !important;
+    border-box: box-sizing;
+    box-sizing: border-box;
+    padding: 15px !important;
+}
+#body_login #bt-login {
+    padding: 13px 13px;
+    background: #313131;
+    color: #FFF;
+    width: 140px;
+    border: none;
+    border-radius: 9px;
+    font-size: 18px;
+    font-weight: bold;
+    box-shadow: 1px 2px 3px #000000;
+    margin: 50px 0px;
+}
+#body_login #error-login {
+    color: #DD0B0B;
+    margin: 20px 10px;
+    text-align: center;
+}
+#body_login #hidden-apidoc-protector-type {
+    display: none !important;
+}
+#body_login #img-logo-huntercodexs {
+    margin: 0px auto;
+}
+#body_login #change-password {
+    color: #000089;
+}
+#body_login > form:nth-child(1) > p:nth-child(1) {
+    width: 100%;
+    text-align: center;
+    font-size: 54px;
+    color: #888;
+}
+#body_login #p_login_username {
+    text-align: left !important;
+    color: #F1F1F1;
+}
+#body_login #p_login_password {
+    text-align: left !important;
+    color: #F1F1F1;
+}
+#body_login #change-password {
+    color: #FFB300;
+}
+#body_login > form:nth-child(1) > p:nth-child(6) {
+    text-align: center;
+}
+#body_login > form:nth-child(1) > p:nth-child(7) {
+    text-align: center;
+}
+
+/*PASSWORD*/
+
+#body_password {
+    overflow: hidden;
+    background: #F1F1F1;
+}
+#body_password > form:nth-child(1) > p:nth-child(1) {
+    width: 100%;
+    text-align: center;
+    font-size: 54px;
+    color: #888;
+}
+#body_password > form:nth-child(1) > p {
+    text-align: left;
+}
+#body_password h5 {
+    font-size: 20px;
+    padding: 25px;
+    color: #F1F1F1;
+    text-shadow: 1px 2px 3px #000000;
+}
+#body_password form {
+    width: 500px;
+    height: auto;
+    padding: 20px;
+    margin: 0px auto;
+    text-align: center;
+}
+#body_password h3 {
+    text-align: center !important;
+    margin-bottom: 25px;
+    padding: 20px;
+    color: #FFF;
+    color: #939397;
+    font-size: 74px;
+}
+#body_password input[type=text], input[type=password] {
+    width: 100%;
+    color: #888;
+    font-size: 18px;
+    margin: 5px auto;
+    box-sizing: border-box;
+    padding: 15px !important;
+    margin-bottom: 25px;
+}
+#bt-password {
+    margin-top: 50px;
+    padding: 13px 13px;
+    background: #313131;
+    color: #FFF;
+    width: 140px;
+    border: none;
+    border-radius: 9px;
+    font-size: 18px;
+    font-weight: bold;
+    box-shadow: 1px 2px 3px #000000;
+}
+#body_password .title-field {
+    color: #F1F1F1;
+    text-align: left;
+}
+#body_password #img-logo-huntercodexs {
+    width: 200px;
+}
+#body_password #p-button {
+    text-align: center;
+}
+#body_password #left-side {
+    width: 30%;
+    height: 1200px;
+    background-color: #353535;
+}
+#body_password #right-side {
+    width: 70%;
+    float: right;
+    text-align: center;
+    padding-top: 200px;
+}
+#body_password #apidoc-protector-icon {
+     width: 100%;
+     text-align: center;
+     font-size: 154px;
+     color: #888;
+     text-shadow: 1px 2px 3px #000;
+}
+#body_password #post-message {
+    color: #ff6c00;
+    margin: 40px;
+}
+#body_password #left-side > form:nth-child(2) > p:nth-child(11) {
+    text-align: left !important;
+}
+#body_password #left-side > form:nth-child(2) > p:nth-child(11) a {
+    color: #0000FF
+}
+
+/*PASSWORD RECOVERY*/
+
+#body_password_recovery {
+    overflow: hidden;
+    background: #F1F1F1;
+}
+#body_password_recovery > form:nth-child(1) > p:nth-child(1) {
+    width: 100%;
+    text-align: center;
+    font-size: 54px;
+    color: #888;
+}
+#body_password_recovery > form:nth-child(1) > p {
+    text-align: left;
+}
+#body_password_recovery h5 {
+    font-size: 20px;
+    padding: 25px;
+    color: #F1F1F1;
+    text-shadow: 1px 2px 3px #000000;
+}
+#body_password_recovery form {
+    width: 500px;
+    height: auto;
+    padding: 20px;
+    margin: 0px auto;
+    text-align: center;
+}
+#body_password_recovery h3 {
+    text-align: center !important;
+    margin-bottom: 25px;
+    padding: 20px;
+    color: #FFF;
+    color: #939397;
+    font-size: 74px;
+}
+#body_password_recovery input[type=text], input[type=password] {
+    width: 100%;
+    color: #888;
+    font-size: 18px;
+    margin: 5px auto;
+    box-sizing: border-box;
+    padding: 15px !important;
+    margin-bottom: 25px;
+}
+#body_password_recovery #bt-recovery {
+    margin-top: 20px;
+    padding: 13px 13px;
+    background: #313131;
+    color: #FFF;
+    width: 140px;
+    border: none;
+    border-radius: 9px;
+    font-size: 18px;
+    font-weight: bold;
+    box-shadow: 1px 2px 3px #000000;
+}
+#body_password_recovery .title-field {
+    color: #F1F1F1;
+    text-align: left;
+}
+#body_password_recovery #img-logo-huntercodexs {
+    width: 200px;
+}
+#body_password_recovery #p-button {
+    text-align: center;
+}
+#body_password_recovery #left-side {
+    width: 30%;
+    height: 1200px;
+    background-color: #353535;
+}
+#body_password_recovery #right-side {
+    width: 70%;
+    float: right;
+    text-align: center;
+    padding-top: 200px;
+}
+#body_password_recovery #apidoc-protector-icon {
+     width: 100%;
+     text-align: center;
+     font-size: 154px;
+     color: #888;
+     text-shadow: 1px 2px 3px #000;
+}
+#body_password_recovery #post-message {
+    color: #ff6c00;
+    margin: 40px;
+}
+#body_password_recovery #left-side > form:nth-child(2) > p:nth-child(11) {
+    text-align: left !important;
+}
+#body_password_recovery #left-side > form:nth-child(2) > p:nth-child(11) a {
+    color: #0000FF
+}
+
+
+/*RECOVERY*/
+
+#body_recovery {
+    overflow: hidden;
+    background: #F1F1F1;
+}
+#body_recovery > form:nth-child(1) > p:nth-child(1) {
+    width: 100%;
+    text-align: center;
+    font-size: 54px;
+    color: #888;
+}
+#body_recovery > form:nth-child(1) > p {
+    text-align: left;
+}
+#body_recovery h5 {
+    font-size: 20px;
+    padding: 25px;
+    color: #F1F1F1;
+    text-shadow: 1px 2px 3px #000000;
+}
+#body_recovery form {
+    width: 500px;
+    height: auto;
+    padding: 20px;
+    margin: 0px auto;
+    text-align: center;
+}
+#body_recovery h3 {
+    text-align: center !important;
+    margin-bottom: 25px;
+    padding: 20px;
+    color: #FFF;
+    color: #939397;
+    font-size: 74px;
+}
+#body_recovery input[type=text], input[type=password] {
+    width: 100%;
+    color: #888;
+    font-size: 18px;
+    margin: 5px auto;
+    box-sizing: border-box;
+    padding: 15px !important;
+    margin-bottom: 25px;
+}
+#body_recovery #bt-recovery {
+    margin-top: 20px;
+    padding: 13px 13px;
+    background: #313131;
+    color: #FFF;
+    width: 140px;
+    border: none;
+    border-radius: 9px;
+    font-size: 18px;
+    font-weight: bold;
+    box-shadow: 1px 2px 3px #000000;
+}
+#body_recovery .title-field {
+    color: #F1F1F1;
+    text-align: left;
+}
+#body_recovery #img-logo-huntercodexs {
+    width: 200px;
+}
+#body_recovery #p-button {
+    text-align: center;
+}
+#body_recovery #left-side {
+    width: 30%;
+    height: 1200px;
+    background-color: #353535;
+}
+#body_recovery #right-side {
+    width: 70%;
+    float: right;
+    text-align: center;
+    padding-top: 200px;
+}
+#body_recovery #apidoc-protector-icon {
+     width: 100%;
+     text-align: center;
+     font-size: 154px;
+     color: #888;
+     text-shadow: 1px 2px 3px #000;
+}
+#body_recovery #post-message {
+    color: #ff6c00;
+    margin: 40px;
+}
+#body_recovery #left-side > form:nth-child(2) > p:nth-child(11) {
+    text-align: left !important;
+}
+#body_recovery #left-side > form:nth-child(2) > p:nth-child(11) a {
+    color: #0000FF
+}
+
+/*ERROR*/
+
+#body_error {
+}
+
+#body_error #error-box {
+    color: F1F1F1;
+    width: 450px;
+    height: 300px;
+    margin: 100px auto;
+    text-align: center;
+    font-family: arial;
+}
+#body_error strong {
+    color: #F80000;
+}
