@@ -73,6 +73,12 @@ public abstract class ApiDocProtectorLibrary extends ApiDocProtectorDataLibrary 
     @Value("${apidocprotector.custom.uri-user-password-recovery:/doc-protect/password/recovery/user}")
     protected String customUriUserPasswordRecovery;
 
+    @Value("${apidocprotector.enabled:true}")
+    protected boolean apiDocEnabled;
+
+    @Value("${apidocprotector.theme:light}")
+    protected String apiDocTheme;
+
     @Value("${apidocprotector.server-name:localhost}")
     protected String apiDocServerName;
 
@@ -540,7 +546,7 @@ public abstract class ApiDocProtectorLibrary extends ApiDocProtectorDataLibrary 
     }
 
     public String readFile(String filepath) {
-        StringBuilder dataHtml = new StringBuilder();
+        StringBuilder dataFile = new StringBuilder();
 
         try {
             FileReader activateFile = null;
@@ -554,14 +560,14 @@ public abstract class ApiDocProtectorLibrary extends ApiDocProtectorDataLibrary 
             String lineFile = "";
             try {
                 lineFile = readActivateFile.readLine();
-                dataHtml = new StringBuilder(lineFile);
+                dataFile = new StringBuilder(lineFile);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
 
             while (lineFile != null) {
-                dataHtml.append(lineFile);
                 lineFile = readActivateFile.readLine();
+                if (lineFile != null) dataFile.append(lineFile);
             }
 
             activateFile.close();
@@ -570,7 +576,7 @@ public abstract class ApiDocProtectorLibrary extends ApiDocProtectorDataLibrary 
             register(NO_AUDITOR, null, "except", 2, "READ-FILE [EXCEPTION]: " + e.getMessage());
         }
 
-        return dataHtml.toString();
+        return dataFile.toString();
     }
 
     public void auditor(ApiDocProtectorRegisterEnum registerEnum, String customMessage, String sessionId, int auditLevel) {
@@ -676,6 +682,13 @@ public abstract class ApiDocProtectorLibrary extends ApiDocProtectorDataLibrary 
         debugger(registerEnum.name(), registerEnum.getMessage() + " - " + custom, true);
         logger(registerEnum.name() +" : "+ registerEnum.getMessage() + " - " + custom, label);
         if (!registerEnum.name().equals("NO_AUDITOR")) auditor(registerEnum, custom, sessionId, auditLevel);
+    }
+
+    public String theme() {
+        if (apiDocTheme.matches("^(light|dark)$")) {
+            return readFile("./src/main/resources/templates/apidocprotector/theme/" + apiDocTheme + ".css");
+        }
+        throw new RuntimeException("Theme exception: invalid name " + apiDocTheme);
     }
 
 }

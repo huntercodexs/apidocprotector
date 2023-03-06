@@ -23,6 +23,7 @@ public class ApiDocProtectorViewer extends ApiDocProtectorLibrary {
 
         response.setStatus(statusCode.value());
         ModelAndView modelAndView = new ModelAndView("apidocprotector/error");
+        modelAndView.addObject("apidoc_protector_theme", theme());
         modelAndView.addObject("apidoc_protector_error_title", title);
         modelAndView.addObject("apidoc_protector_error_info", info);
 
@@ -38,7 +39,9 @@ public class ApiDocProtectorViewer extends ApiDocProtectorLibrary {
         try {
 
             if (apiDocProtectorType.equals("swagger")) {
+
                 ModelAndView modelAndView = new ModelAndView("apidocprotector/generator");
+                modelAndView.addObject("apidoc_protector_theme", theme());
                 modelAndView.addObject("apidoc_protector_target", customUriUserGenerator);
                 modelAndView.addObject("apidoc_protector_form_recovery", customUriRecovery);
 
@@ -77,6 +80,8 @@ public class ApiDocProtectorViewer extends ApiDocProtectorLibrary {
 
             if (apiDocProtectorType.equals("swagger")) {
                 ModelAndView modelAndView = new ModelAndView("apidocprotector/recovery");
+
+                modelAndView.addObject("apidoc_protector_theme", theme());
                 modelAndView.addObject("apidoc_protector_target", customUriUserRecovery);
 
                 if (userRecoverySuccessful) {
@@ -113,7 +118,9 @@ public class ApiDocProtectorViewer extends ApiDocProtectorLibrary {
         try {
 
             if (apiDocProtectorType.equals("swagger")) {
+
                 ModelAndView modelAndView = new ModelAndView("apidocprotector/password");
+                modelAndView.addObject("apidoc_protector_theme", theme());
                 modelAndView.addObject("apidoc_protector_target", customUriUserPassword);
 
                 if (userRecoverySuccessful) {
@@ -150,7 +157,9 @@ public class ApiDocProtectorViewer extends ApiDocProtectorLibrary {
         try {
 
             if (apiDocProtectorType.equals("swagger")) {
+
                 ModelAndView modelAndView = new ModelAndView("apidocprotector/password-recovery");
+                modelAndView.addObject("apidoc_protector_theme", theme());
                 modelAndView.addObject("apidoc_protector_target", customUriUserPasswordRecovery);
 
                 if (userRecoverySuccessful) {
@@ -200,7 +209,9 @@ public class ApiDocProtectorViewer extends ApiDocProtectorLibrary {
             debugger("TOKEN IN FORM", token, true);
 
             if (apiDocProtectorType.equals("swagger")) {
+
                 ModelAndView modelAndView = new ModelAndView("apidocprotector/login");
+                modelAndView.addObject("apidoc_protector_theme", theme());
                 modelAndView.addObject("apidoc_protector_target", swaggerUIPath);
                 modelAndView.addObject("apidoc_protector_sec", secret);
                 modelAndView.addObject("apidoc_protector_token", token);
@@ -234,7 +245,9 @@ public class ApiDocProtectorViewer extends ApiDocProtectorLibrary {
         register(VIEW_FORM_STARTED, null, "info", 1, "");
 
         if (apiDocProtectorType.equals("swagger")) {
+
             ModelAndView modelAndView = new ModelAndView("apidocprotector/swagger-ui/index");
+            modelAndView.addObject("apidoc_protector_theme", theme());
             modelAndView.addObject("api_docs_path", apiDocsPath);
             modelAndView.addObject("swagger_layout", swaggerLayout);
             modelAndView.addObject("show_url_api_docs", showUrlApiDocs);
