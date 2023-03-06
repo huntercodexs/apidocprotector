@@ -3,7 +3,7 @@ A simple project to API document protect
 
 # Overview
 
-- Release: 1.0.1
+- Release: 1.0.2
 
 ![img.png](./midias/apidoc-protector-login-v1.png)
 
@@ -223,7 +223,7 @@ Set up the pom.xml with the dependencies below
 
 </code>
 
-In this release 1.0.1, the unique way to use the APIDOC-PROTECTOR it that showed below, please pay attention when you
+In this release 1.0.2, the unique way to use the APIDOC-PROTECTOR it that showed below, please pay attention when you
 implement this solution in your application to avoid mistakes or forgot anything.
 
 Let's start...
@@ -243,11 +243,10 @@ user@host$: cd /home/user/sample-project/src/main/java/com
 user@host$: git clone https://github.com/huntercodexs/apidocprotector.git
 </pre>
 
-- Get a current release: 1.0.1
+- Get a current release: 1.0.2
 
 <pre>
-user@host$: cd apidocprotector/
-user@host$: git checkout release_1.0.1
+user@host$: git checkout release_1.0.2
 </pre>
 
 - Remove unnecessary files
