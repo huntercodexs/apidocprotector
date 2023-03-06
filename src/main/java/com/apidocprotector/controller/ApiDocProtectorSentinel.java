@@ -28,11 +28,18 @@ public class ApiDocProtectorSentinel extends ApiDocProtectorLibrary {
 
 		register(SENTINEL_ALLOWED_STARTED, null, "info", 0, "URI: "+request.getRequestURI());
 
-		String prefix = apiPrefix.replaceFirst("/$", "") + "/";
-		if (!prefix.startsWith("/")) prefix = "/" + prefix;
+		if (apiDocEnabled) {
 
-		HttpServletResponse httpResponse = (HttpServletResponse) servletResponse;
-		httpResponse.sendRedirect(prefix);
+			HttpServletResponse httpResponse = (HttpServletResponse) servletResponse;
+			httpResponse.sendRedirect("/error");
+
+		} else {
+			String prefix = apiPrefix.replaceFirst("/$", "") + "/";
+			if (!prefix.startsWith("/")) prefix = "/" + prefix;
+
+			HttpServletResponse httpResponse = (HttpServletResponse) servletResponse;
+			httpResponse.sendRedirect(prefix);
+		}
 
 		register(SENTINEL_ALLOWED_FINISHED, null, "info", 0, "");
 	}

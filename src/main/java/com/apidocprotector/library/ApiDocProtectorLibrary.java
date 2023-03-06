@@ -74,7 +74,7 @@ public abstract class ApiDocProtectorLibrary extends ApiDocProtectorDataLibrary 
     protected String customUriUserPasswordRecovery;
 
     @Value("${apidocprotector.enabled:true}")
-    protected String apiDocEnabled;
+    protected boolean apiDocEnabled;
 
     @Value("${apidocprotector.theme:light}")
     protected String apiDocTheme;
