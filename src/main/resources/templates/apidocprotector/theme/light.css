@@ -53,10 +53,10 @@ body {
     width: 100%;
     color: #888;
     font-size: 18px;
-    margin: 5px auto;
+    margin: 5px auto !important;
     box-sizing: border-box;
     padding: 15px !important;
-    margin-bottom: 25px;
+    margin-bottom: 25px !important;
 }
 #body_generator #bt-signup {
     margin-top: 50px;
@@ -186,9 +186,11 @@ body {
 }
 #body_login #p_login_username {
     text-align: left !important;
+    margin-top: 33px !important;
 }
 #body_login #p_login_password {
     text-align: left !important;
+    margin-top: 33px !important;
 }
 #body_login > form:nth-child(1) > p:nth-child(6) {
     text-align: center;
@@ -332,7 +334,7 @@ body {
     width: 100%;
     color: #888;
     font-size: 18px;
-    margin: 5px auto;
+    margin: 5px auto !important;
     box-sizing: border-box;
     padding: 15px !important;
     margin-bottom: 25px;

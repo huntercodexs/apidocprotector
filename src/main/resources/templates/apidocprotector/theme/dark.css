@@ -45,14 +45,15 @@ body {
     color: #595959;
     font-size: 74px;
 }
-#body_generator input[type=text], input[type=password] {
+#body_generator input[type=text],
+#body_generator input[type=password] {
     width: 100%;
     color: #888;
     font-size: 18px;
-    margin: 5px auto;
+    margin: 5px auto !important;
     box-sizing: border-box;
     padding: 15px !important;
-    margin-bottom: 25px;
+    margin-bottom: 25px !important;
 }
 #body_generator #bt-signup {
     margin-top: 50px;
@@ -110,6 +111,10 @@ body {
     color: #ff8300 !important;
 }
 
+#body_generator #role_field_name {}
+
+#body_generator #role_field_value {}
+
 /*ACTIVATED, GENERIC*/
 
 #body_generic #container {
@@ -145,7 +150,8 @@ body {
     color: #939397;
     border-bottom: solid 1px;
 }
-#body_login input[type=text], input[type=password] {
+#body_login input[type=text],
+#body_login input[type=password] {
     width: 100%;
     color: #888;
     font-size: 18px;
@@ -189,10 +195,12 @@ body {
 #body_login #p_login_username {
     text-align: left !important;
     color: #F1F1F1;
+    margin-top: 33px !important;
 }
 #body_login #p_login_password {
     text-align: left !important;
     color: #F1F1F1;
+    margin-top: 33px !important;
 }
 #body_login #change-password {
     color: #FFB300;
@@ -240,7 +248,8 @@ body {
     color: #939397;
     font-size: 74px;
 }
-#body_password input[type=text], input[type=password] {
+#body_password input[type=text],
+#body_password input[type=password] {
     width: 100%;
     color: #888;
     font-size: 18px;
@@ -336,7 +345,8 @@ body {
     color: #939397;
     font-size: 74px;
 }
-#body_password_recovery input[type=text], input[type=password] {
+#body_password_recovery input[type=text],
+#body_password_recovery input[type=password] {
     width: 100%;
     color: #888;
     font-size: 18px;
@@ -433,7 +443,8 @@ body {
     color: #939397;
     font-size: 74px;
 }
-#body_recovery input[type=text], input[type=password] {
+#body_recovery input[type=text],
+#body_recovery input[type=password] {
     width: 100%;
     color: #888;
     font-size: 18px;
