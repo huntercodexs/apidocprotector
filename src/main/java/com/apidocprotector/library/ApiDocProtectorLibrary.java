@@ -494,6 +494,10 @@ public abstract class ApiDocProtectorLibrary extends ApiDocProtectorDataLibrary 
 
     public String userPasswordUpdate(Map<String, String> userBody, ApiDocProtectorEntity user) {
 
+        if (userBody.get("password") == null || userBody.get("password").equals("")) {
+            throw new RuntimeException("Missing data to password recovery");
+        }
+
         try {
 
             String token = guide(null);

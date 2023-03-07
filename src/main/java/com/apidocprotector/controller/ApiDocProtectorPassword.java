@@ -109,14 +109,19 @@ public class ApiDocProtectorPassword extends ApiDocProtectorLibrary {
 			return apiDocProtectorErrorRedirect.redirectPasswordError(base64Encode("invalid_session_user_password"));
 		}
 
+		if (body.get("email") == null || body.get("email").equals("")) {
+			register(GENERIC_MESSAGE, null, "error", 2, "Missing email on request");
+			return apiDocProtectorErrorRedirect.redirectPasswordError(base64Encode("Missing email on request"));
+		}
+
 		ApiDocProtectorEntity user = apiDocProtectorRepository.findByEmail(body.get("email"));
 
 		if (user == null) {
 
-			register(PASSWORD_ACCOUNT_NOT_FOUND, null, "error", 2, "Account not found: " + body.get("email"));
+			register(PASSWORD_ACCOUNT_NOT_FOUND, null, "error", 2, "User not found to mail " + body.get("email"));
 
 			session.setAttribute("ADP-ACCOUNT-PASSWORD-SUCCESSFUL", null);
-			return apiDocProtectorErrorRedirect.redirectPasswordError(base64Encode("user_not_found_password"));
+			return apiDocProtectorErrorRedirect.redirectPasswordError(base64Encode("User not found to mail " + body.get("email")));
 		}
 
 		try {

@@ -54,7 +54,7 @@ public class ApiDocProtectorViewer extends ApiDocProtectorLibrary {
                 modelAndView.addObject("apidoc_protector_form_recovery", customUriRecovery);
 
                 if (userCreatedSuccessful) {
-                    modelAndView.addObject("apidoc_protector_created", "Account Created Successful");
+                    modelAndView.addObject("apidoc_protector_created", "Account created successful, please check your email !");
                 }
 
                 register(VIEW_GENERATOR_FINISHED, null, "info", 1, "");
@@ -93,7 +93,7 @@ public class ApiDocProtectorViewer extends ApiDocProtectorLibrary {
                 modelAndView.addObject("apidoc_protector_target", customUriUserRecovery);
 
                 if (userRecoverySuccessful) {
-                    modelAndView.addObject("apidoc_protector_recovery", "Check your email !");
+                    modelAndView.addObject("apidoc_protector_recovery", "Account recovery successfull, please check your email !");
                 }
 
                 register(VIEW_RECOVERY_FINISHED, null, "info", 1, "");
@@ -132,7 +132,7 @@ public class ApiDocProtectorViewer extends ApiDocProtectorLibrary {
                 modelAndView.addObject("apidoc_protector_target", customUriUserPassword);
 
                 if (userRecoverySuccessful) {
-                    modelAndView.addObject("apidoc_protector_password", "Check your email !");
+                    modelAndView.addObject("apidoc_protector_password", "Password request successfull, please check your email !");
                 }
 
                 register(VIEW_PASSWORD_FINISHED, null, "info", 1, "");
@@ -171,7 +171,7 @@ public class ApiDocProtectorViewer extends ApiDocProtectorLibrary {
                 modelAndView.addObject("apidoc_protector_target", customUriUserPasswordRecovery);
 
                 if (userRecoverySuccessful) {
-                    modelAndView.addObject("apidoc_protector_password", "Password changed successful !");
+                    modelAndView.addObject("apidoc_protector_password_recovery", "Password changed successful, please check your email !");
                 } else {
                     modelAndView.addObject("apidoc_protector_token", currentToken);
                 }
