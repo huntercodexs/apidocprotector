@@ -119,14 +119,16 @@ public class ApiDocProtectorPasswordRecovery extends ApiDocProtectorLibrary {
 			return apiDocProtectorErrorRedirect.redirectPasswordRecoveryError(base64Encode("Missing password on request"));
 		}
 
-		ApiDocProtectorEntity user = apiDocProtectorRepository.findByToken(body.get("token"));
+		String token = base64Decode(body.get("token"));
+
+		ApiDocProtectorEntity user = apiDocProtectorRepository.findByToken(token);
 
 		if (user == null) {
 
-			register(PASSWORD_RECOVERY_USER_NOT_FOUND, null, "error", 2, "User not found to token " + body.get("token"));
+			register(PASSWORD_RECOVERY_USER_NOT_FOUND, null, "error", 2, "User not found to token " + token);
 
 			session.setAttribute("ADP-ACCOUNT-PASSWORD-RECOVERY-SUCCESSFULL", null);
-			return apiDocProtectorErrorRedirect.redirectPasswordRecoveryError(base64Encode("User not found to token " + body.get("token")));
+			return apiDocProtectorErrorRedirect.redirectPasswordRecoveryError(base64Encode("User not found to token " + token));
 		}
 
 		String newToken = userPasswordUpdate(body, user);
@@ -138,7 +140,7 @@ public class ApiDocProtectorPasswordRecovery extends ApiDocProtectorLibrary {
 
 		try {
 
-			String subject = apiDocProtectorMailSender.subjectMail(user.getUsername());
+			String subject = apiDocProtectorMailSender.subjectMail("Password recovered", user.getUsername());
 			String content = apiDocProtectorMailSender.contentMailPasswordRecovery(newToken, user);
 
 			apiDocProtectorMailSender.sendMailAttached(user.getEmail(), subject, content);

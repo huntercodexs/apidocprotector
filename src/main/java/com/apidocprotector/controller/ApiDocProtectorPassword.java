@@ -126,7 +126,7 @@ public class ApiDocProtectorPassword extends ApiDocProtectorLibrary {
 
 		try {
 
-			String subject = apiDocProtectorMailSender.subjectMail(user.getUsername());
+			String subject = apiDocProtectorMailSender.subjectMail("Password recovery request", user.getUsername());
 			String content = apiDocProtectorMailSender.contentMailPassword(user);
 
 			apiDocProtectorMailSender.sendMailAttached(user.getEmail(), subject, content);

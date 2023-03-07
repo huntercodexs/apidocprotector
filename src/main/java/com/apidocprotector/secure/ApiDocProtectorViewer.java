@@ -255,7 +255,7 @@ public class ApiDocProtectorViewer extends ApiDocProtectorLibrary {
         if (apiDocProtectorType.equals("swagger")) {
 
             ModelAndView modelAndView = new ModelAndView("apidocprotector/swagger-ui/index");
-            modelAndView.addObject("apidoc_protector_theme", theme());
+            modelAndView.addObject("apidoc_protector_swagger_css", swaggerCss());
             modelAndView.addObject("api_docs_path", apiDocsPath);
             modelAndView.addObject("swagger_layout", swaggerLayout);
             modelAndView.addObject("show_url_api_docs", showUrlApiDocs);
@@ -263,7 +263,7 @@ public class ApiDocProtectorViewer extends ApiDocProtectorLibrary {
             String uriLogout = customUriLogout.replaceFirst("/$", "") + "/";
             if (!uriLogout.startsWith("/")) uriLogout = "/" + uriLogout;
 
-            modelAndView.addObject("apidoc_protector_logout_token", uriLogout+token);
+            modelAndView.addObject("apidoc_protector_logout_token", uriLogout+base64Encode(token));
 
             register(VIEW_INDEX_FINISHED, null, "info", 1, "");
 

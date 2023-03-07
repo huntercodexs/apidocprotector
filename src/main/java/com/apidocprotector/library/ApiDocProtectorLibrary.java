@@ -698,4 +698,8 @@ public abstract class ApiDocProtectorLibrary extends ApiDocProtectorDataLibrary 
         throw new RuntimeException("Theme exception: invalid name " + apiDocTheme);
     }
 
+    public String swaggerCss() {
+        return readFile("./src/main/resources/templates/apidocprotector/theme/swagger.css");
+    }
+
 }

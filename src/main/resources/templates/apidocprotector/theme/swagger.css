@@ -1,0 +1,57 @@
+html {
+    box-sizing: border-box;
+    overflow: -moz-scrollbars-vertical;
+    overflow-y: scroll;
+}
+
+*,
+*:before,
+*:after {
+    box-sizing: inherit;
+}
+
+body {
+    margin:0;
+    background: #fafafa;
+}
+
+#swagger-ui {
+    margin: 0px auto !important;
+}
+
+.download-url-input {
+    width: 80% !important;
+}
+
+.download-url-button {
+    margin-right: 50px !important;
+}
+
+span.url, input.download-url-input {
+    color: #FFFFFF;
+}
+
+#inject-content {
+    position: absolute;
+    z-index: 1000;
+    color: #FFF;
+    top: 10px;
+    right: 10px;
+    width: 40px;
+    height: 40px;
+    text-align: center;
+    background: #3285d9;
+    border-radius: 43px;
+}
+
+#exit > a:nth-child(1) {
+    color: #FFF;
+    text-decoration: none;
+    font-size: 30px;
+    width: 100%;
+    display: block;
+}
+
+#hidden-api-docs-path, #swagger-layout, #show-url-api-docs {
+    display: none !important;
+}
