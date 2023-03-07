@@ -76,6 +76,9 @@ public abstract class ApiDocProtectorLibrary extends ApiDocProtectorDataLibrary 
     @Value("${apidocprotector.enabled:true}")
     protected boolean apiDocEnabled;
 
+    @Value("${apidocprotector.role:false}")
+    protected boolean apiDocRole;
+
     @Value("${apidocprotector.theme:light}")
     protected String apiDocTheme;
 
@@ -422,7 +425,7 @@ public abstract class ApiDocProtectorLibrary extends ApiDocProtectorDataLibrary 
                     userBody.get("password") == null || userBody.get("password").equals("") ||
                     userBody.get("email") == null || userBody.get("email").equals("")
             ) {
-                return "Missing data, check your request";
+                throw new RuntimeException("Missing data, check your request");
             }
 
             LocalDateTime dateTime = LocalDateTime.now();
@@ -430,8 +433,8 @@ public abstract class ApiDocProtectorLibrary extends ApiDocProtectorDataLibrary 
             String passwordCrypt = dataEncrypt(userBody.get("password"));
 
             if (apiDocProtectorRepository.findByUsernameOrEmail(userBody.get("username"), userBody.get("email")) != null) {
-                register(LIBRARY_GENERATOR_USER_ALREADY_EXISTS, null, "error", 2, "User: " + userBody.get("username"));
-                return "User already exists";
+                register(LIBRARY_GENERATOR_USER_ALREADY_EXISTS, null, "error", 2, "User: " + userBody.get("username") + " Role: " + userBody.get("role"));
+                throw new RuntimeException("User already exists");
             }
 
             ApiDocProtectorEntity newUser = new ApiDocProtectorEntity();
@@ -451,12 +454,12 @@ public abstract class ApiDocProtectorLibrary extends ApiDocProtectorDataLibrary 
 
             apiDocProtectorRepository.save(newUser);
 
-            register(LIBRARY_GENERATOR_USER_SUCCESSFUL, null, "info", 2, "The user was created " + userBody.get("username"));
+            register(LIBRARY_GENERATOR_USER_SUCCESSFUL, null, "info", 2, "User create: " + userBody.get("username") + " Role: " + userBody.get("role"));
 
             return token;
 
         } catch (RuntimeException re) {
-            return "Exception, " + re.getMessage();
+            throw new RuntimeException("Exception in process: " + re.getMessage());
         }
 
     }
@@ -490,6 +493,10 @@ public abstract class ApiDocProtectorLibrary extends ApiDocProtectorDataLibrary 
     }
 
     public String userPasswordUpdate(Map<String, String> userBody, ApiDocProtectorEntity user) {
+
+        if (userBody.get("password") == null || userBody.get("password").equals("")) {
+            throw new RuntimeException("Missing data to password recovery");
+        }
 
         try {
 

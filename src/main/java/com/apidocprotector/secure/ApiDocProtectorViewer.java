@@ -21,6 +21,8 @@ public class ApiDocProtectorViewer extends ApiDocProtectorLibrary {
 
         register(VIEW_ERROR_STARTED, null, "info", 1, "");
 
+        info = base64Decode(info).replace("_", " ");
+
         response.setStatus(statusCode.value());
         ModelAndView modelAndView = new ModelAndView("apidocprotector/error");
         modelAndView.addObject("apidoc_protector_theme", theme());
@@ -40,13 +42,19 @@ public class ApiDocProtectorViewer extends ApiDocProtectorLibrary {
 
             if (apiDocProtectorType.equals("swagger")) {
 
-                ModelAndView modelAndView = new ModelAndView("apidocprotector/generator");
+                String model = "apidocprotector/generator";
+
+                if (apiDocRole) {
+                    model = "apidocprotector/generator-role";
+                }
+
+                ModelAndView modelAndView = new ModelAndView(model);
                 modelAndView.addObject("apidoc_protector_theme", theme());
                 modelAndView.addObject("apidoc_protector_target", customUriUserGenerator);
                 modelAndView.addObject("apidoc_protector_form_recovery", customUriRecovery);
 
                 if (userCreatedSuccessful) {
-                    modelAndView.addObject("apidoc_protector_created", "Account Created Successful");
+                    modelAndView.addObject("apidoc_protector_created", "Account created successful, please check your email !");
                 }
 
                 register(VIEW_GENERATOR_FINISHED, null, "info", 1, "");
@@ -58,7 +66,7 @@ public class ApiDocProtectorViewer extends ApiDocProtectorLibrary {
 
             return error(
                     FORM_VIEW_ERROR.getMessage(),
-                    "Occurs an critical error on form",
+                    base64Encode("Occurs an critical error on form"),
                     FORM_VIEW_ERROR.getStatusCode());
 
         } catch (RuntimeException re) {
@@ -67,7 +75,7 @@ public class ApiDocProtectorViewer extends ApiDocProtectorLibrary {
 
             return error(
                     FORM_ERROR.getMessage(),
-                    re.getMessage(),
+                    base64Encode(re.getMessage()),
                     FORM_ERROR.getStatusCode());
         }
     }
@@ -85,7 +93,7 @@ public class ApiDocProtectorViewer extends ApiDocProtectorLibrary {
                 modelAndView.addObject("apidoc_protector_target", customUriUserRecovery);
 
                 if (userRecoverySuccessful) {
-                    modelAndView.addObject("apidoc_protector_recovery", "Check your email !");
+                    modelAndView.addObject("apidoc_protector_recovery", "Account recovery successfull, please check your email !");
                 }
 
                 register(VIEW_RECOVERY_FINISHED, null, "info", 1, "");
@@ -97,7 +105,7 @@ public class ApiDocProtectorViewer extends ApiDocProtectorLibrary {
 
             return error(
                     FORM_VIEW_ERROR.getMessage(),
-                    "Occurs an critical error on form recovery",
+                    base64Encode("Occurs an critical error on form recovery"),
                     FORM_VIEW_ERROR.getStatusCode());
 
         } catch (RuntimeException re) {
@@ -106,7 +114,7 @@ public class ApiDocProtectorViewer extends ApiDocProtectorLibrary {
 
             return error(
                     FORM_ERROR.getMessage(),
-                    re.getMessage(),
+                    base64Encode(re.getMessage()),
                     FORM_ERROR.getStatusCode());
         }
     }
@@ -124,7 +132,7 @@ public class ApiDocProtectorViewer extends ApiDocProtectorLibrary {
                 modelAndView.addObject("apidoc_protector_target", customUriUserPassword);
 
                 if (userRecoverySuccessful) {
-                    modelAndView.addObject("apidoc_protector_password", "Check your email !");
+                    modelAndView.addObject("apidoc_protector_password", "Password request successfull, please check your email !");
                 }
 
                 register(VIEW_PASSWORD_FINISHED, null, "info", 1, "");
@@ -136,7 +144,7 @@ public class ApiDocProtectorViewer extends ApiDocProtectorLibrary {
 
             return error(
                     FORM_VIEW_ERROR.getMessage(),
-                    "Occurs an critical error on form password",
+                    base64Encode("Occurs an critical error on form password"),
                     FORM_VIEW_ERROR.getStatusCode());
 
         } catch (RuntimeException re) {
@@ -145,7 +153,7 @@ public class ApiDocProtectorViewer extends ApiDocProtectorLibrary {
 
             return error(
                     FORM_ERROR.getMessage(),
-                    re.getMessage(),
+                    base64Encode(re.getMessage()),
                     FORM_ERROR.getStatusCode());
         }
     }
@@ -163,7 +171,7 @@ public class ApiDocProtectorViewer extends ApiDocProtectorLibrary {
                 modelAndView.addObject("apidoc_protector_target", customUriUserPasswordRecovery);
 
                 if (userRecoverySuccessful) {
-                    modelAndView.addObject("apidoc_protector_password", "Password changed successful !");
+                    modelAndView.addObject("apidoc_protector_password_recovery", "Password changed successful, please check your email !");
                 } else {
                     modelAndView.addObject("apidoc_protector_token", currentToken);
                 }
@@ -177,7 +185,7 @@ public class ApiDocProtectorViewer extends ApiDocProtectorLibrary {
 
             return error(
                     FORM_VIEW_ERROR.getMessage(),
-                    "Occurs an critical error on form password recovery",
+                    base64Encode("Occurs an critical error on form password recovery"),
                     FORM_VIEW_ERROR.getStatusCode());
 
         } catch (RuntimeException re) {
@@ -186,7 +194,7 @@ public class ApiDocProtectorViewer extends ApiDocProtectorLibrary {
 
             return error(
                     FORM_ERROR.getMessage(),
-                    re.getMessage(),
+                    base64Encode(re.getMessage()),
                     FORM_ERROR.getStatusCode());
         }
     }
@@ -226,7 +234,7 @@ public class ApiDocProtectorViewer extends ApiDocProtectorLibrary {
 
             return error(
                     FORM_VIEW_ERROR.getMessage(),
-                    "Occurs an critical error on form",
+                    base64Encode("Occurs an critical error on form"),
                     FORM_VIEW_ERROR.getStatusCode());
 
         } catch (RuntimeException re) {
@@ -235,7 +243,7 @@ public class ApiDocProtectorViewer extends ApiDocProtectorLibrary {
 
             return error(
                     FORM_ERROR.getMessage(),
-                    re.getMessage(),
+                    base64Encode(re.getMessage()),
                     FORM_ERROR.getStatusCode());
         }
     }
@@ -266,7 +274,7 @@ public class ApiDocProtectorViewer extends ApiDocProtectorLibrary {
 
         return error(
                 INVALID_PROTECTOR.getMessage(),
-                apiDocProtectorType,
+                base64Encode(apiDocProtectorType),
                 INVALID_PROTECTOR.getStatusCode());
     }
 
@@ -298,7 +306,7 @@ public class ApiDocProtectorViewer extends ApiDocProtectorLibrary {
                 }
                 return apiDocProtectorViewer.error(
                         EXPIRED_SESSION.getMessage(),
-                        "session expired",
+                        base64Encode("session expired"),
                         EXPIRED_SESSION.getStatusCode());
             }
 
@@ -311,7 +319,7 @@ public class ApiDocProtectorViewer extends ApiDocProtectorLibrary {
 
             return error(
                     INVALID_PROTECTOR.getMessage(),
-                    apiDocProtectorType,
+                    base64Encode(apiDocProtectorType),
                     INVALID_PROTECTOR.getStatusCode());
 
         } catch (RuntimeException re) {
@@ -322,7 +330,7 @@ public class ApiDocProtectorViewer extends ApiDocProtectorLibrary {
 
             return error(
                     REFRESH_ERROR.getMessage(),
-                    error,
+                    base64Encode(error),
                     REFRESH_ERROR.getStatusCode());
         }
     }
@@ -357,7 +365,7 @@ public class ApiDocProtectorViewer extends ApiDocProtectorLibrary {
 
             return error(
                     PROTECTOR_ERROR.getMessage(),
-                    re.getMessage(),
+                    base64Encode(re.getMessage()),
                     PROTECTOR_ERROR.getStatusCode());
         }
     }

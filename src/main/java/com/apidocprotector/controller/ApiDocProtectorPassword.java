@@ -33,7 +33,7 @@ public class ApiDocProtectorPassword extends ApiDocProtectorLibrary {
 
 			register(PASSWORD_EXCEPTION, null, "except", 1, re.getMessage());
 
-			return apiDocProtectorErrorRedirect.redirectPasswordError("error_to_load_form_password");
+			return apiDocProtectorErrorRedirect.redirectPasswordError(base64Encode(re.getMessage()));
 		}
 
 	}
@@ -50,7 +50,7 @@ public class ApiDocProtectorPassword extends ApiDocProtectorLibrary {
 
 			register(PASSWORD_GLASS_EXCEPTION, null, "except", 1, re.getMessage());
 
-			return apiDocProtectorErrorRedirect.redirectPasswordError("unknown");
+			return apiDocProtectorErrorRedirect.redirectPasswordError(base64Encode(re.getMessage()));
 		}
 	}
 
@@ -66,7 +66,7 @@ public class ApiDocProtectorPassword extends ApiDocProtectorLibrary {
 
 			return apiDocProtectorViewer.error(
 					PASSWORD_ERROR.getMessage(),
-					"invalid access in form password",
+					base64Encode("invalid access in form password"),
 					PASSWORD_ERROR.getStatusCode());
 		}
 
@@ -90,7 +90,7 @@ public class ApiDocProtectorPassword extends ApiDocProtectorLibrary {
 
 			return apiDocProtectorViewer.error(
 					PASSWORD_ERROR.getMessage(),
-					"The request has caused a exception",
+					base64Encode("The request has caused a exception " + re.getMessage()),
 					PASSWORD_ERROR.getStatusCode());
 		}
 	}
@@ -106,17 +106,22 @@ public class ApiDocProtectorPassword extends ApiDocProtectorLibrary {
 
 		if (session.getAttribute("ADP-USER-PASSWORD") == null || !session.getAttribute("ADP-USER-PASSWORD").equals("1")) {
 			register(PASSWORD_FORM_INVALID_SESSION, null, "error", 2, "Invalid Session");
-			return apiDocProtectorErrorRedirect.redirectPasswordError("invalid_session_user_password");
+			return apiDocProtectorErrorRedirect.redirectPasswordError(base64Encode("invalid_session_user_password"));
+		}
+
+		if (body.get("email") == null || body.get("email").equals("")) {
+			register(GENERIC_MESSAGE, null, "error", 2, "Missing email on request");
+			return apiDocProtectorErrorRedirect.redirectPasswordError(base64Encode("Missing email on request"));
 		}
 
 		ApiDocProtectorEntity user = apiDocProtectorRepository.findByEmail(body.get("email"));
 
 		if (user == null) {
 
-			register(PASSWORD_ACCOUNT_NOT_FOUND, null, "error", 2, "Account not found: " + body.get("email"));
+			register(PASSWORD_ACCOUNT_NOT_FOUND, null, "error", 2, "User not found to mail " + body.get("email"));
 
 			session.setAttribute("ADP-ACCOUNT-PASSWORD-SUCCESSFUL", null);
-			return apiDocProtectorErrorRedirect.redirectPasswordError("user_not_found_password");
+			return apiDocProtectorErrorRedirect.redirectPasswordError(base64Encode("User not found to mail " + body.get("email")));
 		}
 
 		try {
@@ -136,7 +141,7 @@ public class ApiDocProtectorPassword extends ApiDocProtectorLibrary {
 			register(PASSWORD_EXCEPTION, null, "except", 1, re.getMessage());
 
 			session.setAttribute("ADP-ACCOUNT-PASSWORD-SUCCESSFUL", null);
-			return apiDocProtectorErrorRedirect.redirectPasswordError("password_recovery_error");
+			return apiDocProtectorErrorRedirect.redirectPasswordError(base64Encode(re.getMessage()));
 		}
 	}
 
@@ -148,7 +153,7 @@ public class ApiDocProtectorPassword extends ApiDocProtectorLibrary {
 
 		return apiDocProtectorViewer.error(
 				PASSWORD_ERROR.getMessage(),
-				data.replace("_", " "),
+				data,
 				PASSWORD_ERROR.getStatusCode());
 	}
 

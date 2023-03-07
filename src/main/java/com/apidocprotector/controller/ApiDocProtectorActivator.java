@@ -30,7 +30,7 @@ public class ApiDocProtectorActivator extends ApiDocProtectorLibrary {
 
 		register(NO_AUDITOR, null, "info", 2, "RESULT TOKEN " + result.getName());
 
-		if (result == null) {
+		if (result.getToken() == null) {
 
 			/*Generic (HTML Page)*/
 			String dataHtml = readFile("./src/main/resources/templates/apidocprotector/generic.html");

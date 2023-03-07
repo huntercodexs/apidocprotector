@@ -30,7 +30,7 @@ public class ApiDocProtectorGenerator extends ApiDocProtectorLibrary {
 			return apiDocProtectorRedirect.forwardToGeneratorGlass();
 		} catch (RuntimeException re) {
 			register(GENERATOR_EXCEPTION, null, "except", 1, "Generator Exception: "+re.getMessage());
-			return apiDocProtectorErrorRedirect.redirectGeneratorError("error_to_load_form");
+			return apiDocProtectorErrorRedirect.redirectGeneratorError(base64Encode(re.getMessage()));
 		}
 
 	}
@@ -45,7 +45,7 @@ public class ApiDocProtectorGenerator extends ApiDocProtectorLibrary {
 			return apiDocProtectorRedirect.redirectToGeneratorForm();
 		} catch (RuntimeException re) {
 			register(GENERATOR_GLASS_EXCEPTION, null, "except", 1, "Generator Glass Exception: " + re.getMessage());
-			return apiDocProtectorErrorRedirect.redirectGeneratorError("glass_forward_error");
+			return apiDocProtectorErrorRedirect.redirectGeneratorError(base64Encode(re.getMessage()));
 		}
 	}
 
@@ -61,7 +61,7 @@ public class ApiDocProtectorGenerator extends ApiDocProtectorLibrary {
 
 			return apiDocProtectorViewer.error(
 					GENERATOR_ERROR.getMessage(),
-					"invalid access",
+					base64Encode("invalid access"),
 					GENERATOR_ERROR.getStatusCode());
 		}
 
@@ -83,7 +83,7 @@ public class ApiDocProtectorGenerator extends ApiDocProtectorLibrary {
 
 			return apiDocProtectorViewer.error(
 					GENERATOR_ERROR.getMessage(),
-					"The request has caused a exception",
+					base64Encode("The request has caused a exception " + re.getMessage()),
 					GENERATOR_ERROR.getStatusCode());
 		}
 	}
@@ -105,13 +105,13 @@ public class ApiDocProtectorGenerator extends ApiDocProtectorLibrary {
 
 		if (session.getAttribute("ADP-USER-GENERATOR") == null || !session.getAttribute("ADP-USER-GENERATOR").equals("1")) {
 			register(GENERATOR_FORM_INVALID_SESSION, null, "warn", 2, "Invalid Session");
-			return apiDocProtectorErrorRedirect.redirectGeneratorError("invalid_session_user_generator");
+			return apiDocProtectorErrorRedirect.redirectGeneratorError(base64Encode("invalid_session_user_generator"));
 		}
 
 		if (apiDocProtectorRepository.findByUsernameOrEmail(body.get("username"), body.get("email")) != null) {
 			register(GENERATOR_FORM_USER_ALREADY_EXISTS, null, "info", 2, "User Conflict: " + body.get("username"));
 			session.setAttribute("ADP-ACCOUNT-CREATED-SUCCESSFUL", null);
-			return apiDocProtectorErrorRedirect.redirectGeneratorError("user_already_exists");
+			return apiDocProtectorErrorRedirect.redirectGeneratorError(base64Encode("user_already_exists"));
 		}
 
 		try {
@@ -133,7 +133,7 @@ public class ApiDocProtectorGenerator extends ApiDocProtectorLibrary {
 			register(GENERATOR_EXCEPTION, null, "except", 1, "Create in Generator: " + re.getMessage());
 
 			session.setAttribute("ADP-ACCOUNT-CREATED-SUCCESSFUL", null);
-			return apiDocProtectorErrorRedirect.redirectGeneratorError("account_create_error");
+			return apiDocProtectorErrorRedirect.redirectGeneratorError(base64Encode(re.getMessage()));
 		}
 	}
 
@@ -145,7 +145,7 @@ public class ApiDocProtectorGenerator extends ApiDocProtectorLibrary {
 
 		return apiDocProtectorViewer.error(
 				GENERATOR_ERROR.getMessage(),
-				data.replace("_", " "),
+				data,
 				GENERATOR_ERROR.getStatusCode());
 	}
 
