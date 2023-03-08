@@ -3,27 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <title>ApiDoc Protector</title>
-    <style>
-    #error-box {
-        width: 450px;
-        height: 300px;
-        margin: 100px auto;
-        text-align: center;
-        font-family: arial;
-    }
-    strong {
-        color: #F80000;
-    }
-    </style>
+    <style th:text="${apidoc_protector_theme}"></style>
 </head>
 
-<body>
+<body id="body_error">
     <div id="error-box" style="width: 300px;height: 300px;margin: 100px auto;text-align: center;font-family: arial;">
         <h4>APIDOC PROTECTOR</h4>
-        <small th:text="${apidoc_protector_error_title}"></small>
-        <strong><small th:text="${apidoc_protector_error_info}"></small></strong>
+        <div>
+            <small th:text="${apidoc_protector_error_title}"></small>
+        </div>
+        <div id="div_error_message">
+            <strong><small th:text="${apidoc_protector_error_info}"></small></strong>
+        </div>
         <br />
-        <small>Please check your support</small>
+        <div>
+            <small>Please check your support</small>
+        </div>
     </div>
 </body>
 </html>
