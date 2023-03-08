@@ -3,94 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <title>ApiDoc Protector</title>
-    <style>
-        * {
-            margin: 5px;
-            padding: 0;
-            font-family: verdana, sans-serif;
-        }
-        body {
-            background: #C9C9CA;
-        }
-        form {
-            width: 500px;
-            height: 300px;
-            padding: 20px;
-            margin: 70px auto;
-            text-align: center;
-        }
-        h3 {
-            text-align: center !important;
-            margin-bottom: 25px;
-            padding: 20px;
-            color: #FFF;
-            color: #939397;
-            border-bottom: solid 1px;
-        }
-        input[type=text], input[type=password] {
-            width: 100%;
-            color: #888;
-            font-size: 18px;
-            margin: 5px auto !important;
-            border-box: box-sizing;
-            box-sizing: border-box;
-            padding: 15px !important;
-        }
-        #bt-login {
-            padding: 13px 13px;
-            background: #4d95e1;
-            color: #FFF;
-            width: 140px;
-            border: none;
-            border-radius: 9px;
-            font-size: 18px;
-            font-weight: bold;
-            box-shadow: 1px 2px 3px #888;
-        }
-        #error-login {
-            color: #DD0B0B;
-            margin: 20px 10px;
-            text-align: center;
-        }
-        #hidden-apidoc-protector-type {
-            display: none !important;
-        }
-        #img-logo-huntercodexs {
-            margin: 70px auto;
-        }
-        #change-password {
-            color: #000089;
-        }
-        body > form:nth-child(1) > p:nth-child(1) {
-            width: 100%;
-            text-align: center;
-            font-size: 54px;
-            color: #888;
-        }
-        body > form:nth-child(1) > p:nth-child(3) {
-            text-align: left;
-        }
-        body > form:nth-child(1) > p:nth-child(5) {
-            text-align: left;
-        }
-        body > form:nth-child(1) > p:nth-child(6) {
-            text-align: center;
-        }
-        body > form:nth-child(1) > p:nth-child(7) {
-            text-align: center;
-        }
-    </style>
+    <style th:text="${apidoc_protector_theme}"></style>
 </head>
 
-<body>
+<body id="body_login">
     <form method='POST' th:action="${apidoc_protector_target}" enctype='application/x-www-form-urlencoded'>
         <p style="width: 100%;text-align: center;font-size: 54px;color: #888;">&#9661;</p>
         <h3>APIDOC PROTECTOR</h3>
-        <p>Username</p>
+        <p id="p_login_username">Username</p>
         <p>
             <input type='text' name='username' id='username' value="" />
         </p>
-        <p>Password <small>
+        <p id="p_login_password">Password<small>
             <a id="change-password" th:href="${apidoc_protector_form_password}">change password</a>
         </small></p>
         <p>

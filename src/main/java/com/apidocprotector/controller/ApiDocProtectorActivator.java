@@ -21,10 +21,11 @@ public class ApiDocProtectorActivator extends ApiDocProtectorLibrary {
 	@Operation(hidden = true)
 	@GetMapping(path = "${apidocprotector.custom.uri-account-active:/doc-protect/account/active}/{token}")
 	@ResponseBody
-	public String activator(@PathVariable("token") String token) {
+	public String activator(@PathVariable("token") String token64) {
 
 		register(ACTIVATOR_STARTED, null, "info", 2, "");
 
+		String token = base64Decode(token64);
 		String tokenCrypt = dataEncrypt(token);
 		ApiDocProtectorEntity result = findAccountByTokenAndActive(tokenCrypt, "no");
 
@@ -34,6 +35,7 @@ public class ApiDocProtectorActivator extends ApiDocProtectorLibrary {
 
 			/*Generic (HTML Page)*/
 			String dataHtml = readFile("./src/main/resources/templates/apidocprotector/generic.html");
+			String dataCss = readFile("./src/main/resources/templates/apidocprotector/theme/mail.css");
 
 			if (alreadyActivated(token)) {
 
@@ -41,6 +43,7 @@ public class ApiDocProtectorActivator extends ApiDocProtectorLibrary {
 				response.setStatus(HttpStatus.CONFLICT.value());
 
 				return dataHtml
+						.replace("@{apidoc_protector_mail_css}", dataCss)
 						.replace("@{apidoc_protector_title}", "Activation Failure")
 						.replace("@{apidoc_protector_content}", "The account has been already activated");
 			}
@@ -50,6 +53,7 @@ public class ApiDocProtectorActivator extends ApiDocProtectorLibrary {
 			response.setStatus(HttpStatus.NOT_FOUND.value());
 
 			return dataHtml
+					.replace("@{apidoc_protector_mail_css}", dataCss)
 					.replace("@{apidoc_protector_title}", "Activation Failure")
 					.replace("@{apidoc_protector_content}", "The account was not found");
 		}
@@ -60,9 +64,12 @@ public class ApiDocProtectorActivator extends ApiDocProtectorLibrary {
 
 			/*Generic (HTML Page)*/
 			String dataHtml = readFile("./src/main/resources/templates/apidocprotector/generic.html");
+			String dataCss = readFile("./src/main/resources/templates/apidocprotector/theme/mail.css");
+
 			response.setStatus(HttpStatus.NOT_ACCEPTABLE.value());
 
 			return dataHtml
+					.replace("@{apidoc_protector_mail_css}", dataCss)
 					.replace("@{apidoc_protector_title}", "Activation Failure")
 					.replace("@{apidoc_protector_content}", "" +
 							"The time to active your account has been expired, you need recovery the account<br />" +
@@ -74,19 +81,23 @@ public class ApiDocProtectorActivator extends ApiDocProtectorLibrary {
 		apiDocProtectorRepository.save(result);
 
 		String emailTo = result.getEmail();
-		String subject = apiDocProtectorMailSender.subjectMail(result.getUsername());
-		String content = apiDocProtectorMailSender.contentMailActivatedUser(result.getName(), token);
+		String subject = apiDocProtectorMailSender.subjectMail("User activated", result.getUsername());
+		String content = apiDocProtectorMailSender.contentMailActivatedUser(result.getName(), result.getUsername(), token);
 		apiDocProtectorMailSender.sendMailAttached(emailTo, subject, content);
 
 		register(ACTIVATOR_MAIL_SUCCESSFUL, null, "info", 2, "User activated ok: " + result.getName());
 
 		/*Activated (HTML Page)*/
 		String dataHtml = readFile("./src/main/resources/templates/apidocprotector/mail/activated.html");
+		String dataCss = readFile("./src/main/resources/templates/apidocprotector/theme/mail.css");
+
 		response.setStatus(HttpStatus.OK.value());
 
 		register(ACTIVATOR_FINISHED, null, "info", 2, "");
 
-		return dataHtml.replace("@{apidoc_protector_username}", result.getName());
+		return dataHtml
+				.replace("@{apidoc_protector_mail_css}", dataCss)
+				.replace("@{apidoc_protector_username}", result.getName());
 	}
 
 }

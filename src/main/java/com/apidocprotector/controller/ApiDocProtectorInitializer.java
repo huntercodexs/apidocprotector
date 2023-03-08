@@ -22,10 +22,11 @@ public class ApiDocProtectorInitializer extends ApiDocProtectorLibrary {
 
 	@Operation(hidden = true)
 	@GetMapping(path = "${apidocprotector.custom.uri-login:/doc-protect/login}/{token}")
-	public String initializer(@PathVariable("token") String token) {
+	public String initializer(@PathVariable("token") String token64) {
 
 		register(INITIALIZER_STARTED, null, "info", 2, "");
 
+		String token = base64Decode(token64);
 		String tokenCrypt = dataEncrypt(token);
 		ApiDocProtectorEntity result = findAccountByTokenAndActive(tokenCrypt, "yes");
 
@@ -100,7 +101,6 @@ public class ApiDocProtectorInitializer extends ApiDocProtectorLibrary {
 		session.setAttribute("ADP-KEYPART", this.transfer.getKeypart());
 		session.setAttribute("ADP-SECRET", this.transfer.getSecret());
 
-		register(NO_AUDITOR, sessionId, "info", 2, "");
 		register(NO_AUDITOR, sessionId, "info", 2, session.getAttribute(sessionId).toString());
 
 		try {
