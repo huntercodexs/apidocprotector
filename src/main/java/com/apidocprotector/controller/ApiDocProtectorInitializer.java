@@ -1,6 +1,5 @@
 package com.apidocprotector.controller;
 
-import com.apidocprotector.enumerator.ApiDocProtectorLibraryEnum;
 import com.apidocprotector.library.ApiDocProtectorLibrary;
 import com.apidocprotector.model.ApiDocProtectorEntity;
 import io.swagger.v3.oas.annotations.Hidden;
@@ -34,12 +33,12 @@ public class ApiDocProtectorInitializer extends ApiDocProtectorLibrary {
 
 		if (findAccountByTokenAndActive(tokenCrypt, "no") != null) {
 			register(INITIALIZER_ERROR, null, "info", 2, "User token is not active");
-			return apiDocProtectorErrorRedirect.redirectInitializerError(base64Encode("User token is not active"));
+			return apiDocProtectorErrorRedirect.redirectError(base64Encode("User token is not active"));
 		}
 
 		if (result == null) {
 			register(INITIALIZER_ERROR, null, "info", 2, "Invalid token");
-			return apiDocProtectorErrorRedirect.redirectInitializerError(base64Encode("Invalid Token " + token));
+			return apiDocProtectorErrorRedirect.redirectError(base64Encode("Invalid Token " + token));
 		}
 
 		if (result.getToken() != null && result.getToken().equals(tokenCrypt)) {
@@ -55,7 +54,7 @@ public class ApiDocProtectorInitializer extends ApiDocProtectorLibrary {
 
 		register(INITIALIZER_ERROR, null, "info", 2, "Unknown Error");
 
-		return apiDocProtectorErrorRedirect.redirectInitializerError(base64Encode("Unknown Error"));
+		return apiDocProtectorErrorRedirect.redirectError(base64Encode("Unknown Error"));
 	}
 
 	@Operation(hidden = true)
@@ -70,7 +69,7 @@ public class ApiDocProtectorInitializer extends ApiDocProtectorLibrary {
 
 			register(INITIALIZER_EXCEPTION, null, "except", 2, "Initializer glass: " + re.getMessage());
 
-			return apiDocProtectorErrorRedirect.redirectInitializerError(base64Encode(re.getMessage()));
+			return apiDocProtectorErrorRedirect.redirectError(base64Encode(re.getMessage()));
 		}
 	}
 
@@ -132,19 +131,7 @@ public class ApiDocProtectorInitializer extends ApiDocProtectorLibrary {
 	@GetMapping(path = "${apidocprotector.custom.uri-login:/doc-protect/login}")
 	public String denied() {
 		register(INITIALIZER_DENIED, null, "info", 2, "Access Denied");
-		return apiDocProtectorErrorRedirect.redirectInitializerError(base64Encode("Missing_Token"));
-	}
-
-	@Operation(hidden = true)
-	@GetMapping(path = "/doc-protect/initializer/error/{data}")
-	public ModelAndView error(@PathVariable(required = false) String data) {
-
-		register(INITIALIZER_EXCEPTION, null, "error", 2, "Error: "+data);
-
-		return apiDocProtectorViewer.error(
-				ApiDocProtectorLibraryEnum.INITIALIZER_ERROR.getMessage(),
-				data,
-				ApiDocProtectorLibraryEnum.INITIALIZER_ERROR.getStatusCode());
+		return apiDocProtectorErrorRedirect.redirectError(base64Encode("Missing_Token"));
 	}
 
 }

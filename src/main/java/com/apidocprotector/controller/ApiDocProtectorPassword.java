@@ -6,7 +6,10 @@ import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
@@ -33,7 +36,7 @@ public class ApiDocProtectorPassword extends ApiDocProtectorLibrary {
 
 			register(PASSWORD_EXCEPTION, null, "except", 1, re.getMessage());
 
-			return apiDocProtectorErrorRedirect.redirectPasswordError(base64Encode(re.getMessage()));
+			return apiDocProtectorErrorRedirect.redirectError(base64Encode(re.getMessage()));
 		}
 
 	}
@@ -50,7 +53,7 @@ public class ApiDocProtectorPassword extends ApiDocProtectorLibrary {
 
 			register(PASSWORD_GLASS_EXCEPTION, null, "except", 1, re.getMessage());
 
-			return apiDocProtectorErrorRedirect.redirectPasswordError(base64Encode(re.getMessage()));
+			return apiDocProtectorErrorRedirect.redirectError(base64Encode(re.getMessage()));
 		}
 	}
 
@@ -106,12 +109,12 @@ public class ApiDocProtectorPassword extends ApiDocProtectorLibrary {
 
 		if (session.getAttribute("ADP-USER-PASSWORD") == null || !session.getAttribute("ADP-USER-PASSWORD").equals("1")) {
 			register(PASSWORD_FORM_INVALID_SESSION, null, "error", 2, "Invalid Session");
-			return apiDocProtectorErrorRedirect.redirectPasswordError(base64Encode("invalid_session_user_password"));
+			return apiDocProtectorErrorRedirect.redirectError(base64Encode("invalid_session_user_password"));
 		}
 
 		if (body.get("email") == null || body.get("email").equals("")) {
 			register(GENERIC_MESSAGE, null, "error", 2, "Missing email on request");
-			return apiDocProtectorErrorRedirect.redirectPasswordError(base64Encode("Missing email on request"));
+			return apiDocProtectorErrorRedirect.redirectError(base64Encode("Missing email on request"));
 		}
 
 		ApiDocProtectorEntity user = apiDocProtectorRepository.findByEmail(body.get("email"));
@@ -121,7 +124,7 @@ public class ApiDocProtectorPassword extends ApiDocProtectorLibrary {
 			register(PASSWORD_ACCOUNT_NOT_FOUND, null, "error", 2, "User not found to mail " + body.get("email"));
 
 			session.setAttribute("ADP-ACCOUNT-PASSWORD-SUCCESSFUL", null);
-			return apiDocProtectorErrorRedirect.redirectPasswordError(base64Encode("User not found to mail " + body.get("email")));
+			return apiDocProtectorErrorRedirect.redirectError(base64Encode("User not found to mail " + body.get("email")));
 		}
 
 		try {
@@ -141,20 +144,8 @@ public class ApiDocProtectorPassword extends ApiDocProtectorLibrary {
 			register(PASSWORD_EXCEPTION, null, "except", 1, re.getMessage());
 
 			session.setAttribute("ADP-ACCOUNT-PASSWORD-SUCCESSFUL", null);
-			return apiDocProtectorErrorRedirect.redirectPasswordError(base64Encode(re.getMessage()));
+			return apiDocProtectorErrorRedirect.redirectError(base64Encode(re.getMessage()));
 		}
-	}
-
-	@Operation(hidden = true)
-	@GetMapping(path = "/doc-protect/password/error/{data}")
-	public ModelAndView error(@PathVariable(required = false) String data) {
-
-		register(PASSWORD_EXCEPTION, null, "error", 1, data);
-
-		return apiDocProtectorViewer.error(
-				PASSWORD_ERROR.getMessage(),
-				data,
-				PASSWORD_ERROR.getStatusCode());
 	}
 
 }

@@ -175,18 +175,7 @@ public class ApiDocProtectorSwaggerRouter extends ApiDocProtectorLibrary {
 		register(SWAGGER_ROUTER_DENIED_STARTED, null, "info", 2, "");
 
 		httpResponse.setStatus(HttpStatus.NOT_ACCEPTABLE.value());
-		return apiDocProtectorErrorRedirect.forwardSentinelError(base64Encode("Operation not allowed"));
+		return apiDocProtectorErrorRedirect.redirectError(base64Encode("Operation not allowed"));
 	}
 
-	@Operation(hidden = true)
-	@GetMapping(path = "/doc-protect/login/error/{username}")
-	public ModelAndView error(@PathVariable(required = false) String data) {
-
-		register(SWAGGER_ROUTER_ERROR_STARTED, null, "error", 2, data);
-
-		return apiDocProtectorViewer.error(
-				INVALID_LOGIN.getMessage(),
-				data,
-				INVALID_LOGIN.getStatusCode());
-	}
 }

@@ -5,7 +5,10 @@ import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
@@ -30,7 +33,7 @@ public class ApiDocProtectorGenerator extends ApiDocProtectorLibrary {
 			return apiDocProtectorRedirect.forwardToGeneratorGlass();
 		} catch (RuntimeException re) {
 			register(GENERATOR_EXCEPTION, null, "except", 1, "Generator Exception: "+re.getMessage());
-			return apiDocProtectorErrorRedirect.redirectGeneratorError(base64Encode(re.getMessage()));
+			return apiDocProtectorErrorRedirect.redirectError(base64Encode(re.getMessage()));
 		}
 
 	}
@@ -45,7 +48,7 @@ public class ApiDocProtectorGenerator extends ApiDocProtectorLibrary {
 			return apiDocProtectorRedirect.redirectToGeneratorForm();
 		} catch (RuntimeException re) {
 			register(GENERATOR_GLASS_EXCEPTION, null, "except", 1, "Generator Glass Exception: " + re.getMessage());
-			return apiDocProtectorErrorRedirect.redirectGeneratorError(base64Encode(re.getMessage()));
+			return apiDocProtectorErrorRedirect.redirectError(base64Encode(re.getMessage()));
 		}
 	}
 
@@ -105,13 +108,13 @@ public class ApiDocProtectorGenerator extends ApiDocProtectorLibrary {
 
 		if (session.getAttribute("ADP-USER-GENERATOR") == null || !session.getAttribute("ADP-USER-GENERATOR").equals("1")) {
 			register(GENERATOR_FORM_INVALID_SESSION, null, "warn", 2, "Invalid Session");
-			return apiDocProtectorErrorRedirect.redirectGeneratorError(base64Encode("invalid_session_user_generator"));
+			return apiDocProtectorErrorRedirect.redirectError(base64Encode("invalid_session_user_generator"));
 		}
 
 		if (apiDocProtectorRepository.findByUsernameOrEmail(body.get("username"), body.get("email")) != null) {
 			register(GENERATOR_FORM_USER_ALREADY_EXISTS, null, "info", 2, "User Conflict: " + body.get("username"));
 			session.setAttribute("ADP-ACCOUNT-CREATED-SUCCESSFUL", null);
-			return apiDocProtectorErrorRedirect.redirectGeneratorError(base64Encode("user_already_exists"));
+			return apiDocProtectorErrorRedirect.redirectError(base64Encode("user_already_exists"));
 		}
 
 		try {
@@ -133,20 +136,8 @@ public class ApiDocProtectorGenerator extends ApiDocProtectorLibrary {
 			register(GENERATOR_EXCEPTION, null, "except", 1, "Create in Generator: " + re.getMessage());
 
 			session.setAttribute("ADP-ACCOUNT-CREATED-SUCCESSFUL", null);
-			return apiDocProtectorErrorRedirect.redirectGeneratorError(base64Encode(re.getMessage()));
+			return apiDocProtectorErrorRedirect.redirectError(base64Encode(re.getMessage()));
 		}
-	}
-
-	@Operation(hidden = true)
-	@GetMapping(path = "/doc-protect/generator/error/{data}")
-	public ModelAndView error(@PathVariable(required = false) String data) {
-
-		register(GENERATOR_EXCEPTION, null, "error", 1, data);
-
-		return apiDocProtectorViewer.error(
-				GENERATOR_ERROR.getMessage(),
-				data,
-				GENERATOR_ERROR.getStatusCode());
 	}
 
 }

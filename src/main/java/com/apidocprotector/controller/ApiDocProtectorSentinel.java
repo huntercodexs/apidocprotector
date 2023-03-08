@@ -14,7 +14,6 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-import static com.apidocprotector.enumerator.ApiDocProtectorLibraryEnum.SENTINEL_ERROR;
 import static com.apidocprotector.enumerator.ApiDocProtectorRegisterEnum.*;
 
 @Hidden
@@ -109,18 +108,6 @@ public class ApiDocProtectorSentinel extends ApiDocProtectorLibrary {
 	public ModelAndView protector() {
 		register(SENTINEL_PROTECTOR_STARTED, null, "info", 0, "");
 		return apiDocProtectorViewer.protector(session, null);
-	}
-
-	@Operation(hidden = true)
-	@GetMapping(path = "/doc-protect/sentinel/error/{error}")
-	public ModelAndView error(@PathVariable("error") String data) {
-
-		register(SENTINEL_ERROR_STARTED, null, "error", 1, data);
-
-		return apiDocProtectorViewer.error(
-				SENTINEL_ERROR.getMessage(),
-				data,
-				SENTINEL_ERROR.getStatusCode());
 	}
 
 }
