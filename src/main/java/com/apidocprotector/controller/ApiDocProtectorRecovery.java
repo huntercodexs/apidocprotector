@@ -6,7 +6,10 @@ import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
@@ -33,7 +36,7 @@ public class ApiDocProtectorRecovery extends ApiDocProtectorLibrary {
 
 			register(RECOVERY_EXCEPTION, null, "except", 1, re.getMessage());
 
-			return apiDocProtectorErrorRedirect.redirectRecoveryError(base64Encode(re.getMessage()));
+			return apiDocProtectorErrorRedirect.redirectError(base64Encode(re.getMessage()));
 		}
 
 	}
@@ -50,7 +53,7 @@ public class ApiDocProtectorRecovery extends ApiDocProtectorLibrary {
 
 			register(RECOVERY_GLASS_EXCEPTION, null, "except", 1, re.getMessage());
 
-			return apiDocProtectorErrorRedirect.redirectRecoveryError(base64Encode(re.getMessage()));
+			return apiDocProtectorErrorRedirect.redirectError(base64Encode(re.getMessage()));
 		}
 	}
 
@@ -104,12 +107,12 @@ public class ApiDocProtectorRecovery extends ApiDocProtectorLibrary {
 
 		if (session.getAttribute("ADP-USER-RECOVERY") == null || !session.getAttribute("ADP-USER-RECOVERY").equals("1")) {
 			register(RECOVERY_FORM_INVALID_SESSION, null, "error", 2, "Ivalid session");
-			return apiDocProtectorErrorRedirect.redirectRecoveryError(base64Encode("Invalid session"));
+			return apiDocProtectorErrorRedirect.redirectError(base64Encode("Invalid session"));
 		}
 
 		if (body.get("email") == null || body.get("email").equals("")) {
 			register(GENERIC_MESSAGE, null, "error", 2, "Missing email on request");
-			return apiDocProtectorErrorRedirect.redirectPasswordError(base64Encode("Missing email on request"));
+			return apiDocProtectorErrorRedirect.redirectError(base64Encode("Missing email on request"));
 		}
 
 		ApiDocProtectorEntity user = apiDocProtectorRepository.findByEmail(body.get("email"));
@@ -119,7 +122,7 @@ public class ApiDocProtectorRecovery extends ApiDocProtectorLibrary {
 			register(PASSWORD_RECOVERY_USER_NOT_FOUND, null, "error", 2, "User not found " + body.get("email"));
 
 			session.setAttribute("ADP-ACCOUNT-RECOVERY-SUCCESSFUL", null);
-			return apiDocProtectorErrorRedirect.redirectRecoveryError(base64Encode("User not found " + body.get("email")));
+			return apiDocProtectorErrorRedirect.redirectError(base64Encode("User not found " + body.get("email")));
 		}
 
 		try {
@@ -140,20 +143,8 @@ public class ApiDocProtectorRecovery extends ApiDocProtectorLibrary {
 			register(RECOVERY_EXCEPTION, null, "info", 1, re.getMessage());
 
 			session.setAttribute("ADP-ACCOUNT-RECOVERY-SUCCESSFUL", null);
-			return apiDocProtectorErrorRedirect.redirectRecoveryError(base64Encode(re.getMessage()));
+			return apiDocProtectorErrorRedirect.redirectError(base64Encode(re.getMessage()));
 		}
-	}
-
-	@Operation(hidden = true)
-	@GetMapping(path = "/doc-protect/recovery/error/{data}")
-	public ModelAndView error(@PathVariable(required = false) String data) {
-
-		register(RECOVERY_EXCEPTION, null, "error", 1, data);
-
-		return apiDocProtectorViewer.error(
-				RECOVERY_ERROR.getMessage(),
-				data,
-				RECOVERY_ERROR.getStatusCode());
 	}
 
 }
