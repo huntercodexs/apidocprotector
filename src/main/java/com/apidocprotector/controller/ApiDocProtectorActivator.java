@@ -35,7 +35,7 @@ public class ApiDocProtectorActivator extends ApiDocProtectorLibrary {
 
 			/*Generic (HTML Page)*/
 			String dataHtml = readFile("./src/main/resources/templates/apidocprotector/generic.html");
-			String dataCss = readFile("./src/main/resources/templates/apidocprotector/theme/mail.css");
+			String dataCss = readFile("./src/main/resources/static/apidocprotector/css/mail.css");
 
 			if (alreadyActivated(token)) {
 
@@ -64,7 +64,7 @@ public class ApiDocProtectorActivator extends ApiDocProtectorLibrary {
 
 			/*Generic (HTML Page)*/
 			String dataHtml = readFile("./src/main/resources/templates/apidocprotector/generic.html");
-			String dataCss = readFile("./src/main/resources/templates/apidocprotector/theme/mail.css");
+			String dataCss = readFile("./src/main/resources/static/apidocprotector/css/mail.css");
 
 			response.setStatus(HttpStatus.NOT_ACCEPTABLE.value());
 
@@ -89,7 +89,7 @@ public class ApiDocProtectorActivator extends ApiDocProtectorLibrary {
 
 		/*Activated (HTML Page)*/
 		String dataHtml = readFile("./src/main/resources/templates/apidocprotector/mail/activated.html");
-		String dataCss = readFile("./src/main/resources/templates/apidocprotector/theme/mail.css");
+		String dataCss = readFile("./src/main/resources/static/apidocprotector/css/mail.css");
 
 		response.setStatus(HttpStatus.OK.value());
 
