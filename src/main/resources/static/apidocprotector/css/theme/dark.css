@@ -8,17 +8,12 @@
 }
 body {
     overflow: hidden;
-    background: #E1E1E1 !important;
+    background: #221f1c !important;
     font-family: arial !important;
 }
 
 /*GENERATOR*/
 
-#body_generator {
-    overflow: hidden;
-    background: #F1F1F1;
-    font-family: arial !important;
-}
 #body_generator > form:nth-child(1) > p:nth-child(1) {
     width: 100%;
     text-align: center;
@@ -28,11 +23,12 @@ body {
 #body_generator > form:nth-child(1) > p {
     text-align: left;
 }
+
 #body_generator h5 {
     font-size: 20px;
     padding: 25px;
     color: #F1F1F1;
-    text-shadow: 1px 2px 3px #888;
+    text-shadow: 1px 2px 3px #000000;
 }
 #body_generator form {
     width: 500px;
@@ -46,7 +42,7 @@ body {
     margin-bottom: 25px;
     padding: 20px;
     color: #FFF;
-    color: #939397;
+    color: #595959;
     font-size: 74px;
 }
 #body_generator input[type=text],
@@ -60,19 +56,20 @@ body {
     padding: 15px !important;
     margin-bottom: 25px !important;
 }
-#body_generator #bt-signup {
+#body_generator #bt-save {
     margin-top: 50px;
     padding: 13px 13px;
-    background: #4d95e1;
+    background: #313131;
     color: #FFF;
     width: 140px;
     border: none;
     border-radius: 9px;
     font-size: 18px;
     font-weight: bold;
-    box-shadow: 1px 2px 3px #888;
+    box-shadow: 1px 2px 3px #000000;
 }
 #body_generator .title-field {
+    color: #F1F1F1;
     text-align: left;
 }
 #body_generator #img-logo-huntercodexs {
@@ -84,7 +81,8 @@ body {
 #body_generator #left-side {
     width: 30%;
     height: 1200px;
-    background-color: #ABABAB;
+    background-color: #353535;
+    color: #9D9D9D;
 }
 #body_generator #right-side {
     width: 70%;
@@ -96,11 +94,11 @@ body {
      width: 100%;
      text-align: center;
      font-size: 154px;
-     color: #888;
+     color: #666043;
      text-shadow: 1px 2px 3px #000;
 }
 #body_generator #post-message {
-    color: #353535;
+    color: #ff6c00;
     margin: 40px;
 }
 #body_generator #left-side > form:nth-child(2) > p:nth-child(11) {
@@ -108,6 +106,10 @@ body {
 }
 #body_generator #left-side > form:nth-child(2) > p:nth-child(11) a {
     color: #0000FF
+}
+
+#body_generator #p_account_recovery a {
+    color: #ff8300 !important;
 }
 
 /*ACTIVATED, GENERIC*/
@@ -157,14 +159,14 @@ body {
 }
 #body_login #bt-login {
     padding: 13px 13px;
-    background: #4d95e1;
+    background: #313131;
     color: #FFF;
     width: 140px;
     border: none;
     border-radius: 9px;
     font-size: 18px;
     font-weight: bold;
-    box-shadow: 1px 2px 3px #888;
+    box-shadow: 1px 2px 3px #000000;
     margin: 50px 0px;
 }
 #body_login #error-login {
@@ -189,11 +191,16 @@ body {
 }
 #body_login #p_login_username {
     text-align: left !important;
+    color: #F1F1F1;
     margin-top: 33px !important;
 }
 #body_login #p_login_password {
     text-align: left !important;
+    color: #F1F1F1;
     margin-top: 33px !important;
+}
+#body_login #change-password {
+    color: #FFB300;
 }
 #body_login > form:nth-child(1) > p:nth-child(6) {
     text-align: center;
@@ -221,7 +228,7 @@ body {
     font-size: 20px;
     padding: 25px;
     color: #F1F1F1;
-    text-shadow: 1px 2px 3px #888;
+    text-shadow: 1px 2px 3px #000000;
 }
 #body_password form {
     width: 500px;
@@ -251,16 +258,17 @@ body {
 #bt-password {
     margin-top: 50px;
     padding: 13px 13px;
-    background: #4d95e1;
+    background: #313131;
     color: #FFF;
     width: 140px;
     border: none;
     border-radius: 9px;
     font-size: 18px;
     font-weight: bold;
-    box-shadow: 1px 2px 3px #888;
+    box-shadow: 1px 2px 3px #000000;
 }
 #body_password .title-field {
+    color: #F1F1F1;
     text-align: left;
 }
 #body_password #img-logo-huntercodexs {
@@ -272,7 +280,7 @@ body {
 #body_password #left-side {
     width: 30%;
     height: 1200px;
-    background-color: #ABABAB;
+    background-color: #353535;
 }
 #body_password #right-side {
     width: 70%;
@@ -288,7 +296,7 @@ body {
      text-shadow: 1px 2px 3px #000;
 }
 #body_password #post-message {
-    color: #353535;
+    color: #ff6c00;
     margin: 40px;
 }
 #body_password #left-side > form:nth-child(2) > p:nth-child(11) {
@@ -317,7 +325,7 @@ body {
     font-size: 20px;
     padding: 25px;
     color: #F1F1F1;
-    text-shadow: 1px 2px 3px #888;
+    text-shadow: 1px 2px 3px #000000;
 }
 #body_password_recovery form {
     width: 500px;
@@ -339,7 +347,7 @@ body {
     width: 100%;
     color: #888;
     font-size: 18px;
-    margin: 5px auto !important;
+    margin: 5px auto;
     box-sizing: border-box;
     padding: 15px !important;
     margin-bottom: 25px;
@@ -347,16 +355,17 @@ body {
 #body_password_recovery #bt-recovery {
     margin-top: 20px;
     padding: 13px 13px;
-    background: #4d95e1;
+    background: #313131;
     color: #FFF;
     width: 140px;
     border: none;
     border-radius: 9px;
     font-size: 18px;
     font-weight: bold;
-    box-shadow: 1px 2px 3px #888;
+    box-shadow: 1px 2px 3px #000000;
 }
 #body_password_recovery .title-field {
+    color: #F1F1F1;
     text-align: left;
 }
 #body_password_recovery #img-logo-huntercodexs {
@@ -368,7 +377,7 @@ body {
 #body_password_recovery #left-side {
     width: 30%;
     height: 1200px;
-    background-color: #ABABAB;
+    background-color: #353535;
 }
 #body_password_recovery #right-side {
     width: 70%;
@@ -384,7 +393,7 @@ body {
      text-shadow: 1px 2px 3px #000;
 }
 #body_password_recovery #post-message {
-    color: #353535;
+    color: #ff6c00;
     margin: 40px;
 }
 #body_password_recovery #left-side > form:nth-child(2) > p:nth-child(11) {
@@ -414,7 +423,7 @@ body {
     font-size: 20px;
     padding: 25px;
     color: #F1F1F1;
-    text-shadow: 1px 2px 3px #888;
+    text-shadow: 1px 2px 3px #000000;
 }
 #body_recovery form {
     width: 500px;
@@ -444,16 +453,17 @@ body {
 #body_recovery #bt-recovery {
     margin-top: 20px;
     padding: 13px 13px;
-    background: #4d95e1;
+    background: #313131;
     color: #FFF;
     width: 140px;
     border: none;
     border-radius: 9px;
     font-size: 18px;
     font-weight: bold;
-    box-shadow: 1px 2px 3px #888;
+    box-shadow: 1px 2px 3px #000000;
 }
 #body_recovery .title-field {
+    color: #F1F1F1;
     text-align: left;
 }
 #body_recovery #img-logo-huntercodexs {
@@ -465,7 +475,7 @@ body {
 #body_recovery #left-side {
     width: 30%;
     height: 1200px;
-    background-color: #ABABAB;
+    background-color: #353535;
 }
 #body_recovery #right-side {
     width: 70%;
@@ -481,7 +491,7 @@ body {
      text-shadow: 1px 2px 3px #000;
 }
 #body_recovery #post-message {
-    color: #353535;
+    color: #ff6c00;
     margin: 40px;
 }
 #body_recovery #left-side > form:nth-child(2) > p:nth-child(11) {
@@ -511,11 +521,11 @@ body {
     margin: 30px;
 }
 
-#body_error  #div_error_message {
+#body_error #div_error_message {
     width: 90%;
     margin: 0px auto;
     padding: 10px;
     border: solid #880000 1px;
     border-radius: 5px;
-    background: #D9ADBB;
+    background: #622C3D;
 }

@@ -70,7 +70,7 @@ public class ApiDocProtectorMailSender extends ApiDocProtectorLibrary {
 
         /*Activate (HTML Mail)*/
         String dataHtml = readFile("./src/main/resources/templates/apidocprotector/mail/activate.html");
-        String dataCss = readFile("./src/main/resources/templates/apidocprotector/theme/mail.css");
+        String dataCss = readFile("./src/main/resources/static/apidocprotector/css/mail.css");
 
         String emailTime = String.valueOf(expireTimeEmail) + " minutes";
 
@@ -91,7 +91,7 @@ public class ApiDocProtectorMailSender extends ApiDocProtectorLibrary {
 
         /*Activate (HTML Mail)*/
         String dataHtml = readFile("./src/main/resources/templates/apidocprotector/mail/activate.html");
-        String dataCss = readFile("./src/main/resources/templates/apidocprotector/theme/mail.css");
+        String dataCss = readFile("./src/main/resources/static/apidocprotector/css/mail.css");
 
         String emailTime = String.valueOf(expireTimeEmail) + " minutes";
 
@@ -112,7 +112,7 @@ public class ApiDocProtectorMailSender extends ApiDocProtectorLibrary {
 
         /*Password Recovery (HTML Mail)*/
         String dataHtml = readFile("./src/main/resources/templates/apidocprotector/mail/password.html");
-        String dataCss = readFile("./src/main/resources/templates/apidocprotector/theme/mail.css");
+        String dataCss = readFile("./src/main/resources/static/apidocprotector/css/mail.css");
 
         String emailTime = String.valueOf(expireTimeEmail) + " minutes";
 
@@ -133,7 +133,7 @@ public class ApiDocProtectorMailSender extends ApiDocProtectorLibrary {
 
         /*Password Recovery (HTML Mail)*/
         String dataHtml = readFile("./src/main/resources/templates/apidocprotector/mail/password-recovery.html");
-        String dataCss = readFile("./src/main/resources/templates/apidocprotector/theme/mail.css");
+        String dataCss = readFile("./src/main/resources/static/apidocprotector/css/mail.css");
 
         register(MAILSENDER_CONTENT, null, "info", 2, "mail to " + user.getUsername());
 
@@ -151,7 +151,7 @@ public class ApiDocProtectorMailSender extends ApiDocProtectorLibrary {
 
         /*Welcome (HTML Mail)*/
         String dataHtml = readFile("./src/main/resources/templates/apidocprotector/mail/welcome.html");
-        String dataCss = readFile("./src/main/resources/templates/apidocprotector/theme/mail.css");
+        String dataCss = readFile("./src/main/resources/static/apidocprotector/css/mail.css");
 
         register(MAILSENDER_CONTENT, null, "info", 2, "mail to " + username);
 

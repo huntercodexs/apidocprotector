@@ -55,6 +55,7 @@ public class ApiDocProtectorViewer extends ApiDocProtectorLibrary {
 
                 if (userCreatedSuccessful) {
                     modelAndView.addObject("apidoc_protector_created", "Account created successful, please check your email !");
+                    session.setAttribute("ADP-ACCOUNT-CREATED-SUCCESSFUL", null);
                 }
 
                 register(VIEW_GENERATOR_FINISHED, null, "info", 1, "");
@@ -94,6 +95,7 @@ public class ApiDocProtectorViewer extends ApiDocProtectorLibrary {
 
                 if (userRecoverySuccessful) {
                     modelAndView.addObject("apidoc_protector_recovery", "Account recovery successfull, please check your email !");
+                    session.setAttribute("ADP-ACCOUNT-RECOVERY-SUCCESSFUL", null);
                 }
 
                 register(VIEW_RECOVERY_FINISHED, null, "info", 1, "");
@@ -133,6 +135,7 @@ public class ApiDocProtectorViewer extends ApiDocProtectorLibrary {
 
                 if (userRecoverySuccessful) {
                     modelAndView.addObject("apidoc_protector_password", "Password request successfull, please check your email !");
+                    session.setAttribute("ADP-ACCOUNT-PASSWORD-SUCCESSFUL", null);
                 }
 
                 register(VIEW_PASSWORD_FINISHED, null, "info", 1, "");
@@ -172,6 +175,7 @@ public class ApiDocProtectorViewer extends ApiDocProtectorLibrary {
 
                 if (userRecoverySuccessful) {
                     modelAndView.addObject("apidoc_protector_password_recovery", "Password changed successful, please check your email !");
+                    session.setAttribute("ADP-ACCOUNT-PASSWORD-RECOVERY-SUCCESSFULL", null);
                 } else {
                     modelAndView.addObject("apidoc_protector_token", currentToken);
                 }
@@ -222,7 +226,7 @@ public class ApiDocProtectorViewer extends ApiDocProtectorLibrary {
                 modelAndView.addObject("apidoc_protector_theme", theme());
                 modelAndView.addObject("apidoc_protector_target", swaggerUIPath);
                 modelAndView.addObject("apidoc_protector_sec", secret);
-                modelAndView.addObject("apidoc_protector_token", token);
+                modelAndView.addObject("apidoc_protector_token", base64Encode(token));
                 modelAndView.addObject("apidoc_protector_form_password", customUriPassword);
 
                 register(VIEW_FORM_FINISHED, sessionId, "info", 1, "");
