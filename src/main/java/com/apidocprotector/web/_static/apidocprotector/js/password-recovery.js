@@ -47,3 +47,36 @@ window.onload = function() {
 
     }(window));
 }
+
+let btrecovery = document.getElementById('bt-recovery');
+
+btrecovery.addEventListener('click', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+
+    let form = document.getElementById('form-password-recovery');
+    let password = document.getElementById('password').value;
+    let token = document.getElementById('token').value;
+
+    if (token == "") {
+        alert("Invalid form, please check your support.");
+        return false;
+    }
+
+    if (password != "") {
+        form.submit();
+    } else {
+        alert("Fill the password field please.")
+        return false;
+    }
+
+});
+
+let message = document.getElementById('post-message');
+
+if (message.innerHTML != "") {
+    setTimeout(function() {
+        console.log("cleanning text...");
+        message.innerHTML = "";
+    }, 5000);
+}

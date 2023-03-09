@@ -47,3 +47,30 @@ window.onload = function() {
 
     }(window));
 }
+
+let btpassword = document.getElementById('bt-password');
+
+btpassword.addEventListener('click', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+
+    let form = document.getElementById('form-password');
+    let email = document.getElementById('email').value;
+
+    if (email != "") {
+        form.submit();
+    } else {
+        alert("Fill the email field please.")
+        return false;
+    }
+
+});
+
+let message = document.getElementById('post-message');
+
+if (message.innerHTML != "") {
+    setTimeout(function() {
+        console.log("cleanning text...");
+        message.innerHTML = "";
+    }, 5000);
+}

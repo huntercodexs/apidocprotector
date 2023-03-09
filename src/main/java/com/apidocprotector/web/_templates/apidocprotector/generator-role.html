@@ -14,7 +14,7 @@
     </div>
     <div id="left-side">
         <h5>Account Creation</h5>
-        <form method='POST' th:action="${apidoc_protector_target}" enctype='application/x-www-form-urlencoded'>
+        <form id="form-generator" method='POST' th:action="${apidoc_protector_target}" enctype='application/x-www-form-urlencoded'>
 
             <p class="title-field">Name</p>
             <p>
@@ -55,10 +55,10 @@
             </p>
 
             <p id="p-button">
-                <input type='submit' id='bt-signup' value='Sign Up' />
+                <input type='submit' id='bt-save' value='Save' />
             </p>
 
-            <p id="post-message" th:text="${apidoc_protector_created}"></p>
+            <p id="post-message" th:text="${apidoc_protector_created}">teste</p>
 
         </form>
     </div>

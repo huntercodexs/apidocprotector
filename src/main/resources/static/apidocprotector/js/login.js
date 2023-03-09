@@ -1,9 +1,4 @@
 window.onload = function() {
-    //let apidoc_protector_target = document.getElementById('hidden-apidoc-protector-type').value;
-    /*if (window.location.href.search(apidoc_protector_target) !== -1) {
-        document.getElementById('error-login').innerHTML = 'Login Failed';
-    }*/
-
     (function(window) {
         'use strict';
 
@@ -55,3 +50,29 @@ window.onload = function() {
 
     }(window));
 }
+
+let btlogin = document.getElementById('bt-login');
+
+btlogin.addEventListener('click', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+
+    let form = document.getElementById('form-login');
+    let username = document.getElementById('username').value;
+    let password = document.getElementById('password').value;
+
+    if (username != "" && password != "") {
+        form.submit();
+    } else {
+        alert("Fill in all fields please.")
+        return false;
+    }
+
+});
+
+let message = document.getElementById('error-login');
+
+setTimeout(function() {
+    console.log("cleanning text...");
+    message.innerHTML = "";
+}, 5000);

@@ -210,7 +210,7 @@ public abstract class ApiDocProtectorLibrary extends ApiDocProtectorDataLibrary 
             return false;
         }
 
-        String tokenCrypt = dataEncrypt(token);
+        String tokenCrypt = dataEncrypt(base64Decode(token));
         ApiDocProtectorEntity result = apiDocProtectorRepository.findByTokenAndActive(tokenCrypt, "yes");
         String sessionCreatedAt = result.getSessionCreatedAt();
 
@@ -389,7 +389,7 @@ public abstract class ApiDocProtectorLibrary extends ApiDocProtectorDataLibrary 
             }
 
             String passwordCrypt = dataEncrypt(password);
-            String tokenCrypt = dataEncrypt(token);
+            String tokenCrypt = dataEncrypt(base64Decode(token));
             ApiDocProtectorEntity login = apiDocProtectorRepository
                     .findByUsernameAndPasswordAndTokenAndActive(username, passwordCrypt, tokenCrypt, "yes");
 

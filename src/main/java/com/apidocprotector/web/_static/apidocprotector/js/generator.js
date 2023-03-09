@@ -49,10 +49,33 @@ window.onload = function() {
 
 }
 
-//let bt = document.getElementById('bt-signup');
-//bt.addEventListener('click', function(e){
-//    e.preventDefault();
-//    e.stopPropagation();
-//    alert('TEST');
-//    return false;
-//});
+let btsave = document.getElementById('bt-save');
+
+btsave.addEventListener('click', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+
+    let form = document.getElementById('form-generator');
+    let name = document.getElementById('name').value;
+    let username = document.getElementById('username').value;
+    let email = document.getElementById('email').value;
+    let password = document.getElementById('password').value;
+    let role = document.getElementById('role').value;
+
+    if (name != "" && username != "" && email != "" && password != "" && role != "") {
+        form.submit();
+    } else {
+        alert("Fill in all fields please.")
+        return false;
+    }
+
+});
+
+let message = document.getElementById('post-message');
+
+if (message.innerHTML != "") {
+    setTimeout(function() {
+        console.log("cleanning text...");
+        message.innerHTML = "";
+    }, 5000);
+}
