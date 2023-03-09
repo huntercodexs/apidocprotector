@@ -692,7 +692,7 @@ public abstract class ApiDocProtectorLibrary extends ApiDocProtectorDataLibrary 
     }
 
     public String theme() {
-        if (apiDocTheme.matches("^(light|dark)$")) {
+        if (apiDocTheme.matches("^(light|dark|modern|gamer)$")) {
             return readFile("./src/main/resources/static/apidocprotector/css/theme/" + apiDocTheme + ".css");
         }
         throw new RuntimeException("Theme exception: invalid name " + apiDocTheme);
