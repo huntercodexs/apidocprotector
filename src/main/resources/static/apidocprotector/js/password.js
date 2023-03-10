@@ -57,6 +57,13 @@ btpassword.addEventListener('click', function(e) {
     let form = document.getElementById('form-password');
     let email = document.getElementById('email').value;
 
+    let check = /^[\w\.-]+@([\w\-]+\.)+[a-zA-Z]{2,4}$/;
+
+    if (email.search(check) == -1) {
+        alert("The mail is not valid");
+        return false;
+    }
+
     if (email != "") {
         form.submit();
     } else {
