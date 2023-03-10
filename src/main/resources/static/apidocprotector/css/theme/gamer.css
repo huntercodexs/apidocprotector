@@ -56,6 +56,9 @@ body {
     box-sizing: border-box;
     padding: 15px !important;
     margin-bottom: 25px !important;
+    background: #252525;
+    border-radius: 5px;
+    border: solid 1px;
 }
 #body_generator #bt-save {
     margin-top: 50px;
@@ -105,16 +108,49 @@ body {
 #body_generator #left-side > form:nth-child(2) > p:nth-child(11) {
     text-align: left !important;
 }
-#body_generator #left-side > form:nth-child(2) > p:nth-child(11) a {
-    color: #0000FF
-}
-
 #body_generator #p_account_recovery a {
     color: #ff8300 !important;
 }
 
+/*GENERATOR GAMER THEME*/
+
+body {
+  background: #18181e !important;
+}
+
+#body_generator #apidoc-protector-icon {
+  color: #62a03f !important;
+}
+
+#body_generator h3 {
+  color: #62a03f !important;
+  text-shadow: 2px 3px 5px #000000 !important;
+}
+
+#body_generator h5 {
+  color: #62a03f !important;
+}
+
+#body_generator #left-side {
+  background-color: #141415 !important;
+  color: #35AE13 !important;
+  box-shadow: 3px 13px 19px #000000 !important;
+}
+
+#body_generator .title-field {
+  color: #279DB0 !important;
+}
+
+#body_generator #bt-save {
+  background: #62a03f !important;
+}
+
+#body_generator #p_account_recovery a {
+  color: #61640f !important;
+}
+
 #body_generator .powered-by {
-    color: #898989 !important;
+    color: #61640f !important;
 }
 
 /*ACTIVATED, GENERIC*/
@@ -130,6 +166,13 @@ body {
     background-color:#222;
     color:#FFF;
     box-sizing: border-box;
+}
+
+/*ACTIVATED, GENERIC - GAMER*/
+
+#body_generic #header-mail {
+    color:#DEDEDE;
+    background-color:#18181;
 }
 
 /*LOGIN*/
@@ -216,8 +259,44 @@ body {
     text-align: center;
 }
 
+/*LOGIN - GAMER*/
+
+#body_login {
+    background: #18181e !important;
+}
+#body_login h3 {
+    color: #62a03f !important;
+    text-shadow: 2px 3px 5px #000000 !important;
+}
+#form-login #apidocprotecto-icon {
+    width: 100%;
+    text-align: center;
+    font-size: 54px;
+    color: #62a03f !important;
+}
+#body_login input[type=text],
+#body_login input[type=email],
+#body_login input[type=password] {
+    color: #888 !important;
+    background: #252525 !important;
+    border-radius: 5px !important;
+    border: solid 1px !important;
+}
+#body_login #bt-login {
+    background: #62a03f !important;
+}
+#body_login #change-password {
+    color: #61640f !important;
+}
+#body_login #p_login_username {
+    color: #279DB0 !important;
+}
+#body_login #p_login_password {
+    color: #279DB0 !important;
+}
+
 #body_login .powered-by {
-    color: #898989 !important;
+    color: #61640f !important;
 }
 
 /*PASSWORD*/
@@ -318,8 +397,50 @@ body {
     color: #0000FF
 }
 
+/*PASSWORD - GAMER*/
+
+#body_password {
+    background: #18181e !important;
+}
+#body_password > form:nth-child(1) > p:nth-child(1) {
+    color: #62a03f !important;
+}
+#body_password h5 {
+    color: #62a03f !important;
+}
+#body_password h3 {
+    color: #62a03f !important;
+    text-shadow: 2px 3px 5px #000000 !important;
+}
+#body_password input[type=text],
+#body_password input[type=email],
+#body_password input[type=password] {
+    color: #888;
+    background: #252525;
+    border-radius: 5px;
+    border: solid 1px;
+}
+#bt-password {
+    background: #62a03f !important;
+}
+#body_password .title-field {
+    color: #279DB0 !important;
+}
+#body_password #left-side {
+    background-color: #141415 !important;
+    color: #35AE13 !important;
+    box-shadow: 3px 13px 19px #000000 !important;
+}
+
+#body_password #apidoc-protector-icon {
+    color: #62a03f !important;
+}
+#body_password #post-message {
+    color: #ff6c00;
+}
+
 #body_password .powered-by {
-    color: #898989 !important;
+    color: #61640f !important;
 }
 
 /*PASSWORD RECOVERY*/
@@ -420,8 +541,45 @@ body {
     color: #0000FF
 }
 
+/*PASSWORD RECOVERY - GAMER*/
+
+#body_password_recovery {
+    background: #18181e !important;
+}
+#body_password_recovery > form:nth-child(1) > p:nth-child(1) {
+    color: #62a03f !important;
+}
+#body_password_recovery h5 {
+    color: #62a03f !important;
+}
+#body_password_recovery h3 {
+    color: #62a03f !important;
+    text-shadow: 2px 3px 5px #000000 !important;
+}
+#body_password_recovery input[type=text],
+#body_password_recovery input[type=email],
+#body_password_recovery input[type=password] {
+    color: #888;
+    background: #252525;
+    border-radius: 5px;
+    border: solid 1px;
+}
+#body_password_recovery #bt-recovery {
+    background: #62a03f !important;
+}
+#body_password_recovery .title-field {
+    color: #279DB0 !important;
+}
+#body_password_recovery #left-side {
+    background-color: #141415 !important;
+    color: #35AE13 !important;
+    box-shadow: 3px 13px 19px #000000 !important;
+}
+#body_password_recovery #apidoc-protector-icon {
+    color: #62a03f !important;
+}
 #body_password_recovery .powered-by {
-    color: #898989 !important;
+    color: #61640f !important;
 }
 
 /*RECOVERY*/
@@ -522,8 +680,45 @@ body {
     color: #0000FF
 }
 
+/*RECOVERY - GAMER*/
+
+#body_recovery {
+    background: #18181e !important;
+}
+#body_recovery > form:nth-child(1) > p:nth-child(1) {
+    color: #62a03f;
+}
+#body_recovery h5 {
+    color: #62a03f !important;
+}
+#body_recovery h3 {
+    color: #62a03f !important;
+    text-shadow: 2px 3px 5px #000000 !important;
+}
+#body_recovery input[type=text],
+#body_recovery input[type=email],
+#body_recovery input[type=password] {
+    color: #888;
+    background: #252525;
+    border-radius: 5px;
+    border: solid 1px;
+}
+#body_recovery #bt-recovery {
+    background: #62a03f !important;
+}
+#body_recovery .title-field {
+    color: #279DB0 !important;
+}
+#body_recovery #left-side {
+    background-color: #141415 !important;
+    color: #35AE13 !important;
+    box-shadow: 3px 13px 19px #000000 !important;
+}
+#body_recovery #apidoc-protector-icon {
+    color: #62a03f !important;
+}
 #body_recovery .powered-by {
-    color: #898989 !important;
+    color: #61640f !important;
 }
 
 /*ERROR*/

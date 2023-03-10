@@ -31,7 +31,7 @@ body {
     text-shadow: 1px 2px 3px #000000;
 }
 #body_generator form {
-    width: 500px;
+    width: auto;
     height: auto;
     padding: 20px;
     margin: 0px auto;
@@ -46,6 +46,7 @@ body {
     font-size: 74px;
 }
 #body_generator input[type=text],
+#body_generator input[type=email],
 #body_generator input[type=password],
 #body_generator #role {
     width: 100%;
@@ -112,6 +113,10 @@ body {
     color: #ff8300 !important;
 }
 
+#body_generator .powered-by {
+    color: #898989 !important;
+}
+
 /*ACTIVATED, GENERIC*/
 
 #body_generic #container {
@@ -133,7 +138,8 @@ body {
     background: #C9C9CA;
 }
 #body_login form {
-    width: 500px;
+    width: auto;
+    max-width: 500px;
     height: 300px;
     padding: 20px;
     margin: 70px auto;
@@ -148,6 +154,7 @@ body {
     border-bottom: solid 1px;
 }
 #body_login input[type=text],
+#body_login input[type=email],
 #body_login input[type=password] {
     width: 100%;
     color: #888;
@@ -209,6 +216,10 @@ body {
     text-align: center;
 }
 
+#body_login .powered-by {
+    color: #898989 !important;
+}
+
 /*PASSWORD*/
 
 #body_password {
@@ -231,7 +242,7 @@ body {
     text-shadow: 1px 2px 3px #000000;
 }
 #body_password form {
-    width: 500px;
+    width: auto;
     height: auto;
     padding: 20px;
     margin: 0px auto;
@@ -246,6 +257,7 @@ body {
     font-size: 74px;
 }
 #body_password input[type=text],
+#body_password input[type=email],
 #body_password input[type=password] {
     width: 100%;
     color: #888;
@@ -306,6 +318,10 @@ body {
     color: #0000FF
 }
 
+#body_password .powered-by {
+    color: #898989 !important;
+}
+
 /*PASSWORD RECOVERY*/
 
 #body_password_recovery {
@@ -328,7 +344,7 @@ body {
     text-shadow: 1px 2px 3px #000000;
 }
 #body_password_recovery form {
-    width: 500px;
+    width: auto;
     height: auto;
     padding: 20px;
     margin: 0px auto;
@@ -343,6 +359,7 @@ body {
     font-size: 74px;
 }
 #body_password_recovery input[type=text],
+#body_password_recovery input[type=email],
 #body_password_recovery input[type=password] {
     width: 100%;
     color: #888;
@@ -403,6 +420,9 @@ body {
     color: #0000FF
 }
 
+#body_password_recovery .powered-by {
+    color: #898989 !important;
+}
 
 /*RECOVERY*/
 
@@ -426,7 +446,7 @@ body {
     text-shadow: 1px 2px 3px #000000;
 }
 #body_recovery form {
-    width: 500px;
+    width: auto;
     height: auto;
     padding: 20px;
     margin: 0px auto;
@@ -441,6 +461,7 @@ body {
     font-size: 74px;
 }
 #body_recovery input[type=text],
+#body_recovery input[type=email],
 #body_recovery input[type=password] {
     width: 100%;
     color: #888;
@@ -499,6 +520,10 @@ body {
 }
 #body_recovery #left-side > form:nth-child(2) > p:nth-child(11) a {
     color: #0000FF
+}
+
+#body_recovery .powered-by {
+    color: #898989 !important;
 }
 
 /*ERROR*/

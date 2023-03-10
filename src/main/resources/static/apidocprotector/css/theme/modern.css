@@ -28,7 +28,6 @@ body {
     font-size: 20px;
     padding: 25px;
     color: #F1F1F1;
-    text-shadow: 1px 2px 3px #000000;
 }
 #body_generator form {
     width: auto;
@@ -42,7 +41,7 @@ body {
     margin-bottom: 25px;
     padding: 20px;
     color: #FFF;
-    color: #595959;
+    color: #FFFFFF;
     font-size: 74px;
 }
 #body_generator input[type=text],
@@ -56,6 +55,9 @@ body {
     box-sizing: border-box;
     padding: 15px !important;
     margin-bottom: 25px !important;
+    background: #FFFFFF;
+    border-radius: 5px;
+    border: solid 1px;
 }
 #body_generator #bt-save {
     margin-top: 50px;
@@ -90,16 +92,17 @@ body {
     float: right;
     text-align: center;
     padding-top: 200px;
+    color: #ff00e3;
 }
 #body_generator #apidoc-protector-icon {
-     width: 100%;
-     text-align: center;
-     font-size: 154px;
-     color: #666043;
-     text-shadow: 1px 2px 3px #000;
+    width: 100%;
+    text-align: center;
+    font-size: 154px;
+    color: #666043;
+    text-shadow: 1px 2px 3px #000;
 }
 #body_generator #post-message {
-    color: #ff6c00;
+    color: #232323;
     margin: 40px;
 }
 #body_generator #left-side > form:nth-child(2) > p:nth-child(11) {
@@ -113,8 +116,45 @@ body {
     color: #ff8300 !important;
 }
 
+/*GENERATOR MODERN THEME*/
+
+body {
+    background: #7f2282 !important;
+}
+
+#body_generator #apidoc-protector-icon {
+    color: #FFFFFF !important;
+}
+
+#body_generator h3 {
+    color: #FFFFFF !important;
+    text-shadow: 2px 3px 5px #000000 !important;
+}
+
+#body_generator h5 {
+    color: #7f2282 !important;
+}
+
+#body_generator #left-side {
+    background-color: #7cb727 !important;
+    color: #35AE13 !important;
+    box-shadow: 3px 13px 19px #000000 !important;
+}
+
+#body_generator .title-field {
+    color: #FFFFFF !important;
+}
+
+#body_generator #bt-save {
+    background: #7f2282 !important;
+}
+
+#body_generator #p_account_recovery a {
+    color: #000000 !important;
+}
+
 #body_generator .powered-by {
-    color: #898989 !important;
+    color: #f704ff !important;
 }
 
 /*ACTIVATED, GENERIC*/
@@ -130,6 +170,13 @@ body {
     background-color:#222;
     color:#FFF;
     box-sizing: border-box;
+}
+
+/*ACTIVATED, GENERIC - MODERN*/
+
+#body_generic #header-mail {
+    color:#DEDEDE;
+    background-color:#18181;
 }
 
 /*LOGIN*/
@@ -216,8 +263,44 @@ body {
     text-align: center;
 }
 
+/*LOGIN - MODERN*/
+
+#body_login {
+    background: #7cb727 !important;
+}
+#body_login h3 {
+    color: #FFFFFF !important;
+    text-shadow: 2px 3px 5px #000000 !important;
+}
+#form-login #apidocprotecto-icon {
+    width: 100%;
+    text-align: center;
+    font-size: 54px;
+    color: #FFFFFF !important;
+}
+#body_login input[type=text],
+#body_login input[type=email],
+#body_login input[type=password] {
+    color: #888 !important;
+    background: #FFFFFF !important;
+    border-radius: 5px !important;
+    border: solid 1px !important;
+}
+#body_login #bt-login {
+    background: #7f2282 !important;
+}
+#body_login #change-password {
+    color: #000000 !important;
+}
+#body_login #p_login_username {
+    color: #FFFFFF !important;
+}
+#body_login #p_login_password {
+    color: #FFFFFF !important;
+}
+
 #body_login .powered-by {
-    color: #898989 !important;
+    color: #f704ff !important;
 }
 
 /*PASSWORD*/
@@ -239,7 +322,6 @@ body {
     font-size: 20px;
     padding: 25px;
     color: #F1F1F1;
-    text-shadow: 1px 2px 3px #000000;
 }
 #body_password form {
     width: auto;
@@ -301,14 +383,14 @@ body {
     padding-top: 200px;
 }
 #body_password #apidoc-protector-icon {
-     width: 100%;
-     text-align: center;
-     font-size: 154px;
-     color: #888;
-     text-shadow: 1px 2px 3px #000;
+    width: 100%;
+    text-align: center;
+    font-size: 154px;
+    color: #888;
+    text-shadow: 1px 2px 3px #000;
 }
 #body_password #post-message {
-    color: #ff6c00;
+    color: #232323;
     margin: 40px;
 }
 #body_password #left-side > form:nth-child(2) > p:nth-child(11) {
@@ -318,8 +400,50 @@ body {
     color: #0000FF
 }
 
+/*PASSWORD - MODERN*/
+
+#body_password {
+    background: #7f2282 !important;
+}
+#body_password > form:nth-child(1) > p:nth-child(1) {
+    color: #FFFFFF !important;
+}
+#body_password h5 {
+    color: #7f2282 !important;
+}
+#body_password h3 {
+    color: #FFFFFF !important;
+    text-shadow: 2px 3px 5px #000000 !important;
+}
+#body_password input[type=text],
+#body_password input[type=email],
+#body_password input[type=password] {
+    color: #888;
+    background: #FFFFFF;
+    border-radius: 5px;
+    border: solid 1px;
+}
+#bt-password {
+    background: #7f2282 !important;
+}
+#body_password .title-field {
+    color: #FFFFFF !important;
+}
+#body_password #left-side {
+    background-color: #7cb727 !important;
+    color: #35AE13 !important;
+    box-shadow: 3px 13px 19px #000000 !important;
+}
+
+#body_password #apidoc-protector-icon {
+    color: #FFFFFF !important;
+}
+#body_password #post-message {
+    color: #232323;
+}
+
 #body_password .powered-by {
-    color: #898989 !important;
+    color: #f704ff !important;
 }
 
 /*PASSWORD RECOVERY*/
@@ -341,7 +465,6 @@ body {
     font-size: 20px;
     padding: 25px;
     color: #F1F1F1;
-    text-shadow: 1px 2px 3px #000000;
 }
 #body_password_recovery form {
     width: auto;
@@ -403,14 +526,14 @@ body {
     padding-top: 200px;
 }
 #body_password_recovery #apidoc-protector-icon {
-     width: 100%;
-     text-align: center;
-     font-size: 154px;
-     color: #888;
-     text-shadow: 1px 2px 3px #000;
+    width: 100%;
+    text-align: center;
+    font-size: 154px;
+    color: #888;
+    text-shadow: 1px 2px 3px #000;
 }
 #body_password_recovery #post-message {
-    color: #ff6c00;
+    color: #232323;
     margin: 40px;
 }
 #body_password_recovery #left-side > form:nth-child(2) > p:nth-child(11) {
@@ -420,8 +543,46 @@ body {
     color: #0000FF
 }
 
+/*PASSWORD RECOVERY - MODERN*/
+
+#body_password_recovery {
+    background: #7f2282 !important;
+}
+#body_password_recovery > form:nth-child(1) > p:nth-child(1) {
+    color: #FFFFFF !important;
+}
+#body_password_recovery h5 {
+    color: #7f2282 !important;
+}
+#body_password_recovery h3 {
+    color: #FFFFFF !important;
+    text-shadow: 2px 3px 5px #000000 !important;
+}
+#body_password_recovery input[type=text],
+#body_password_recovery input[type=email],
+#body_password_recovery input[type=password] {
+    color: #888;
+    background: #FFFFFF;
+    border-radius: 5px;
+    border: solid 1px;
+}
+#body_password_recovery #bt-recovery {
+    background: #7f2282 !important;
+}
+#body_password_recovery .title-field {
+    color: #FFFFFF !important;
+}
+#body_password_recovery #left-side {
+    background-color: #7cb727 !important;
+    color: #35AE13 !important;
+    box-shadow: 3px 13px 19px #000000 !important;
+}
+#body_password_recovery #apidoc-protector-icon {
+    color: #FFFFFF !important;
+}
+
 #body_password_recovery .powered-by {
-    color: #898989 !important;
+    color: #f704ff !important;
 }
 
 /*RECOVERY*/
@@ -443,7 +604,6 @@ body {
     font-size: 20px;
     padding: 25px;
     color: #F1F1F1;
-    text-shadow: 1px 2px 3px #000000;
 }
 #body_recovery form {
     width: auto;
@@ -505,14 +665,14 @@ body {
     padding-top: 200px;
 }
 #body_recovery #apidoc-protector-icon {
-     width: 100%;
-     text-align: center;
-     font-size: 154px;
-     color: #888;
-     text-shadow: 1px 2px 3px #000;
+    width: 100%;
+    text-align: center;
+    font-size: 154px;
+    color: #888;
+    text-shadow: 1px 2px 3px #000;
 }
 #body_recovery #post-message {
-    color: #ff6c00;
+    color: #232323;
     margin: 40px;
 }
 #body_recovery #left-side > form:nth-child(2) > p:nth-child(11) {
@@ -522,8 +682,46 @@ body {
     color: #0000FF
 }
 
+/*RECOVERY - MODERN*/
+
+#body_recovery {
+    background: #7f2282 !important;
+}
+#body_recovery > form:nth-child(1) > p:nth-child(1) {
+    color: #FFFFFF;
+}
+#body_recovery h5 {
+    color: #7f2282 !important;
+}
+#body_recovery h3 {
+    color: #FFFFFF !important;
+    text-shadow: 2px 3px 5px #000000 !important;
+}
+#body_recovery input[type=text],
+#body_recovery input[type=email],
+#body_recovery input[type=password] {
+    color: #888;
+    background: #FFFFFF;
+    border-radius: 5px;
+    border: solid 1px;
+}
+#body_recovery #bt-recovery {
+    background: #7f2282 !important;
+}
+#body_recovery .title-field {
+    color: #FFFFFF !important;
+}
+#body_recovery #left-side {
+    background-color: #7cb727 !important;
+    color: #35AE13 !important;
+    box-shadow: 3px 13px 19px #000000 !important;
+}
+#body_recovery #apidoc-protector-icon {
+    color: #FFFFFF !important;
+}
+
 #body_recovery .powered-by {
-    color: #898989 !important;
+    color: #f704ff !important;
 }
 
 /*ERROR*/

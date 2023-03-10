@@ -35,7 +35,7 @@ body {
     text-shadow: 1px 2px 3px #888;
 }
 #body_generator form {
-    width: 500px;
+    width: auto;
     height: auto;
     padding: 20px;
     margin: 0px auto;
@@ -50,6 +50,7 @@ body {
     font-size: 74px;
 }
 #body_generator input[type=text],
+#body_generator input[type=email],
 #body_generator input[type=password],
 #body_generator #role {
     width: 100%;
@@ -131,7 +132,8 @@ body {
     background: #C9C9CA;
 }
 #body_login form {
-    width: 500px;
+    width: auto;
+    max-width: 500px;
     height: 300px;
     padding: 20px;
     margin: 70px auto;
@@ -146,6 +148,7 @@ body {
     border-bottom: solid 1px;
 }
 #body_login input[type=text],
+#body_login input[type=email],
 #body_login input[type=password] {
     width: 100%;
     color: #888;
@@ -224,7 +227,7 @@ body {
     text-shadow: 1px 2px 3px #888;
 }
 #body_password form {
-    width: 500px;
+    width: auto;
     height: auto;
     padding: 20px;
     margin: 0px auto;
@@ -239,6 +242,7 @@ body {
     font-size: 74px;
 }
 #body_password input[type=text],
+#body_password input[type=email],
 #body_password input[type=password] {
     width: 100%;
     color: #888;
@@ -320,7 +324,7 @@ body {
     text-shadow: 1px 2px 3px #888;
 }
 #body_password_recovery form {
-    width: 500px;
+    width: auto;
     height: auto;
     padding: 20px;
     margin: 0px auto;
@@ -335,6 +339,7 @@ body {
     font-size: 74px;
 }
 #body_password_recovery input[type=text],
+#body_password_recovery input[type=email],
 #body_password_recovery input[type=password] {
     width: 100%;
     color: #888;
@@ -417,7 +422,7 @@ body {
     text-shadow: 1px 2px 3px #888;
 }
 #body_recovery form {
-    width: 500px;
+    width: auto;
     height: auto;
     padding: 20px;
     margin: 0px auto;
@@ -432,6 +437,7 @@ body {
     font-size: 74px;
 }
 #body_recovery input[type=text],
+#body_recovery input[type=email],
 #body_recovery input[type=password] {
     width: 100%;
     color: #888;
@@ -497,7 +503,7 @@ body {
 }
 
 #body_error #error-box {
-    color: #F1F1F1;
+    color: #838383;
     width: 96% !important;
     height: auto;
     margin: 100px auto;
