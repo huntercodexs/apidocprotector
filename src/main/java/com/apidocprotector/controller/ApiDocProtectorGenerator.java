@@ -108,13 +108,18 @@ public class ApiDocProtectorGenerator extends ApiDocProtectorLibrary {
 
 		if (session.getAttribute("ADP-USER-GENERATOR") == null || !session.getAttribute("ADP-USER-GENERATOR").equals("1")) {
 			register(GENERATOR_FORM_INVALID_SESSION, null, "warn", 2, "Invalid Session");
-			return apiDocProtectorErrorRedirect.redirectError(base64Encode("invalid_session_user_generator"));
+			return apiDocProtectorErrorRedirect.redirectError(base64Encode(GENERATOR_FORM_INVALID_SESSION.getMessage()));
+		}
+
+		if (!mailValidator(body.get("email"))) {
+			register(GENERATOR_FORM_INVALID_EMAIL, null, "error", 2, null);
+			return apiDocProtectorErrorRedirect.redirectError(base64Encode(GENERATOR_FORM_INVALID_EMAIL.getMessage()));
 		}
 
 		if (apiDocProtectorRepository.findByUsernameOrEmail(body.get("username"), body.get("email")) != null) {
 			register(GENERATOR_FORM_USER_ALREADY_EXISTS, null, "info", 2, "User Conflict: " + body.get("username"));
 			session.setAttribute("ADP-ACCOUNT-CREATED-SUCCESSFUL", null);
-			return apiDocProtectorErrorRedirect.redirectError(base64Encode("user_already_exists"));
+			return apiDocProtectorErrorRedirect.redirectError(base64Encode(GENERATOR_FORM_USER_ALREADY_EXISTS.getMessage()));
 		}
 
 		try {

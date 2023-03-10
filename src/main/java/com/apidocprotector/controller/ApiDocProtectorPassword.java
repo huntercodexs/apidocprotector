@@ -117,6 +117,11 @@ public class ApiDocProtectorPassword extends ApiDocProtectorLibrary {
 			return apiDocProtectorErrorRedirect.redirectError(base64Encode("Missing email on request"));
 		}
 
+		if (!mailValidator(body.get("email"))) {
+			register(PASSWORD_FORM_INVALID_EMAIL, null, "error", 2, null);
+			return apiDocProtectorErrorRedirect.redirectError(base64Encode(PASSWORD_FORM_INVALID_EMAIL.getMessage()));
+		}
+
 		ApiDocProtectorEntity user = apiDocProtectorRepository.findByEmail(body.get("email"));
 
 		if (user == null) {
