@@ -12,13 +12,13 @@
         <h3>APIDOC PROTECTOR</h3>
         <p id="p_login_username">Username</p>
         <p>
-            <input type='text' name='username' id='username' value="" />
+            <input type='email' name='username' id='username' value="" required  />
         </p>
         <p id="p_login_password">Password<small>
             <a id="change-password" th:href="${apidoc_protector_form_password}">change password</a>
         </small></p>
         <p>
-            <input type='password' name='password' id='password' value="" />
+            <input type='password' name='password' id='password' value="" required  />
         </p>
         <p>
             <input type='submit' id='bt-login' value='Sign' />
