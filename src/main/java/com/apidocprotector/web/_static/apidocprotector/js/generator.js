@@ -62,6 +62,13 @@ btsave.addEventListener('click', function(e) {
     let password = document.getElementById('password').value;
     let role = document.getElementById('role').value;
 
+    let check = /^[\w\.-]+@([\w\-]+\.)+[a-zA-Z]{2,4}$/;
+
+    if (email.search(check) == -1) {
+        alert("The mail is not valid");
+        return false;
+    }
+
     if (name != "" && username != "" && email != "" && password != "" && role != "") {
         form.submit();
     } else {
