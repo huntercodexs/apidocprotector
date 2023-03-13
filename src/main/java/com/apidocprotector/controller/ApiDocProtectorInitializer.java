@@ -20,30 +20,29 @@ import static com.apidocprotector.enumerator.ApiDocProtectorRegisterEnum.*;
 public class ApiDocProtectorInitializer extends ApiDocProtectorLibrary {
 
 	@Operation(hidden = true)
-	@GetMapping(path = "${apidocprotector.custom.uri-login:/doc-protect/login}/{token}")
-	public String initializer(@PathVariable("token") String token64) {
+	@GetMapping(path = "${apidocprotector.custom.uri-login:/doc-protect/login}/{token64}")
+	public String initializer(@PathVariable("token64") String token64) {
 
 		register(INITIALIZER_STARTED, null, "info", 2, "");
 
-		String token = base64Decode(token64);
-		String tokenCrypt = dataEncrypt(token);
-		ApiDocProtectorEntity result = findAccountByTokenAndActive(tokenCrypt, "yes");
+		String md5TokenCrypt = base64Decode(token64);
+		ApiDocProtectorEntity result = findAccountByTokenAndActive(md5TokenCrypt, "yes");
 
-		register(INITIALIZER_TOKEN_OK, null, "info", 2, "token: " + token);
+		register(INITIALIZER_TOKEN_OK, null, "info", 2, "token: " + md5TokenCrypt);
 
-		if (findAccountByTokenAndActive(tokenCrypt, "no") != null) {
+		if (findAccountByTokenAndActive(md5TokenCrypt, "no") != null) {
 			register(INITIALIZER_ERROR, null, "info", 2, "User token is not active");
 			return apiDocProtectorErrorRedirect.redirectError(base64Encode("User token is not active"));
 		}
 
 		if (result == null) {
 			register(INITIALIZER_ERROR, null, "info", 2, "Invalid token");
-			return apiDocProtectorErrorRedirect.redirectError(base64Encode("Invalid Token " + token));
+			return apiDocProtectorErrorRedirect.redirectError(base64Encode("Invalid Token " + md5TokenCrypt));
 		}
 
-		if (result.getToken() != null && result.getToken().equals(tokenCrypt)) {
+		if (result.getToken() != null && result.getToken().equals(md5TokenCrypt)) {
 
-			this.transfer = initEnv(token);
+			this.transfer = initEnv(md5TokenCrypt);
 			register(INITIALIZER_ENVIRONMENT_OK, null, "info", 2, "Init Transfer: " + this.transfer.getUsername());
 
 			sessionPrepare(session, this.transfer, result);

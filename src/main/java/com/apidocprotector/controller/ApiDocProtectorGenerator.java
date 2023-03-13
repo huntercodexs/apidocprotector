@@ -143,6 +143,7 @@ public class ApiDocProtectorGenerator extends ApiDocProtectorLibrary {
 			session.setAttribute("ADP-ACCOUNT-CREATED-SUCCESSFUL", null);
 			return apiDocProtectorErrorRedirect.redirectError(base64Encode(re.getMessage()));
 		}
+
 	}
 
 }

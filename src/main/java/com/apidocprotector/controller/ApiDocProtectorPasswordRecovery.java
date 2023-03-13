@@ -23,12 +23,12 @@ public class ApiDocProtectorPasswordRecovery extends ApiDocProtectorLibrary {
 
 	@Operation(hidden = true)
 	@GetMapping(path = "${apidocprotector.custom.uri-password-recovery:/doc-protect/password/recovery}/{token}")
-	public String password(@PathVariable(required = false, value = "token") String md5Token) {
+	public String password(@PathVariable(required = false, value = "token") String token64) {
 
 		register(PASSWORD_RECOVERY_STARTED, null, "info", 0, "");
 
 		try {
-			return apiDocProtectorRedirect.forwardToPasswordRecoveryGlass(md5Token);
+			return apiDocProtectorRedirect.forwardToPasswordRecoveryGlass(token64);
 		} catch (RuntimeException re) {
 
 			register(PASSWORD_EXCEPTION, null, "except", 1, re.getMessage());
@@ -40,12 +40,12 @@ public class ApiDocProtectorPasswordRecovery extends ApiDocProtectorLibrary {
 
 	@Operation(hidden = true)
 	@GetMapping(path = "/doc-protect/protector/password/recovery/glass/{token}")
-	public String glass(@PathVariable(required = true, value = "token") String md5Token) {
+	public String glass(@PathVariable(required = true, value = "token") String token64) {
 
 		register(PASSWORD_RECOVERY_GLASS_STARTED, null, "info", 0, "");
 
 		try {
-			return apiDocProtectorRedirect.redirectToPasswordRecoveryForm(md5Token);
+			return apiDocProtectorRedirect.redirectToPasswordRecoveryForm(token64);
 		} catch (RuntimeException re) {
 
 			register(PASSWORD_RECOVERY_GLASS_EXCEPTION, null, "except", 1, re.getMessage());
@@ -56,7 +56,7 @@ public class ApiDocProtectorPasswordRecovery extends ApiDocProtectorLibrary {
 
 	@Operation(hidden = true)
 	@GetMapping(path = "${apidocprotector.custom.uri-password-recovery:/doc-protect/password/recovery}/form/{token}")
-	public ModelAndView form(@PathVariable(required = true, value = "token") String md5Token) {
+	public ModelAndView form(@PathVariable(required = true, value = "token") String token64) {
 
 		register(PASSWORD_RECOVERY_FORM_STARTED, null, "info", 0, "");
 
@@ -77,12 +77,12 @@ public class ApiDocProtectorPasswordRecovery extends ApiDocProtectorLibrary {
 
 					register(PASSWORD_RECOVERY_SUCCESSFUL, null, "info", 2, "Password Recovered");
 
-					return apiDocProtectorViewer.passwordRecovery(true, md5Token);
+					return apiDocProtectorViewer.passwordRecovery(true, token64);
 				}
 			}
 
 			register(PASSWORD_RECOVERY_VIEW_FORM, null, "info", 0, "");
-			return apiDocProtectorViewer.passwordRecovery(false, md5Token);
+			return apiDocProtectorViewer.passwordRecovery(false, token64);
 
 		} catch (RuntimeException re) {
 
@@ -119,21 +119,21 @@ public class ApiDocProtectorPasswordRecovery extends ApiDocProtectorLibrary {
 			return apiDocProtectorErrorRedirect.redirectError(base64Encode("Missing password on request"));
 		}
 
-		String token = base64Decode(body.get("token"));
+		String md5TokenCrypt = base64Decode(body.get("token"));
 
-		ApiDocProtectorEntity user = apiDocProtectorRepository.findByToken(token);
+		ApiDocProtectorEntity user = apiDocProtectorRepository.findByToken(md5TokenCrypt);
 
 		if (user == null) {
 
-			register(PASSWORD_RECOVERY_USER_NOT_FOUND, null, "error", 2, "User not found to token " + token);
+			register(PASSWORD_RECOVERY_USER_NOT_FOUND, null, "error", 2, "User not found to token " + md5TokenCrypt);
 
 			session.setAttribute("ADP-ACCOUNT-PASSWORD-RECOVERY-SUCCESSFULL", null);
-			return apiDocProtectorErrorRedirect.redirectError(base64Encode("User not found to token " + token));
+			return apiDocProtectorErrorRedirect.redirectError(base64Encode("User not found to token " + md5TokenCrypt));
 		}
 
-		String newToken = userPasswordUpdate(body, user);
+		String updatedMd5TokenCrypt = userPasswordUpdate(body, user);
 
-		if (newToken == null) {
+		if (updatedMd5TokenCrypt == null) {
 			register(PASSWORD_RECOVERY_EXCEPTION, null, "info", 1, "Password recovery exception");
 			return apiDocProtectorErrorRedirect.redirectError(base64Encode("Password recovery exception"));
 		}
@@ -141,14 +141,14 @@ public class ApiDocProtectorPasswordRecovery extends ApiDocProtectorLibrary {
 		try {
 
 			String subject = apiDocProtectorMailSender.subjectMail("Password recovered", user.getUsername());
-			String content = apiDocProtectorMailSender.contentMailPasswordRecovery(newToken, user);
+			String content = apiDocProtectorMailSender.contentMailPasswordRecovery(updatedMd5TokenCrypt, user);
 
 			apiDocProtectorMailSender.sendMailAttached(user.getEmail(), subject, content);
 			session.setAttribute("ADP-ACCOUNT-PASSWORD-RECOVERY-SUCCESSFULL", "1");
 
 			register(PASSWORD_RECOVERY_MAIL_SENDER_OK, null, "info", 0, "Email sended to: " + user.getName());
 
-			return apiDocProtectorRedirect.redirectToPasswordRecoveryForm(newToken);
+			return apiDocProtectorRedirect.redirectToPasswordRecoveryForm(updatedMd5TokenCrypt);
 
 		} catch (RuntimeException re) {
 

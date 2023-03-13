@@ -8,7 +8,6 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
 import java.util.Base64;
 import java.util.UUID;
 import java.util.regex.Matcher;
@@ -57,6 +56,22 @@ public abstract class ApiDocProtectorDataLibrary {
     public String base64Decode(String input) {
         byte[] result = Base64.getDecoder().decode(input);
         return new String(result);
+    }
+
+    public boolean passwordCheck(String passwordRequest, String passwordDatabase, String alg) {
+        switch (alg) {
+            case "md5":
+                return md5(passwordDatabase).equals(passwordDatabase);
+            case "bcrypt":
+                BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+                String passwordBCrypt = bCryptPasswordEncoder.encode(passwordRequest);
+                return bCryptPasswordEncoder.matches(passwordDatabase, passwordBCrypt);
+            case "custom":
+                //TODO
+                return true;
+            default:
+                return false;
+        }
     }
 
     public static boolean cpfValidator(String cpf) {

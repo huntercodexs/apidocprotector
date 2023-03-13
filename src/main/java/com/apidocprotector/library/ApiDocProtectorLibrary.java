@@ -92,7 +92,7 @@ public abstract class ApiDocProtectorLibrary extends ApiDocProtectorDataLibrary 
     protected String apiDocProtectorType;
 
     @Value("${apidocprotector.data.crypt.type:md5}")
-    protected String dataCryptTpe;
+    protected String apiDocCryptType;
 
     @Value("${springdoc.api-docs.path:/api-docs-guard}")
     protected String apiDocsPath;
@@ -202,7 +202,7 @@ public abstract class ApiDocProtectorLibrary extends ApiDocProtectorDataLibrary 
         register(LIBRARY_SESSION_RENEW_OK, null, "info", 2, "The session is renewed");
     }
 
-    public boolean sessionExpired(String token) {
+    public boolean sessionExpired(String token64) {
 
         /*Control Session is disabled*/
         if (expireTimeSession < 1) {
@@ -210,8 +210,8 @@ public abstract class ApiDocProtectorLibrary extends ApiDocProtectorDataLibrary 
             return false;
         }
 
-        String tokenCrypt = dataEncrypt(base64Decode(token));
-        ApiDocProtectorEntity result = apiDocProtectorRepository.findByTokenAndActive(tokenCrypt, "yes");
+        String md5TokenCrypt = base64Decode(token64);
+        ApiDocProtectorEntity result = apiDocProtectorRepository.findByTokenAndActive(md5TokenCrypt, "yes");
         String sessionCreatedAt = result.getSessionCreatedAt();
 
         LocalDateTime dateTimeSession = LocalDateTime.parse(result.getSessionCreatedAt(), FORMATTER);
@@ -258,16 +258,15 @@ public abstract class ApiDocProtectorLibrary extends ApiDocProtectorDataLibrary 
         return false;
     }
 
-    public boolean alreadyActivated(String clearToken) {
-        String tokenCrypt = dataEncrypt(clearToken);
-        ApiDocProtectorEntity result = apiDocProtectorRepository.findByTokenAndActive(tokenCrypt, "yes");
+    public boolean alreadyActivated(String md5TokenCrypt) {
+        ApiDocProtectorEntity result = apiDocProtectorRepository.findByTokenAndActive(md5TokenCrypt, "yes");
 
-        if (result != null && result.getToken().equals(tokenCrypt)) {
-            register(LIBRARY_ACCOUNT_ALREADY_ACTIVATED, null, "info", 2, "Account token: " + tokenCrypt);
+        if (result != null && result.getToken().equals(md5TokenCrypt)) {
+            register(LIBRARY_ACCOUNT_ALREADY_ACTIVATED, null, "info", 2, "Account token: " + md5TokenCrypt);
             return true;
         }
 
-        register(LIBRARY_ACCOUNT_NOT_ACTIVATED_YET, null, "info", 2, "Account token: " + tokenCrypt);
+        register(LIBRARY_ACCOUNT_NOT_ACTIVATED_YET, null, "info", 2, "Account token: " + md5TokenCrypt);
 
         return false;
     }
@@ -304,15 +303,14 @@ public abstract class ApiDocProtectorLibrary extends ApiDocProtectorDataLibrary 
         }
     }
 
-    public boolean activateExpired(String tokenClear) {
+    public boolean activateExpired(String md5TokenCrypt) {
 
         /*0 = not expires email to account activate*/
         if (expireTimeEmail < 1) {
             return false;
         }
 
-        String tokenCrypt = dataEncrypt(tokenClear);
-        ApiDocProtectorEntity user = apiDocProtectorRepository.findByTokenAndActive(tokenCrypt, "no");
+        ApiDocProtectorEntity user = apiDocProtectorRepository.findByTokenAndActive(md5TokenCrypt, "no");
         String accountCreatedAt = user.getCreatedAt();
         int diffTimeCreated = diffTime(user.getCreatedAt());
         int diffTimeUpdated = diffTime(user.getUpdatedAt());
@@ -379,7 +377,7 @@ public abstract class ApiDocProtectorLibrary extends ApiDocProtectorDataLibrary 
         session.setAttribute(sessionId, sessionTransfer);
     }
 
-    public boolean loginChecker(String username, String password, String token) {
+    public boolean loginChecker(String username, String password, String md5TokenCrypt64) {
 
         try {
 
@@ -389,11 +387,11 @@ public abstract class ApiDocProtectorLibrary extends ApiDocProtectorDataLibrary 
             }
 
             String passwordCrypt = dataEncrypt(password);
-            String tokenCrypt = dataEncrypt(base64Decode(token));
+            String md5TokenCrypt = base64Decode(md5TokenCrypt64);
             ApiDocProtectorEntity login = apiDocProtectorRepository
-                    .findByUsernameAndPasswordAndTokenAndActive(username, passwordCrypt, tokenCrypt, "yes");
+                    .findByUsernameAndTokenAndActive(username, md5TokenCrypt, "yes");
 
-            if (login != null && login.getUsername().equals(username)) {
+            if (login != null && login.getUsername().equals(username) && passwordCheck(passwordCrypt, login.getPassword(), apiDocCryptType)) {
                 register(LIBRARY_LOGIN_SUCCESSFUL, null, "info", 2, "Login successful to user " + username);
                 return true;
             }
@@ -413,7 +411,7 @@ public abstract class ApiDocProtectorLibrary extends ApiDocProtectorDataLibrary 
         try {
 
             String token = guide(null);
-            String tokenCrypt = dataEncrypt(token);
+            String md5TokenCrypt = md5(dataEncrypt(token));
 
             if (userBody.get("role") == null || userBody.get("role").equals("")) {
                 userBody.put("role", "viewer");
@@ -443,7 +441,7 @@ public abstract class ApiDocProtectorLibrary extends ApiDocProtectorDataLibrary 
             newUser.setEmail(userBody.get("email"));
             newUser.setRole(userBody.get("role"));
             newUser.setPassword(passwordCrypt);
-            newUser.setToken(tokenCrypt);
+            newUser.setToken(md5TokenCrypt);
             newUser.setActive("no");
             newUser.setSessionKey(null);
             newUser.setSessionVal(null);
@@ -456,7 +454,7 @@ public abstract class ApiDocProtectorLibrary extends ApiDocProtectorDataLibrary 
 
             register(LIBRARY_GENERATOR_USER_SUCCESSFUL, null, "info", 2, "User create: " + userBody.get("username") + " Role: " + userBody.get("role"));
 
-            return token;
+            return md5TokenCrypt;
 
         } catch (RuntimeException re) {
             throw new RuntimeException("Exception in process: " + re.getMessage());
@@ -469,11 +467,11 @@ public abstract class ApiDocProtectorLibrary extends ApiDocProtectorDataLibrary 
         try {
 
             String token = guide(null);
-            String tokenCrypt = dataEncrypt(token);
+            String md5TokenCrypt = md5(dataEncrypt(token));
             LocalDateTime dateTime = LocalDateTime.now();
             String currentDate = dateTime.format(FORMATTER);
 
-            user.setToken(tokenCrypt);
+            user.setToken(md5TokenCrypt);
             user.setActive("no");
             user.setSessionKey(null);
             user.setSessionVal(null);
@@ -484,7 +482,7 @@ public abstract class ApiDocProtectorLibrary extends ApiDocProtectorDataLibrary 
 
             register(LIBRARY_USER_RECOVERY_OK, null, "info", 2, "User: " + user.getUsername());
 
-            return token;
+            return md5TokenCrypt;
 
         } catch (RuntimeException re) {
             return "Exception, " + re.getMessage();
@@ -501,13 +499,13 @@ public abstract class ApiDocProtectorLibrary extends ApiDocProtectorDataLibrary 
         try {
 
             String token = guide(null);
-            String tokenCrypt = dataEncrypt(token);
+            String md5TokenCrypt = md5(dataEncrypt(token));
 
             LocalDateTime dateTime = LocalDateTime.now();
             String currentDate = dateTime.format(FORMATTER);
             String passwordCrypt = dataEncrypt(userBody.get("password"));
 
-            user.setToken(tokenCrypt);
+            user.setToken(md5TokenCrypt);
             user.setPassword(passwordCrypt);
             user.setUpdatedAt(currentDate);
 
@@ -515,7 +513,7 @@ public abstract class ApiDocProtectorLibrary extends ApiDocProtectorDataLibrary 
 
             register(LIBRARY_PASSWORD_UPDATED, null, "info", 2, "User: " + user.getUsername());
 
-            return token;
+            return md5TokenCrypt;
 
         } catch (Exception ex) {
             register(NO_AUDITOR, null, "except", 2, "User updated[EXCEPTION]: " + ex.getMessage());
@@ -526,9 +524,9 @@ public abstract class ApiDocProtectorLibrary extends ApiDocProtectorDataLibrary 
 
     public String dataEncrypt(String data) {
         if (data == null) return null;
-        if (dataCryptTpe.equals("md5")) {
+        if (apiDocCryptType.equals("md5")) {
             return md5(data);
-        } else if (dataCryptTpe.equals("bcrypt")) {
+        } else if (apiDocCryptType.equals("bcrypt")) {
             return bcrypt(data);
         }
         return data;
@@ -540,8 +538,8 @@ public abstract class ApiDocProtectorLibrary extends ApiDocProtectorDataLibrary 
         return result != null && result.getToken().equals(tokenCrypt);
     }
 
-    public ApiDocProtectorEntity findAccountByTokenAndActive(String tokenCrypt, String active) {
-        return apiDocProtectorRepository.findByTokenAndActive(tokenCrypt, active);
+    public ApiDocProtectorEntity findAccountByTokenAndActive(String md5TokenCrypt, String active) {
+        return apiDocProtectorRepository.findByTokenAndActive(md5TokenCrypt, active);
     }
 
     public ApiDocProtectorEntity findDataSession(String keypart, String secret) {

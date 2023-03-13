@@ -19,15 +19,14 @@ import static com.apidocprotector.enumerator.ApiDocProtectorRegisterEnum.*;
 public class ApiDocProtectorActivator extends ApiDocProtectorLibrary {
 
 	@Operation(hidden = true)
-	@GetMapping(path = "${apidocprotector.custom.uri-account-active:/doc-protect/account/active}/{token}")
+	@GetMapping(path = "${apidocprotector.custom.uri-account-active:/doc-protect/account/active}/{token64}")
 	@ResponseBody
-	public String activator(@PathVariable("token") String token64) {
+	public String activator(@PathVariable("token64") String token64) {
 
 		register(ACTIVATOR_STARTED, null, "info", 2, "");
 
-		String token = base64Decode(token64);
-		String tokenCrypt = dataEncrypt(token);
-		ApiDocProtectorEntity result = findAccountByTokenAndActive(tokenCrypt, "no");
+		String md5TokenCrypt = base64Decode(token64);
+		ApiDocProtectorEntity result = findAccountByTokenAndActive(md5TokenCrypt, "no");
 
 		register(NO_AUDITOR, null, "info", 2, "RESULT TOKEN " + result.getName());
 
@@ -37,9 +36,9 @@ public class ApiDocProtectorActivator extends ApiDocProtectorLibrary {
 			String dataHtml = readFile("./src/main/resources/templates/apidocprotector/generic.html");
 			String dataCss = readFile("./src/main/resources/static/apidocprotector/css/mail.css");
 
-			if (alreadyActivated(token)) {
+			if (alreadyActivated(md5TokenCrypt)) {
 
-				register(ACTIVATOR_ACCOUNT_ALREADY_ACTIVATED, null, "info", 2, "Account token: " + token);
+				register(ACTIVATOR_ACCOUNT_ALREADY_ACTIVATED, null, "info", 2, "Account token: " + md5TokenCrypt);
 				response.setStatus(HttpStatus.CONFLICT.value());
 
 				return dataHtml
@@ -48,7 +47,7 @@ public class ApiDocProtectorActivator extends ApiDocProtectorLibrary {
 						.replace("@{apidoc_protector_content}", "The account has been already activated");
 			}
 
-			register(ACTIVATOR_ACCOUNT_NOT_FOUND,  null, "info", 2, "Account not found in activator: " + token);
+			register(ACTIVATOR_ACCOUNT_NOT_FOUND,  null, "info", 2, "Account not found in activator: " + md5TokenCrypt);
 
 			response.setStatus(HttpStatus.NOT_FOUND.value());
 
@@ -58,9 +57,9 @@ public class ApiDocProtectorActivator extends ApiDocProtectorLibrary {
 					.replace("@{apidoc_protector_content}", "The account was not found");
 		}
 
-		if (activateExpired(token)) {
+		if (activateExpired(md5TokenCrypt)) {
 
-			register(ACTIVATOR_EXPIRED_ACCOUNT, null, "info", 2, "Account token has been expired: " + token);
+			register(ACTIVATOR_EXPIRED_ACCOUNT, null, "info", 2, "Account token has been expired: " + md5TokenCrypt);
 
 			/*Generic (HTML Page)*/
 			String dataHtml = readFile("./src/main/resources/templates/apidocprotector/generic.html");
@@ -82,7 +81,7 @@ public class ApiDocProtectorActivator extends ApiDocProtectorLibrary {
 
 		String emailTo = result.getEmail();
 		String subject = apiDocProtectorMailSender.subjectMail("User activated", result.getUsername());
-		String content = apiDocProtectorMailSender.contentMailActivatedUser(result.getName(), result.getUsername(), token);
+		String content = apiDocProtectorMailSender.contentMailActivatedUser(result.getName(), result.getUsername(), md5TokenCrypt);
 		apiDocProtectorMailSender.sendMailAttached(emailTo, subject, content);
 
 		register(ACTIVATOR_MAIL_SUCCESSFUL, null, "info", 2, "User activated ok: " + result.getName());
