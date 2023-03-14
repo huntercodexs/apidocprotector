@@ -62,11 +62,15 @@ public abstract class ApiDocProtectorDataLibrary {
     public boolean passwordCheck(String passwordRequest, String passwordDatabase, String alg) {
         switch (alg) {
             case "md5":
-                return md5(passwordDatabase).equals(passwordDatabase);
+                System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+                System.out.println(passwordRequest);
+                System.out.println(passwordDatabase);
+                System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+                return passwordRequest.equals(passwordDatabase);
             case "bcrypt":
                 PasswordEncoder encoder = new BCryptPasswordEncoder();
                 return encoder.matches(passwordRequest, passwordDatabase);
-            case "custom": //TODO
+            case "custom"://TODO
                 return true;
             default:
                 return false;

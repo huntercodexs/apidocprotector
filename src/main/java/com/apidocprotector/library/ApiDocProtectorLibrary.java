@@ -392,6 +392,12 @@ public abstract class ApiDocProtectorLibrary extends ApiDocProtectorDataLibrary 
 
     public boolean loginChecker(String username, String password, String token64) {
 
+        System.out.println("+++++++++++++++++++++++++++++++++++++++++++++++++++");
+        System.out.println(username);
+        System.out.println(password);
+        System.out.println(token64);
+        System.out.println("+++++++++++++++++++++++++++++++++++++++++++++++++++");
+
         try {
 
             if (username.equals("") || password.equals("")) {
