@@ -25,12 +25,13 @@ public class ApiDocProtectorActivator extends ApiDocProtectorLibrary {
 
 		register(ACTIVATOR_STARTED, null, "info", 2, "");
 
-		String md5TokenCrypt = base64Decode(token64);
-		ApiDocProtectorEntity result = findAccountByTokenAndActive(md5TokenCrypt, "no");
+		String currentToken = base64Decode(token64);
+		String md5TokenCrypt = md5(currentToken);
+		ApiDocProtectorEntity apiDocProtectorEntity = findAccountByTokenAndActive(md5TokenCrypt, "no");
 
-		register(NO_AUDITOR, null, "info", 2, "RESULT TOKEN " + result.getName());
+		register(NO_AUDITOR, null, "info", 2, "RESULT TOKEN " + apiDocProtectorEntity.getName());
 
-		if (result.getToken() == null) {
+		if (apiDocProtectorEntity.getToken() == null) {
 
 			/*Generic (HTML Page)*/
 			String dataHtml = readFile("./src/main/resources/templates/apidocprotector/generic.html");
@@ -76,15 +77,15 @@ public class ApiDocProtectorActivator extends ApiDocProtectorLibrary {
 							"");
 		}
 
-		result.setActive("yes");
-		apiDocProtectorRepository.save(result);
+		/*Account Active*/
+		String newMd5TokenCrypt = activeUser(apiDocProtectorEntity);
 
-		String emailTo = result.getEmail();
-		String subject = apiDocProtectorMailSender.subjectMail("User activated", result.getUsername());
-		String content = apiDocProtectorMailSender.contentMailActivatedUser(result.getName(), result.getUsername(), md5TokenCrypt);
+		String emailTo = apiDocProtectorEntity.getEmail();
+		String subject = apiDocProtectorMailSender.subjectMail("User activated", apiDocProtectorEntity.getUsername());
+		String content = apiDocProtectorMailSender.contentMailActivatedUser(apiDocProtectorEntity.getName(), apiDocProtectorEntity.getUsername(), newMd5TokenCrypt);
 		apiDocProtectorMailSender.sendMailAttached(emailTo, subject, content);
 
-		register(ACTIVATOR_MAIL_SUCCESSFUL, null, "info", 2, "User activated ok: " + result.getName());
+		register(ACTIVATOR_MAIL_SUCCESSFUL, null, "info", 2, "User activated ok: " + apiDocProtectorEntity.getName());
 
 		/*Activated (HTML Page)*/
 		String dataHtml = readFile("./src/main/resources/templates/apidocprotector/mail/activated.html");
@@ -96,7 +97,7 @@ public class ApiDocProtectorActivator extends ApiDocProtectorLibrary {
 
 		return dataHtml
 				.replace("@{apidoc_protector_mail_css}", dataCss)
-				.replace("@{apidoc_protector_username}", result.getName());
+				.replace("@{apidoc_protector_username}", apiDocProtectorEntity.getName());
 	}
 
 }

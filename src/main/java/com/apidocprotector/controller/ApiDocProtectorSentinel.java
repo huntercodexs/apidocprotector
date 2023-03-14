@@ -97,10 +97,10 @@ public class ApiDocProtectorSentinel extends ApiDocProtectorLibrary {
 	}
 
 	@Operation(hidden = true)
-	@GetMapping(path = "${apidocprotector.custom.uri-logout:/doc-protect/logout}/{token}")
-	public String logout(@PathVariable("token") String token) {
+	@GetMapping(path = "${apidocprotector.custom.uri-logout:/doc-protect/logout}/{token64}")
+	public String logout(@PathVariable("token64") String token64) {
 		register(SENTINEL_LOGOUT_STARTED, null, "info", 0,"");
-		return apiDocProtectorRedirect.logout(session, token);
+		return apiDocProtectorRedirect.logout(session, token64);
 	}
 
 	@Operation(hidden = true)

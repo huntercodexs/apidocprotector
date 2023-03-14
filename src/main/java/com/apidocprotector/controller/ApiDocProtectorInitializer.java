@@ -25,8 +25,9 @@ public class ApiDocProtectorInitializer extends ApiDocProtectorLibrary {
 
 		register(INITIALIZER_STARTED, null, "info", 2, "");
 
-		String md5TokenCrypt = base64Decode(token64);
-		ApiDocProtectorEntity result = findAccountByTokenAndActive(md5TokenCrypt, "yes");
+		String currentToken = base64Decode(token64);
+		String md5TokenCrypt = md5(currentToken);
+		ApiDocProtectorEntity apiDocProtectorEntity = findAccountByTokenAndActive(md5TokenCrypt, "yes");
 
 		register(INITIALIZER_TOKEN_OK, null, "info", 2, "token: " + md5TokenCrypt);
 
@@ -35,17 +36,17 @@ public class ApiDocProtectorInitializer extends ApiDocProtectorLibrary {
 			return apiDocProtectorErrorRedirect.redirectError(base64Encode("User token is not active"));
 		}
 
-		if (result == null) {
+		if (apiDocProtectorEntity == null) {
 			register(INITIALIZER_ERROR, null, "info", 2, "Invalid token");
 			return apiDocProtectorErrorRedirect.redirectError(base64Encode("Invalid Token " + md5TokenCrypt));
 		}
 
-		if (result.getToken() != null && result.getToken().equals(md5TokenCrypt)) {
+		if (apiDocProtectorEntity.getToken() != null && apiDocProtectorEntity.getToken().equals(md5TokenCrypt)) {
 
-			this.transfer = initEnv(md5TokenCrypt);
+			this.transfer = initEnv(token64);
 			register(INITIALIZER_ENVIRONMENT_OK, null, "info", 2, "Init Transfer: " + this.transfer.getUsername());
 
-			sessionPrepare(session, this.transfer, result);
+			sessionPrepare(session, this.transfer, apiDocProtectorEntity);
 			register(INITIALIZER_SESSION_PREPARE_OK, null, "info", 2, "Session configured: " + session);
 
 			return apiDocProtectorRedirect.forwardToGlass();

@@ -62,11 +62,11 @@ public class ApiDocProtectorMailSender extends ApiDocProtectorLibrary {
         return "[APIDOC PROTECTOR] " + info + " " + username;
     }
 
-    public String contentMailGeneratorUser(String username, String md5Token) {
+    public String contentMailGeneratorUser(String username, String md5TokenCrypt) {
         String domainServer = customUrlServerDomain.replaceFirst("/$", "");;
         String uriServer = customUriAccountActive.replaceFirst("/$", "");
         if (!uriServer.startsWith("/")) uriServer = "/" + uriServer;
-        String link = domainServer + uriServer +"/" + base64Encode(md5Token);
+        String link = domainServer + uriServer +"/" + base64Encode(md5TokenCrypt);
 
         /*Activate (HTML Mail)*/
         String dataHtml = readFile("./src/main/resources/templates/apidocprotector/mail/activate.html");
@@ -83,11 +83,11 @@ public class ApiDocProtectorMailSender extends ApiDocProtectorLibrary {
                 .replace("@{apidoc_protector_email_expires_time}", emailTime);
     }
 
-    public String contentMailRecoveryUser(String username, String md5TokenCrypt) {
+    public String contentMailRecoveryUser(String username, String updatedMd5TokenCrypt) {
         String domainServer = customUrlServerDomain.replaceFirst("/$", "");;
         String uriServer = customUriAccountActive.replaceFirst("/$", "");
         if (!uriServer.startsWith("/")) uriServer = "/" + uriServer;
-        String link = domainServer + uriServer +"/" + base64Encode(md5TokenCrypt);
+        String link = domainServer + uriServer +"/" + base64Encode(updatedMd5TokenCrypt);
 
         /*Activate (HTML Mail)*/
         String dataHtml = readFile("./src/main/resources/templates/apidocprotector/mail/activate.html");
@@ -125,11 +125,11 @@ public class ApiDocProtectorMailSender extends ApiDocProtectorLibrary {
                 .replace("@{apidoc_protector_email_expires_time}", emailTime);
     }
 
-    public String contentMailPasswordRecovery(String updatedMd5TokenCrypt, ApiDocProtectorEntity user) {
+    public String contentMailPasswordRecovery(String dMd5TokenCrypt, ApiDocProtectorEntity user) {
         String domainServer = customUrlServerDomain.replaceFirst("/$", "");;
         String uriServer = customUriLogin.replaceFirst("/$", "");
         if (!uriServer.startsWith("/")) uriServer = "/" + uriServer;
-        String link = domainServer + uriServer +"/" + base64Encode(updatedMd5TokenCrypt);
+        String link = domainServer + uriServer +"/" + base64Encode(dMd5TokenCrypt);
 
         /*Password Recovery (HTML Mail)*/
         String dataHtml = readFile("./src/main/resources/templates/apidocprotector/mail/password-recovery.html");
@@ -143,9 +143,9 @@ public class ApiDocProtectorMailSender extends ApiDocProtectorLibrary {
                 .replace("@{apidoc_protector_url_password_recovery}", link);
     }
 
-    public String contentMailActivatedUser(String name, String username, String md5TokenCrypt) {
+    public String contentMailActivatedUser(String name, String username, String newMd5TokenCrypt) {
         String urlUser = customUrlServerDomain.replaceFirst("/$", "");
-        String uriUser = customUriLogin.replaceFirst("/$", "") + "/" + base64Encode(md5TokenCrypt);
+        String uriUser = customUriLogin.replaceFirst("/$", "") + "/" + base64Encode(newMd5TokenCrypt);
         if (!uriUser.startsWith("/")) uriUser = "/" + uriUser;
         String urlToken = urlUser + uriUser;
 

@@ -132,10 +132,10 @@ public class ApiDocProtectorRecovery extends ApiDocProtectorLibrary {
 
 		try {
 
-			String md5TokenCrypt = userRecovery(body, user);
+			String updatedMd5TokenCrypt = userRecovery(body, user);
 			String emailTo = body.get("email");
 			String subject = apiDocProtectorMailSender.subjectMail("Account recovered", user.getUsername());
-			String content = apiDocProtectorMailSender.contentMailRecoveryUser(user.getName(), md5TokenCrypt);
+			String content = apiDocProtectorMailSender.contentMailRecoveryUser(user.getName(), updatedMd5TokenCrypt);
 
 			apiDocProtectorMailSender.sendMailAttached(emailTo, subject, content);
 			session.setAttribute("ADP-ACCOUNT-RECOVERY-SUCCESSFUL", "1");

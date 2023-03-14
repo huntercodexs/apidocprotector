@@ -161,7 +161,7 @@ public class ApiDocProtectorViewer extends ApiDocProtectorLibrary {
         }
     }
 
-    public ModelAndView passwordRecovery(boolean userRecoverySuccessful, String currentToken) {
+    public ModelAndView passwordRecovery(boolean userRecoverySuccessful, String token64) {
 
         register(VIEW_PASSWORD_RECOVERY_STARTED, null, "info", 1, "");
 
@@ -177,7 +177,7 @@ public class ApiDocProtectorViewer extends ApiDocProtectorLibrary {
                     modelAndView.addObject("apidoc_protector_password_recovery", "Password changed successful, please check your email !");
                     session.setAttribute("ADP-ACCOUNT-PASSWORD-RECOVERY-SUCCESSFULL", null);
                 } else {
-                    modelAndView.addObject("apidoc_protector_token", currentToken);
+                    modelAndView.addObject("apidoc_protector_token", token64);
                 }
 
                 register(VIEW_PASSWORD_RECOVERY_FINISHED, null, "info", 1, "");
@@ -217,8 +217,8 @@ public class ApiDocProtectorViewer extends ApiDocProtectorLibrary {
             String secret = ((ApiDocProtectorDto) session.getAttribute(sessionId)).getSecret();
             debugger("SECRET IN FORM", secret, true);
 
-            String token = ((ApiDocProtectorDto) session.getAttribute(sessionId)).getToken();
-            debugger("TOKEN IN FORM", token, true);
+            String token64 = ((ApiDocProtectorDto) session.getAttribute(sessionId)).getToken();
+            debugger("TOKEN IN FORM", token64, true);
 
             if (apiDocProtectorType.equals("swagger")) {
 
@@ -226,7 +226,7 @@ public class ApiDocProtectorViewer extends ApiDocProtectorLibrary {
                 modelAndView.addObject("apidoc_protector_theme", theme());
                 modelAndView.addObject("apidoc_protector_target", swaggerUIPath);
                 modelAndView.addObject("apidoc_protector_sec", secret);
-                modelAndView.addObject("apidoc_protector_token", base64Encode(token));
+                modelAndView.addObject("apidoc_protector_token", token64);
                 modelAndView.addObject("apidoc_protector_form_password", customUriPassword);
 
                 register(VIEW_FORM_FINISHED, sessionId, "info", 1, "");
@@ -267,7 +267,7 @@ public class ApiDocProtectorViewer extends ApiDocProtectorLibrary {
             String uriLogout = customUriLogout.replaceFirst("/$", "") + "/";
             if (!uriLogout.startsWith("/")) uriLogout = "/" + uriLogout;
 
-            modelAndView.addObject("apidoc_protector_logout_token", uriLogout+base64Encode(token));
+            modelAndView.addObject("apidoc_protector_logout_token", uriLogout+token);
 
             register(VIEW_INDEX_FINISHED, null, "info", 1, "");
 
@@ -356,12 +356,12 @@ public class ApiDocProtectorViewer extends ApiDocProtectorLibrary {
             String secret = ((ApiDocProtectorDto) session.getAttribute(sessionId)).getSecret();
             debugger("SECRET CURRENT IN PROTECTOR", secret, true);
 
-            String token = ((ApiDocProtectorDto) session.getAttribute(sessionId)).getToken();
-            debugger("SECRET CURRENT IN PROTECTOR", token, true);
+            String token64 = ((ApiDocProtectorDto) session.getAttribute(sessionId)).getToken();
+            debugger("SECRET CURRENT IN PROTECTOR", token64, true);
 
             register(VIEW_PROTECTOR_FINISHED, sessionId, "info", 1, "");
 
-            return index(token);
+            return index(token64);
 
         } catch (RuntimeException re) {
 

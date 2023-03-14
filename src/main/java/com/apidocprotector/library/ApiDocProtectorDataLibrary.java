@@ -1,6 +1,7 @@
 package com.apidocprotector.library;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 
@@ -45,8 +46,8 @@ public abstract class ApiDocProtectorDataLibrary {
     }
 
     public String bcrypt(String data) {
-        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
-        return bCryptPasswordEncoder.encode(data);
+        PasswordEncoder encoder = new BCryptPasswordEncoder();
+        return encoder.encode(data);
     }
 
     public String base64Encode(String input) {
@@ -63,11 +64,9 @@ public abstract class ApiDocProtectorDataLibrary {
             case "md5":
                 return md5(passwordDatabase).equals(passwordDatabase);
             case "bcrypt":
-                BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
-                String passwordBCrypt = bCryptPasswordEncoder.encode(passwordRequest);
-                return bCryptPasswordEncoder.matches(passwordDatabase, passwordBCrypt);
-            case "custom":
-                //TODO
+                PasswordEncoder encoder = new BCryptPasswordEncoder();
+                return encoder.matches(passwordRequest, passwordDatabase);
+            case "custom": //TODO
                 return true;
             default:
                 return false;
