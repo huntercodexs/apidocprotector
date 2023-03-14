@@ -485,7 +485,6 @@ public abstract class ApiDocProtectorLibrary extends ApiDocProtectorDataLibrary 
 
             String token = guide(null);
             String md5TokenCrypt = md5(dataEncrypt(token));
-            
             LocalDateTime dateTime = LocalDateTime.now();
             String currentDate = dateTime.format(FORMATTER);
 
@@ -508,7 +507,7 @@ public abstract class ApiDocProtectorLibrary extends ApiDocProtectorDataLibrary 
 
     }
 
-    public boolean userPasswordUpdate(Map<String, String> userBody, ApiDocProtectorEntity user) {
+    public String userPasswordUpdate(Map<String, String> userBody, ApiDocProtectorEntity user) {
 
         if (userBody.get("password") == null || userBody.get("password").equals("")) {
             throw new RuntimeException("Missing data to password recovery");
@@ -516,10 +515,14 @@ public abstract class ApiDocProtectorLibrary extends ApiDocProtectorDataLibrary 
 
         try {
 
+            String token = guide(null);
+            String md5TokenCrypt = md5(dataEncrypt(token));
+
             LocalDateTime dateTime = LocalDateTime.now();
             String currentDate = dateTime.format(FORMATTER);
             String passwordCrypt = dataEncrypt(userBody.get("password"));
 
+            user.setToken(md5(md5TokenCrypt));
             user.setPassword(passwordCrypt);
             user.setUpdatedAt(currentDate);
 
@@ -527,11 +530,11 @@ public abstract class ApiDocProtectorLibrary extends ApiDocProtectorDataLibrary 
 
             register(LIBRARY_PASSWORD_UPDATED, null, "info", 2, "User: " + user.getUsername());
 
-            return true;
+            return md5TokenCrypt;
 
         } catch (Exception ex) {
             register(NO_AUDITOR, null, "except", 2, "User updated[EXCEPTION]: " + ex.getMessage());
-            return false;
+            return null;
         }
 
     }
