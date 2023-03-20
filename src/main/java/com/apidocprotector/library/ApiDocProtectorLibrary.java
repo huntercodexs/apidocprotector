@@ -392,12 +392,6 @@ public abstract class ApiDocProtectorLibrary extends ApiDocProtectorDataLibrary 
 
     public boolean loginChecker(String username, String password, String token64) {
 
-        System.out.println("+++++++++++++++++++++++++++++++++++++++++++++++++++");
-        System.out.println(username);
-        System.out.println(password);
-        System.out.println(token64);
-        System.out.println("+++++++++++++++++++++++++++++++++++++++++++++++++++");
-
         try {
 
             if (username.equals("") || password.equals("")) {
@@ -547,12 +541,16 @@ public abstract class ApiDocProtectorLibrary extends ApiDocProtectorDataLibrary 
 
     public String dataEncrypt(String data) {
         if (data == null) return null;
-        if (apiDocCryptType.equals("md5")) {
-            return md5(data);
-        } else if (apiDocCryptType.equals("bcrypt")) {
-            return bcrypt(data);
+        switch (apiDocCryptType) {
+            case "md5":
+                return md5(data);
+            case "bcrypt":
+                return bcrypt(data);
+            case "custom":
+                return customEncrypt(data);
+            default:
+                return data;
         }
-        return data;
     }
 
     public boolean findPrivilegedAdmin(String token) {

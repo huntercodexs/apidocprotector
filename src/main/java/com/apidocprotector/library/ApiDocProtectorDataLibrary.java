@@ -1,5 +1,6 @@
 package com.apidocprotector.library;
 
+import com.apidocprotector.config.ApiDocProtectorCustomCrypt;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -15,7 +16,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Service
-public abstract class ApiDocProtectorDataLibrary {
+public abstract class ApiDocProtectorDataLibrary extends ApiDocProtectorCustomCrypt {
 
     public Cookie cookie(HttpServletRequest request, String cookieName) {
         Cookie[] cookies = request.getCookies();
@@ -62,10 +63,6 @@ public abstract class ApiDocProtectorDataLibrary {
     public boolean passwordCheck(String passwordRequest, String passwordDatabase, String alg) {
         switch (alg) {
             case "md5":
-                System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
-                System.out.println(passwordRequest);
-                System.out.println(passwordDatabase);
-                System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
                 return passwordRequest.equals(passwordDatabase);
             case "bcrypt":
                 PasswordEncoder encoder = new BCryptPasswordEncoder();
