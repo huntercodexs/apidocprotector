@@ -3,8 +3,6 @@ package com.apidocprotector.config.oauth2.security;
 import com.apidocprotector.config.oauth2.model.OperatorEntity;
 import com.apidocprotector.config.oauth2.repository.Oauth2ClientRepository;
 import com.apidocprotector.config.oauth2.repository.OperatorRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -19,21 +17,19 @@ import org.springframework.stereotype.Service;
 @Service
 public class CustomAuthenticationManager implements AuthenticationManager {
 
-    private final Logger LOG = LoggerFactory.getLogger(CustomAuthenticationManager.class);
-
-    @Value("${huntercodexs.basic-auth.credentials:db}")
+    @Value("${oauth.basic-auth.credentials:db}")
     String sourceCredentials;
 
     @Autowired
     CustomOperatorDetailsService customOperatorDetailsService;
 
-    @Value("${huntercodexs.basic-auth.username:}")
+    @Value("${oauth.basic-auth.username:}")
     String usernameAuthenticate;
 
-    @Value("${huntercodexs.basic-auth.password:}")
+    @Value("${oauth.basic-auth.password:}")
     String passwordAuthenticate;
 
-    @Value("${huntercodexs.basic-auth.role:1}")
+    @Value("${oauth.basic-auth.role:1}")
     int roleAuthenticate;
 
     @Autowired

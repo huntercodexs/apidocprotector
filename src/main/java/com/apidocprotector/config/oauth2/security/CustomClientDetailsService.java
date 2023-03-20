@@ -2,8 +2,6 @@ package com.apidocprotector.config.oauth2.security;
 
 import com.apidocprotector.config.oauth2.model.AuthorizationEntity;
 import com.apidocprotector.config.oauth2.repository.Oauth2ClientRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -19,8 +17,6 @@ import static com.apidocprotector.config.oauth2.security.RoleOperator.ROLE_CLIEN
 
 @Service
 public class CustomClientDetailsService implements ClientDetailsService {
-
-    private final Logger LOG = LoggerFactory.getLogger(CustomClientDetailsService.class);
 
 	@Autowired
     Oauth2ClientRepository oauth2ClientRepository;

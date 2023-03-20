@@ -3,8 +3,6 @@ package com.apidocprotector.config.oauth2;
 import com.apidocprotector.config.oauth2.security.CustomAuthenticationManager;
 import com.apidocprotector.config.oauth2.security.CustomClientDetailsService;
 import com.apidocprotector.config.oauth2.security.CustomOperatorDetailsService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -33,9 +31,7 @@ import org.springframework.security.oauth2.provider.token.store.InMemoryTokenSto
 @SuppressWarnings("deprecation")
 public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdapter {
 
-    private final Logger LOG = LoggerFactory.getLogger(AuthorizationServerConfig.class);
-
-    @Value("${oauth.server.custom.endpoint}")
+    @Value("${oauth.server.custom.endpoint:/api/rest/v1/oauth}")
     private String oauth2CustomEndpoint;
 
     @Autowired
@@ -80,8 +76,8 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
     @Override
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
         endpoints
-                .pathMapping("/oauth/token", oauth2CustomEndpoint+"/token" )
-                .pathMapping("/oauth/check_token", oauth2CustomEndpoint+"/check_token")
+                .pathMapping("/oauth/token", oauth2CustomEndpoint + "/token")
+                .pathMapping("/oauth/check_token", oauth2CustomEndpoint + "/check_token")
                 .tokenStore(this.tokenStore)
                 .userApprovalHandler(this.userApprovalHandler)
                 .authenticationManager(customAuthenticationManager)
@@ -108,25 +104,42 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
         @Value("${api.prefix}")
         private String apiPrefix;
 
+        @Value("${springdoc.swagger-ui.path:/swagger-ui}")
+        private String swaggerUiPath;
+
+        @Value("${springdoc.api-docs.path:/api-docs}")
+        private String swaggerUiDocs;
+
         @Override
         public void configure(final HttpSecurity http) throws Exception {
             http.authorizeRequests()
-                    /*Allowed Endpoints*/
-                    .antMatchers(apiPrefix+"/allowed").permitAll()
-                    /*Restrict Endpoints*/
-                    .antMatchers(apiPrefix+"/welcome").authenticated()
+
+                    /*--------- Restrict Endpoints ---------*/
+
+                    /*Application*/
+                    .antMatchers(apiPrefix + "/users/**").authenticated()
+
+                    /*--------- Allowed Endpoints ----------*/
+
+                    /*Actuator*/
+                    .antMatchers("/actuator/**").permitAll()
+                    /*ApiDoc Protector*/
+                    .antMatchers("**/doc-protect/**").permitAll()
+                    /*Application*/
+                    .antMatchers(apiPrefix + "/welcome").permitAll()
                     /*Swagger*/
+                    .antMatchers(swaggerUiDocs).permitAll()
+                    .antMatchers(swaggerUiPath).permitAll()
                     .antMatchers("/swagger-ui/**").permitAll()
                     .antMatchers("/api-docs/**").permitAll()
                     .antMatchers("/api-docs.yaml").permitAll()
                     /*Swagger (With Prefix)*/
-                    .antMatchers(apiPrefix+"/swagger-ui/**").permitAll()
-                    .antMatchers(apiPrefix+"/api-docs/**").permitAll()
-                    .antMatchers(apiPrefix+"/api-docs.yaml").permitAll()
-                    /*Actuator*/
-                    .antMatchers("/actuator/**").permitAll()
-                    .anyRequest().authenticated();
+                    .antMatchers(apiPrefix + "/swagger-ui/**").permitAll()
+                    .antMatchers(apiPrefix + "/api-docs/**").permitAll()
+                    .antMatchers(apiPrefix + "/api-docs.yaml").permitAll();
 
+            /*Disable Oauth2 If needed*/
+            //http.authorizeRequests().anyRequest().permitAll();
         }
 
     }
