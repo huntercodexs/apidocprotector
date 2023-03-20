@@ -34,6 +34,9 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
     @Value("${oauth.server.custom.endpoint:/api/rest/v1/oauth}")
     private String oauth2CustomEndpoint;
 
+    @Value("${oauth.enabled:true}")
+    private boolean oauth2Enabled;
+
     @Autowired
     private TokenStore tokenStore;
 
@@ -75,13 +78,15 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 
     @Override
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
-        endpoints
-                .pathMapping("/oauth/token", oauth2CustomEndpoint + "/token")
-                .pathMapping("/oauth/check_token", oauth2CustomEndpoint + "/check_token")
-                .tokenStore(this.tokenStore)
-                .userApprovalHandler(this.userApprovalHandler)
-                .authenticationManager(customAuthenticationManager)
-                .userDetailsService(customOperatorDetailsService);
+        if (oauth2Enabled) {
+            endpoints
+                    .pathMapping("/oauth/token", oauth2CustomEndpoint + "/token")
+                    .pathMapping("/oauth/check_token", oauth2CustomEndpoint + "/check_token")
+                    .tokenStore(this.tokenStore)
+                    .userApprovalHandler(this.userApprovalHandler)
+                    .authenticationManager(customAuthenticationManager)
+                    .userDetailsService(customOperatorDetailsService);
+        }
     }
 
     @Override
@@ -91,11 +96,13 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 
     @Override
     public void configure(AuthorizationServerSecurityConfigurer security) {
-        security
-                .allowFormAuthenticationForClients()
-                .tokenKeyAccess("permitAll()")
-                .checkTokenAccess("isAuthenticated()")
-                .passwordEncoder(this.passwordEncoder);
+        if (oauth2Enabled) {
+            security
+                    .allowFormAuthenticationForClients()
+                    .tokenKeyAccess("permitAll()")
+                    .checkTokenAccess("isAuthenticated()")
+                    .passwordEncoder(this.passwordEncoder);
+        }
     }
 
     @Configuration
@@ -110,36 +117,40 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
         @Value("${springdoc.api-docs.path:/api-docs}")
         private String swaggerUiDocs;
 
+        @Value("${oauth.enabled:true}")
+        private boolean oauth2Enabled;
+
         @Override
         public void configure(final HttpSecurity http) throws Exception {
-            http.authorizeRequests()
+            if (oauth2Enabled) {
+                http.authorizeRequests()
 
-                    /*--------- Restrict Endpoints ---------*/
+                        /*--------- Restrict Endpoints ---------*/
 
-                    /*Application*/
-                    .antMatchers(apiPrefix + "/users/**").authenticated()
+                        /*Application*/
+                        .antMatchers(apiPrefix + "/users/**").authenticated()
 
-                    /*--------- Allowed Endpoints ----------*/
+                        /*--------- Allowed Endpoints ----------*/
 
-                    /*Actuator*/
-                    .antMatchers("/actuator/**").permitAll()
-                    /*ApiDoc Protector*/
-                    .antMatchers("**/doc-protect/**").permitAll()
-                    /*Application*/
-                    .antMatchers(apiPrefix + "/welcome").permitAll()
-                    /*Swagger*/
-                    .antMatchers(swaggerUiDocs).permitAll()
-                    .antMatchers(swaggerUiPath).permitAll()
-                    .antMatchers("/swagger-ui/**").permitAll()
-                    .antMatchers("/api-docs/**").permitAll()
-                    .antMatchers("/api-docs.yaml").permitAll()
-                    /*Swagger (With Prefix)*/
-                    .antMatchers(apiPrefix + "/swagger-ui/**").permitAll()
-                    .antMatchers(apiPrefix + "/api-docs/**").permitAll()
-                    .antMatchers(apiPrefix + "/api-docs.yaml").permitAll();
-
-            /*Disable Oauth2 If needed*/
-            //http.authorizeRequests().anyRequest().permitAll();
+                        /*Actuator*/
+                        .antMatchers("/actuator/**").permitAll()
+                        /*ApiDoc Protector*/
+                        .antMatchers("**/doc-protect/**").permitAll()
+                        /*Application*/
+                        .antMatchers(apiPrefix + "/welcome").permitAll()
+                        /*Swagger*/
+                        .antMatchers(swaggerUiDocs).permitAll()
+                        .antMatchers(swaggerUiPath).permitAll()
+                        .antMatchers("/swagger-ui/**").permitAll()
+                        .antMatchers("/api-docs/**").permitAll()
+                        .antMatchers("/api-docs.yaml").permitAll()
+                        /*Swagger (With Prefix)*/
+                        .antMatchers(apiPrefix + "/swagger-ui/**").permitAll()
+                        .antMatchers(apiPrefix + "/api-docs/**").permitAll()
+                        .antMatchers(apiPrefix + "/api-docs.yaml").permitAll();
+            } else {
+                http.authorizeRequests().anyRequest().permitAll();
+            }
         }
 
     }
