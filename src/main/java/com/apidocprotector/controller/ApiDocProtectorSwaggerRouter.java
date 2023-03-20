@@ -48,7 +48,7 @@ public class ApiDocProtectorSwaggerRouter extends ApiDocProtectorLibrary {
 		String username = body.get("username");
 		String password = body.get("password");
 		String secret = body.get("apidocprotector_sec");
-		String token = body.get("apidocprotector_token");
+		String token64 = body.get("apidocprotector_token");
 
 		register(SWAGGER_ROUTER_DETAILS, null, "info", 2, "POST BODY: "+ body);
 
@@ -72,12 +72,12 @@ public class ApiDocProtectorSwaggerRouter extends ApiDocProtectorLibrary {
 					INVALID_ACCESS.getStatusCode());
 		}
 
-		if (sessionExpired(token)) {
+		if (sessionExpired(token64)) {
 
 			register(SWAGGER_ROUTER_EXPIRED_SESSION, null, "error", 2, "Expired session");
 
 			try {
-				apiDocProtectorRedirect.redirectExpiredSession(token);
+				apiDocProtectorRedirect.redirectExpiredSession(token64);
 				return null;
 			} catch (IOException e) {
 
@@ -98,7 +98,7 @@ public class ApiDocProtectorSwaggerRouter extends ApiDocProtectorLibrary {
 
 		register(SWAGGER_ROUTER_SESSION_FOUNDED, sessionId, "info", 2, "Session Transfer: " + sessionTransfer.getUsername());
 
-		if (loginChecker(username, password, token)) {
+		if (loginChecker(username, password, token64)) {
 
 			sessionTransfer.setUsername(username);
 			sessionTransfer.setPassword("0x"+md5(password).replaceAll("[^0-9]", ""));

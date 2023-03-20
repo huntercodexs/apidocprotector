@@ -1,6 +1,8 @@
 package com.apidocprotector.library;
 
+import com.apidocprotector.config.ApiDocProtectorCustomCrypt;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 
@@ -8,14 +10,13 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
 import java.util.Base64;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Service
-public abstract class ApiDocProtectorDataLibrary {
+public abstract class ApiDocProtectorDataLibrary extends ApiDocProtectorCustomCrypt {
 
     public Cookie cookie(HttpServletRequest request, String cookieName) {
         Cookie[] cookies = request.getCookies();
@@ -46,8 +47,8 @@ public abstract class ApiDocProtectorDataLibrary {
     }
 
     public String bcrypt(String data) {
-        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
-        return bCryptPasswordEncoder.encode(data);
+        PasswordEncoder encoder = new BCryptPasswordEncoder();
+        return encoder.encode(data);
     }
 
     public String base64Encode(String input) {
@@ -57,6 +58,20 @@ public abstract class ApiDocProtectorDataLibrary {
     public String base64Decode(String input) {
         byte[] result = Base64.getDecoder().decode(input);
         return new String(result);
+    }
+
+    public boolean passwordCheck(String passwordRequest, String passwordDatabase, String alg) {
+        switch (alg) {
+            case "md5":
+                return passwordRequest.equals(passwordDatabase);
+            case "bcrypt":
+                PasswordEncoder encoder = new BCryptPasswordEncoder();
+                return encoder.matches(passwordRequest, passwordDatabase);
+            case "custom"://TODO
+                return true;
+            default:
+                return false;
+        }
     }
 
     public static boolean cpfValidator(String cpf) {

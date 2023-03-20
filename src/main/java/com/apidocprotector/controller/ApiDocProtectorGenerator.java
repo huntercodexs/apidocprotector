@@ -124,10 +124,10 @@ public class ApiDocProtectorGenerator extends ApiDocProtectorLibrary {
 
 		try {
 
-			String userToken = userGenerator(body);
+			String md5TokenCrypt = userGenerator(body);
 			String emailTo = body.get("email");
 			String subject = apiDocProtectorMailSender.subjectMail("User created success", body.get("username"));
-			String content = apiDocProtectorMailSender.contentMailGeneratorUser(body.get("name"), userToken);
+			String content = apiDocProtectorMailSender.contentMailGeneratorUser(body.get("name"), md5TokenCrypt);
 
 			apiDocProtectorMailSender.sendMailAttached(emailTo, subject, content);
 			register(GENERATOR_MAIL_SENDER_OK, null, "info", 0, "mail to" + emailTo);
@@ -143,6 +143,7 @@ public class ApiDocProtectorGenerator extends ApiDocProtectorLibrary {
 			session.setAttribute("ADP-ACCOUNT-CREATED-SUCCESSFUL", null);
 			return apiDocProtectorErrorRedirect.redirectError(base64Encode(re.getMessage()));
 		}
+
 	}
 
 }

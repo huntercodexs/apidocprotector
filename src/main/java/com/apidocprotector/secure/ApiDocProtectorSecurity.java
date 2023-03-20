@@ -274,13 +274,13 @@ public class ApiDocProtectorSecurity extends ApiDocProtectorLibrary {
         register(SECURITY_FIREWALL_FINISHED, sessionId, "info", 2, "FIREWALL PASSED: " + sessionTransfer.getToken());
     }
 
-    public boolean burn(HttpSession session, String tokenCrypt, String sessionId) {
+    public boolean burn(HttpSession session, String md5TokenCrypt, String sessionId) {
         auditor(SECURITY_BURN_STARTED, null, sessionId, 2);
         ApiDocProtectorDto sessionTransfer = (ApiDocProtectorDto) session.getAttribute(sessionId);
         if (
                 !sessionTransfer.getOrigin().equals("redirectToLoginForm") ||
                 !sessionTransfer.getId().equals(session.getId()) ||
-                !tokenCrypt.equals(dataEncrypt(sessionTransfer.getToken())) ||
+                !md5TokenCrypt.equals(md5(base64Decode(sessionTransfer.getToken()))) ||
                 !session.getAttribute("ADP-KEYPART").equals(sessionTransfer.getKeypart())
         ) {
             doAuthorized(session, sessionId, false);

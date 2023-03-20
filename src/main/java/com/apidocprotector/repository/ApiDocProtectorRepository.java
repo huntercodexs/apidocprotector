@@ -12,7 +12,7 @@ public interface ApiDocProtectorRepository extends JpaRepository<ApiDocProtector
     ApiDocProtectorEntity findByToken(String token) throws NonUniqueResultException;
     ApiDocProtectorEntity findByUsernameOrEmail(String username, String email) throws NonUniqueResultException;
     ApiDocProtectorEntity findByTokenAndActive(String token, String active);
-    ApiDocProtectorEntity findByUsernameAndPasswordAndTokenAndActive(String username, String password, String token, String active);
+    ApiDocProtectorEntity findByUsernameAndTokenAndActive(String username, String token, String active);
     ApiDocProtectorEntity findBySessionKeyAndActive(String key, String active);
     ApiDocProtectorEntity findByTokenAndRoleAndActive(String token, String role, String active);
 }
