@@ -1,4 +1,4 @@
-package com.apidocprotector.config;
+package com.apidocprotector.config.crypt;
 
 import com.apidocprotector.secure.ApiDocProtectorCrypt;
 

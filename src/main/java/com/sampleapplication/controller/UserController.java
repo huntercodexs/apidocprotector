@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     @Operation(hidden = true)
-    @GetMapping(path = "/")
+    @GetMapping(path = {"/", "/welcome"})
     @ResponseBody
     public ResponseEntity<?> welcome() {
         return ResponseEntity.ok().body("Welcome to APIDOC PROTECTOR");
@@ -72,7 +72,7 @@ public class UserController {
                     @Content(mediaType = "application/json")
             })
     })
-    @GetMapping(path = "/api/users")
+    @GetMapping(path = "/users")
     @ResponseBody
     public ResponseEntity<?> readAll() {
         return ResponseEntity.ok().body("Get all users");
@@ -135,7 +135,7 @@ public class UserController {
                     @Content(mediaType = "application/json")
             })
     })
-    @DeleteMapping(path = "/api/users/{userid}")
+    @DeleteMapping(path = "/users/{userid}")
     @ResponseBody
     public ResponseEntity<?> delete(@PathVariable("userid") String userid) {
         return ResponseEntity.ok().body("Delete an user by id");
@@ -168,7 +168,7 @@ public class UserController {
                     @Content(mediaType = "application/json")
             })
     })
-    @PutMapping(path = "/api/users/{userid}")
+    @PutMapping(path = "/users/{userid}")
     @ResponseBody
     public ResponseEntity<?> update(@PathVariable("userid") String userid, @RequestBody Object user) {
         return ResponseEntity.ok().body("Update an user by id");
@@ -201,7 +201,7 @@ public class UserController {
                     @Content(mediaType = "application/json")
             })
     })
-    @PatchMapping(path = "/api/users/{userid}")
+    @PatchMapping(path = "/users/{userid}")
     @ResponseBody
     public ResponseEntity<?> patch(@PathVariable("userid") String userid, @RequestBody Object user) {
         return ResponseEntity.ok().body("Fix/Patch an user by id");
