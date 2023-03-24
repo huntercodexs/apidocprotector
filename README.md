@@ -1,14 +1,17 @@
 # APIDOC PROTECTOR
-A simple project to API document protect
+A simple project to protect documentation from OPENAPI
 
 # Overview
 
-- Release: 1.0.2
+- Release: 1.0.3
+- License: MIT
+- Coding: Open Source Code
+- Language: Java
 
 ![img.png](./midias/apidoc-protector-login-v1.png)
 
 When APIDOC PROTECTOR is installed in the application it catches the requests into endpoints refers to currently manager
-documentation, as example in the Swagger, when is requested to http://localhost:31303/swagger-ui/index.html this request
+documentation, as example the Swagger, when is requested to http://localhost:31303/swagger-ui/index.html this request
 is intercepted and is required a login by username and password.
 <br />
 This can be look in ApiDocProtectorSwagger that is placed in the apidocprotector path (package)
@@ -40,7 +43,9 @@ Below is the diagram flow to summarize as the APIDOC PROTECTOR work.
 * Rest Template
 * Swagger (OpenAPI)
 * Thymeleaf
-* Crypto/MD5
+* Crypto
+* MD5
+* Custom Encrypt
 
 # Environment Details
 <pre>
@@ -56,33 +61,31 @@ Java(TM) SE Runtime Environment (build 1.8.0_212-b10)
 Java HotSpot(TM) 64-Bit Server VM (build 25.212-b10, mixed mode)
 </pre>
 
-# Maven Commands (jar generate)
+# Maven Commands Helper (jar generate)
 
 1. mvn clean
-2. mvn clean install
-3. mvn clean compile assembly:single
-4. mvn clean package spring-boot:repackage
-5. mvn package
+2. mvn clean install 
+3. mvn package
 
 # List of Documentation Managers
 
-* OpenAPI with Swagger
+- OpenAPI with Swagger
 
 > The openAPI with Swagger-UI is available to query and help understand the application by REST API
 
-* http://localhost:31303/swagger-ui/protector
+http://localhost:31303/swagger-ui/protector
 
-* OpenAPI with Adobe AEM
+- OpenAPI with Adobe AEM (Not available yet)
 
 > The openAPI with Adobe-AEM is available to query and help understand the application by REST API
 
-* http://localhost:31303/adobe-aem/protector
+http://localhost:31303/adobe-aem/protector
 
-* OpenAPI with Authentiq API
+* OpenAPI with Authentiq API (Not available yet)
 
 > The openAPI with Authentiq API is available to query and help understand the application by REST API
 
-* http://localhost:31303/authentiq-api/protector
+http://localhost:31303/authentiq-api/protector
 
 # Workflow Code Details
 
@@ -157,6 +160,9 @@ This process should be used as explained in this session, e.g., an URL + Token s
 
 # Usage
 
+> IMPORTANT NOTE: if you cannot modify your project's package structure by setting the root path to "com" and placing 
+> your main file "main" in this root path "com", it will not be possible to use APIDOC PROTECTOR.
+
 Set up the pom.xml with the dependencies below
 
 <code>
@@ -221,16 +227,35 @@ Set up the pom.xml with the dependencies below
 			<version>5.3.15</version>
 		</dependency>
 
+		<!--OAUTH2-->
+		<dependency>
+			<groupId>org.springframework.security.oauth.boot</groupId>
+			<artifactId>spring-security-oauth2-autoconfigure</artifactId>
+			<version>2.0.1.RELEASE</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-security</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+
 </code>
 
-In this release 1.0.2, the unique way to use the APIDOC-PROTECTOR it that showed below, please pay attention when you
+In this release 1.0.3, the unique way to use the APIDOC-PROTECTOR it that showed below, please pay attention when you
 implement this solution in your application to avoid mistakes or forgot anything.
 
-Let's start...
+Let's get start...
 
 Please, follow the instructions below to install APIDOC PROTECTOR in your application.
 
-- Firstly, access the package com in your application
+- Firstly, access the package "com" in your application
 
 <pre>
 [Example]
@@ -243,10 +268,10 @@ user@host$: cd /home/user/sample-project/src/main/java/com
 user@host$: git clone https://github.com/huntercodexs/apidocprotector.git
 </pre>
 
-- Get a current release: 1.0.2
+- Get a current release: 1.0.3
 
 <pre>
-user@host$: git checkout release_1.0.2
+user@host$: git checkout release_1.0.3
 </pre>
 
 - Remove unnecessary files
@@ -260,9 +285,13 @@ Until now, we should have the project structure as below:
 
 ![img.png](./midias/apidocprotector-initial-structure.png)
 
-- Copy the template files html from src/main/java/com/apidocprotector/templates to src/main/resources/templates as showed below
+- Copy the template files html from src/main/java/com/apidocprotector/web/_templates to src/main/resources/templates as showed below
 
 ![img.png](./midias/apidocprotector-templates-files.png)
+
+- Copy the static files css and js from src/main/java/com/apidocprotector/web/_static to src/main/resources/static as showed below
+
+![img.png](./midias/apidocprotector-static-files.png)
 
 - Now you can configure the application.properties file of your project, as showed below:
 
@@ -285,14 +314,18 @@ springdoc.model-and-view-allowed=true
 
 ## APIDOC PROTECTOR
 #----------------------------------------------------------------------------------------------------
-#true, false
-apidocprotector.enabled=false
+#true(default), false
+apidocprotector.enabled=true
+#true, false(default)
+apidocprotector.role=true
+#light(default), dark, gamer, modern
+apidocprotector.theme=gamer
 #localhost, 192.168.0.17, app.domain.com
 apidocprotector.server-name=192.168.0.203
 #swagger, adobe, authentiq
 apidocprotector.type=swagger
-#md5, bcrypt
-apidocprotector.data.crypt.type=md5
+#md5(default), bcrypt, custom
+apidocprotector.data.crypt.type=custom
 #true, false
 apidocprotector.url.show=true
 #time to expire session (in minutes): 0,1,3,5,6,7, .... 15,60,148, etc...
@@ -337,12 +370,27 @@ spring.mail.properties.mail.smtp.timeout=5000
 spring.mail.properties.mail.smtp.writetimeout=5000
 spring.mail.properties.mail.smtp.socketFactory.port=31025
 spring.mail.properties.mail.smtp.socketFactory.class=javax.net.ssl.SSLSocketFactory
+
+## OAUTH2
+#----------------------------------------------------------------------------------------------------
+#true(default), false
+oauth.enabled=true
+#custom
+oauth.server.custom.endpoint=/api/rest/v1/oauth
+#use: (db|file)
+oauth.basic-auth.credentials=db
+#user details
+oauth.basic-auth.username=OAUTH2DEMO_USER
+oauth.basic-auth.password=1234567890
+oauth.basic-auth.role=1
 </pre>
+
+> See more in the application.properties file placed in resources path from this project
 
 # Properties File
 
-> NOTE: you can personlize the all options/features to get more confidente and security in the application implementation,
-> main in the custome.uri path
+> NOTE: you can personalize the all options/features to get more confidente and security in the application implementation,
+> main in the custom.uri path
 
 There is a many settings tha can be made in the application.properties file, but we can talk about the options on
 
@@ -392,7 +440,6 @@ There is a many settings tha can be made in the application.properties file, but
         - URI to password, default is /doc-protect/password
     - apidocprotector.custom.uri-password-recovery:
         - URI to password recovery, default is /doc-protect/password/recovery
-
 
 - APIDOC PROTECTOR (JAVA MAIL SENDER)
     - spring.mail.host:
@@ -540,46 +587,75 @@ All endpoints that will be intercepted can be seen in the application.properties
 
 - OAuth2 Settings
 
+The APIDOC PROTECTOR has the Oauth2 pre configurated, and you might enable ou disable it. Below is the properties settings 
+that you should used to make this.
+
+<pre>
+oauth.enabled=true
+</pre>
+
 If your application use the OAuth2 as a security layer, can be needed to make any configurations in the scope of the
 project as showed below...
 
 <code>
 
     @Override
-    public void configure(final HttpSecurity http) throws Exception {
-       http.authorizeRequests()
+        public void configure(final HttpSecurity http) throws Exception {
+            if (oauth2Enabled) {
+                http.authorizeRequests()
 
-               /*APP SERVICES*/
-               .antMatchers("/users/delete").authenticated()
-               .antMatchers("/users/create").authenticated()
+                    /*--------- Restrict Endpoints ---------*/
 
-               /*OTHERS SERVICES*/
-               .antMatchers("/auditory/view").authenticated()
+                    /*Application*/
+                    .antMatchers(apiPrefix + "/users/**").authenticated()
 
-               /*SWAGGER*/
-               .antMatchers("/swagger/**").permitAll()
-               .antMatchers("/swagger-ui/**").permitAll()
-               .antMatchers("/api-docs/**").permitAll()
-               .antMatchers("/api-docs.yaml").permitAll()
+                    /*--------- Allowed Endpoints ----------*/
 
-               /*API-DOC-GUARD*/
-               .antMatchers("/doc-protect/**").permitAll()
-               .antMatchers("/api-doc-guard/**").permitAll()
-               .antMatchers("/api-docs-guard/**").permitAll()
-
-               /*CUSTOM*/
-               .antMatchers(custom_api_prefix+"/swagger/**").permitAll()
-               .antMatchers(custom_api_prefix+"/swagger-ui/**").permitAll()
-               .antMatchers(custom_api_prefix+"/doc-protect/**").permitAll()
-               .antMatchers(custom_api_prefix+"/api-doc-guard/**").permitAll()
-               .antMatchers(custom_api_prefix+"/api-docs-guard/**").permitAll()
-
-               /*ACTUATOR*/
-               .antMatchers("/actuator/**").permitAll().anyRequest().authenticated();
-    
-    }
+                    /*Actuator*/
+                    .antMatchers("/actuator/**").permitAll()
+                    /*ApiDoc Protector*/
+                    .antMatchers("**/doc-protect/**").permitAll()
+                    /*Application*/
+                    .antMatchers(apiPrefix + "/welcome").permitAll()
+                    /*Swagger*/
+                    .antMatchers(swaggerUiDocs).permitAll()
+                    .antMatchers(swaggerUiPath).permitAll()
+                    .antMatchers("/swagger-ui/**").permitAll()
+                    .antMatchers("/api-docs/**").permitAll()
+                    .antMatchers("/api-docs.yaml").permitAll()
+                    /*Swagger (With Prefix)*/
+                    .antMatchers(apiPrefix + "/swagger-ui/**").permitAll()
+                    .antMatchers(apiPrefix + "/api-docs/**").permitAll()
+                    .antMatchers(apiPrefix + "/api-docs.yaml").permitAll();
+            } else {
+                http.authorizeRequests().anyRequest().permitAll();
+            }
+        }
 
 </code>
+
+You can use the database.sql to charge oauht2 database, see it in path src/main/java/com/apidocprotector/config/oauth2.
+
+# Theme
+
+The APIDOC PROTECTOR has a few themes available to use, and each one can be used according the below settings
+
+<pre>
+#light(default), dark, gamer, modern
+apidocprotector.theme=gamer
+</pre>
+
+# Role
+
+Enabled or disabled this option to let available a Role field in the GENERATOR FORM
+
+> If you set this option equal true, anyone will be could create a user with a privilege's admin, 
+> so think well before allow this option
+
+<pre>
+#true, false(default)
+apidocprotector.role=true
+</pre>
 
 # Logger
 
@@ -610,3 +686,28 @@ apidocprotector.audit.enabled=true
 apidocprotector.audit.level=2
 </pre>
 
+# Customizations
+
+You can configure many features available in APIDOC PROTECTOR through the properties file, but you can also
+configure or schedule new features, for example:
+
+- themes
+    - (src/main/resources/static/apidocprotector/css/theme)
+
+- javascript features
+    - (src/main/resources/static/apidocprotector/js)
+
+- system business rules
+
+- database
+
+- authentication
+    - Oauth2 (src/main/java/com/apidocprotector/config/oauth2)
+
+- error messages and responses
+    - (src/main/java/com/apidocprotector/enumerator)
+
+- encryption of user data (password)
+    - ApiDocProtectorCustomCrypt.java (com/apidocprotector/config/crypt/ApiDocProtectorCustomCrypt.java)
+
+Check the above options in the project scope for more details
