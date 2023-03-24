@@ -5,7 +5,10 @@ import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
@@ -30,7 +33,7 @@ public class ApiDocProtectorGenerator extends ApiDocProtectorLibrary {
 			return apiDocProtectorRedirect.forwardToGeneratorGlass();
 		} catch (RuntimeException re) {
 			register(GENERATOR_EXCEPTION, null, "except", 1, "Generator Exception: "+re.getMessage());
-			return apiDocProtectorErrorRedirect.redirectGeneratorError("error_to_load_form");
+			return apiDocProtectorErrorRedirect.redirectError(base64Encode(re.getMessage()));
 		}
 
 	}
@@ -45,7 +48,7 @@ public class ApiDocProtectorGenerator extends ApiDocProtectorLibrary {
 			return apiDocProtectorRedirect.redirectToGeneratorForm();
 		} catch (RuntimeException re) {
 			register(GENERATOR_GLASS_EXCEPTION, null, "except", 1, "Generator Glass Exception: " + re.getMessage());
-			return apiDocProtectorErrorRedirect.redirectGeneratorError("glass_forward_error");
+			return apiDocProtectorErrorRedirect.redirectError(base64Encode(re.getMessage()));
 		}
 	}
 
@@ -61,7 +64,7 @@ public class ApiDocProtectorGenerator extends ApiDocProtectorLibrary {
 
 			return apiDocProtectorViewer.error(
 					GENERATOR_ERROR.getMessage(),
-					"invalid access",
+					base64Encode("invalid access"),
 					GENERATOR_ERROR.getStatusCode());
 		}
 
@@ -83,7 +86,7 @@ public class ApiDocProtectorGenerator extends ApiDocProtectorLibrary {
 
 			return apiDocProtectorViewer.error(
 					GENERATOR_ERROR.getMessage(),
-					"The request has caused a exception",
+					base64Encode("The request has caused a exception " + re.getMessage()),
 					GENERATOR_ERROR.getStatusCode());
 		}
 	}
@@ -105,21 +108,26 @@ public class ApiDocProtectorGenerator extends ApiDocProtectorLibrary {
 
 		if (session.getAttribute("ADP-USER-GENERATOR") == null || !session.getAttribute("ADP-USER-GENERATOR").equals("1")) {
 			register(GENERATOR_FORM_INVALID_SESSION, null, "warn", 2, "Invalid Session");
-			return apiDocProtectorErrorRedirect.redirectGeneratorError("invalid_session_user_generator");
+			return apiDocProtectorErrorRedirect.redirectError(base64Encode(GENERATOR_FORM_INVALID_SESSION.getMessage()));
+		}
+
+		if (!mailValidator(body.get("email"))) {
+			register(GENERATOR_FORM_INVALID_EMAIL, null, "error", 2, null);
+			return apiDocProtectorErrorRedirect.redirectError(base64Encode(GENERATOR_FORM_INVALID_EMAIL.getMessage()));
 		}
 
 		if (apiDocProtectorRepository.findByUsernameOrEmail(body.get("username"), body.get("email")) != null) {
 			register(GENERATOR_FORM_USER_ALREADY_EXISTS, null, "info", 2, "User Conflict: " + body.get("username"));
 			session.setAttribute("ADP-ACCOUNT-CREATED-SUCCESSFUL", null);
-			return apiDocProtectorErrorRedirect.redirectGeneratorError("user_already_exists");
+			return apiDocProtectorErrorRedirect.redirectError(base64Encode(GENERATOR_FORM_USER_ALREADY_EXISTS.getMessage()));
 		}
 
 		try {
 
-			String userToken = userGenerator(body);
+			String md5TokenCrypt = userGenerator(body);
 			String emailTo = body.get("email");
-			String subject = apiDocProtectorMailSender.subjectMail(body.get("username"));
-			String content = apiDocProtectorMailSender.contentMailGeneratorUser(body.get("name"), userToken);
+			String subject = apiDocProtectorMailSender.subjectMail("User created success", body.get("username"));
+			String content = apiDocProtectorMailSender.contentMailGeneratorUser(body.get("name"), md5TokenCrypt);
 
 			apiDocProtectorMailSender.sendMailAttached(emailTo, subject, content);
 			register(GENERATOR_MAIL_SENDER_OK, null, "info", 0, "mail to" + emailTo);
@@ -133,20 +141,9 @@ public class ApiDocProtectorGenerator extends ApiDocProtectorLibrary {
 			register(GENERATOR_EXCEPTION, null, "except", 1, "Create in Generator: " + re.getMessage());
 
 			session.setAttribute("ADP-ACCOUNT-CREATED-SUCCESSFUL", null);
-			return apiDocProtectorErrorRedirect.redirectGeneratorError("account_create_error");
+			return apiDocProtectorErrorRedirect.redirectError(base64Encode(re.getMessage()));
 		}
-	}
 
-	@Operation(hidden = true)
-	@GetMapping(path = "/doc-protect/generator/error/{data}")
-	public ModelAndView error(@PathVariable(required = false) String data) {
-
-		register(GENERATOR_EXCEPTION, null, "error", 1, data);
-
-		return apiDocProtectorViewer.error(
-				GENERATOR_ERROR.getMessage(),
-				data.replace("_", " "),
-				GENERATOR_ERROR.getStatusCode());
 	}
 
 }

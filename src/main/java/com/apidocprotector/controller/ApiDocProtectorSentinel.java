@@ -14,7 +14,6 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-import static com.apidocprotector.enumerator.ApiDocProtectorLibraryEnum.SENTINEL_ERROR;
 import static com.apidocprotector.enumerator.ApiDocProtectorRegisterEnum.*;
 
 @Hidden
@@ -98,10 +97,10 @@ public class ApiDocProtectorSentinel extends ApiDocProtectorLibrary {
 	}
 
 	@Operation(hidden = true)
-	@GetMapping(path = "${apidocprotector.custom.uri-logout:/doc-protect/logout}/{token}")
-	public String logout(@PathVariable("token") String token) {
+	@GetMapping(path = "${apidocprotector.custom.uri-logout:/doc-protect/logout}/{token64}")
+	public String logout(@PathVariable("token64") String token64) {
 		register(SENTINEL_LOGOUT_STARTED, null, "info", 0,"");
-		return apiDocProtectorRedirect.logout(session, token);
+		return apiDocProtectorRedirect.logout(session, token64);
 	}
 
 	@Operation(hidden = true)
@@ -109,18 +108,6 @@ public class ApiDocProtectorSentinel extends ApiDocProtectorLibrary {
 	public ModelAndView protector() {
 		register(SENTINEL_PROTECTOR_STARTED, null, "info", 0, "");
 		return apiDocProtectorViewer.protector(session, null);
-	}
-
-	@Operation(hidden = true)
-	@GetMapping(path = "/doc-protect/sentinel/error/{error}")
-	public ModelAndView error(@PathVariable("error") String error) {
-
-		register(SENTINEL_ERROR_STARTED, null, "error", 1, error);
-
-		return apiDocProtectorViewer.error(
-				SENTINEL_ERROR.getMessage(),
-				error.replaceAll("_", " "),
-				SENTINEL_ERROR.getStatusCode());
 	}
 
 }

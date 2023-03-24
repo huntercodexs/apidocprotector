@@ -97,14 +97,14 @@ public class ApiDocProtectorRedirect extends ApiDocProtectorLibrary {
         return "redirect:" + uriTarget;
     }
 
-    public String redirectToPasswordRecoveryForm(String md5Token) {
+    public String redirectToPasswordRecoveryForm(String token64) {
 
         register(REDIRECT_TO_PASSWORD_RECOVERY_FORM, null, "info", 1, "REDIRECT TO PASSWORD RECOVERY FORM IS START");
 
         String uriTarget = customUriPasswordRecovery.replaceFirst("/$", "");
         if (!uriTarget.startsWith("/")) uriTarget = "/" + uriTarget;
         if (!uriTarget.endsWith("/form")) uriTarget = uriTarget.replaceFirst("/form$", "");
-        uriTarget = uriTarget + "/form/" + md5Token;
+        uriTarget = uriTarget + "/form/" + token64;
 
         register(REDIRECT_TO_PASSWORD_RECOVERY_FORM_TARGET, null, "info", 1, "REDIRECT TO PASSWORD RECOVERY FORM");
 
@@ -179,13 +179,13 @@ public class ApiDocProtectorRedirect extends ApiDocProtectorLibrary {
         return "redirect:/doc-protect/protector";
     }
 
-    public String logout(HttpSession session, String token) {
+    public String logout(HttpSession session, String token64) {
 
         register(REDIRECT_LOGOUT_STARTED, null, "info", 1, "");
 
         seesionDestroy();
         response.setHeader("ApiDoc-Protector-Active-User", null);
-        String uriTarget = customUriLogin.replaceFirst("/$", "") + "/" + token;
+        String uriTarget = customUriLogin.replaceFirst("/$", "") + "/" + token64;
         if (!uriTarget.startsWith("/")) uriTarget = "/" + uriTarget;
 
         register(REDIRECT_LOGOUT_TO_LOGIN, null, "info", 1, "");

@@ -122,7 +122,12 @@ public enum ApiDocProtectorLibraryEnum {
     INVALID_FORM_FIREWALL(
             HttpStatus.BAD_REQUEST,
             50004,
-            "Invalid Form");
+            "Invalid Form"),
+
+    GENERIC_ERROR(
+            HttpStatus.INTERNAL_SERVER_ERROR,
+            99999,
+                    "Occurs an error"),;
 
     public HttpStatus statusCode;
     public int errorCode;

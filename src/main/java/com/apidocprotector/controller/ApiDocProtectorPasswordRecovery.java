@@ -22,41 +22,41 @@ import static com.apidocprotector.enumerator.ApiDocProtectorRegisterEnum.*;
 public class ApiDocProtectorPasswordRecovery extends ApiDocProtectorLibrary {
 
 	@Operation(hidden = true)
-	@GetMapping(path = "${apidocprotector.custom.uri-password-recovery:/doc-protect/password/recovery}/{token}")
-	public String password(@PathVariable(required = false, value = "token") String md5Token) {
+	@GetMapping(path = "${apidocprotector.custom.uri-password-recovery:/doc-protect/password/recovery}/{token64}")
+	public String password(@PathVariable(required = false, value = "token64") String token64) {
 
 		register(PASSWORD_RECOVERY_STARTED, null, "info", 0, "");
 
 		try {
-			return apiDocProtectorRedirect.forwardToPasswordRecoveryGlass(md5Token);
+			return apiDocProtectorRedirect.forwardToPasswordRecoveryGlass(token64);
 		} catch (RuntimeException re) {
 
 			register(PASSWORD_EXCEPTION, null, "except", 1, re.getMessage());
 
-			return apiDocProtectorErrorRedirect.redirectPasswordRecoveryError("error_to_load_form_password");
+			return apiDocProtectorErrorRedirect.redirectError(base64Encode(re.getMessage()));
 		}
 
 	}
 
 	@Operation(hidden = true)
-	@GetMapping(path = "/doc-protect/protector/password/recovery/glass/{token}")
-	public String glass(@PathVariable(required = true, value = "token") String md5Token) {
+	@GetMapping(path = "/doc-protect/protector/password/recovery/glass/{token64}")
+	public String glass(@PathVariable(required = true, value = "token64") String token64) {
 
 		register(PASSWORD_RECOVERY_GLASS_STARTED, null, "info", 0, "");
 
 		try {
-			return apiDocProtectorRedirect.redirectToPasswordRecoveryForm(md5Token);
+			return apiDocProtectorRedirect.redirectToPasswordRecoveryForm(token64);
 		} catch (RuntimeException re) {
 
 			register(PASSWORD_RECOVERY_GLASS_EXCEPTION, null, "except", 1, re.getMessage());
 
-			return apiDocProtectorErrorRedirect.redirectPasswordRecoveryError("unknown");
+			return apiDocProtectorErrorRedirect.redirectError(base64Encode(re.getMessage()));
 		}
 	}
 
 	@Operation(hidden = true)
-	@GetMapping(path = "${apidocprotector.custom.uri-password-recovery:/doc-protect/password/recovery}/form/{token}")
-	public ModelAndView form(@PathVariable(required = true, value = "token") String md5Token) {
+	@GetMapping(path = "${apidocprotector.custom.uri-password-recovery:/doc-protect/password/recovery}/form/{token64}")
+	public ModelAndView form(@PathVariable(required = true, value = "token64") String token64) {
 
 		register(PASSWORD_RECOVERY_FORM_STARTED, null, "info", 0, "");
 
@@ -66,23 +66,23 @@ public class ApiDocProtectorPasswordRecovery extends ApiDocProtectorLibrary {
 
 			return apiDocProtectorViewer.error(
 					PASSWORD_RECOVERY_ERROR.getMessage(),
-					"invalid access in form password",
+					base64Encode("invalid access in form password"),
 					PASSWORD_RECOVERY_ERROR.getStatusCode());
 		}
 
 		try {
 
-			if (session.getAttribute("ADP-ACCOUNT-PASSWORD-RECOVERY-SUCCESSFUL") != null) {
-				if (session.getAttribute("ADP-ACCOUNT-PASSWORD-RECOVERY-SUCCESSFUL").equals("1")) {
+			if (session.getAttribute("ADP-ACCOUNT-PASSWORD-RECOVERY-SUCCESSFULL") != null) {
+				if (session.getAttribute("ADP-ACCOUNT-PASSWORD-RECOVERY-SUCCESSFULL").equals("1")) {
 
-					register(PASSWORD_RECOVERY_SUCCESSFUL, null, "info", 2, "Paasword Recovered");
+					register(PASSWORD_RECOVERY_SUCCESSFUL, null, "info", 2, "Password Recovered");
 
-					return apiDocProtectorViewer.passwordRecovery(true, md5Token);
+					return apiDocProtectorViewer.passwordRecovery(true, token64);
 				}
 			}
 
 			register(PASSWORD_RECOVERY_VIEW_FORM, null, "info", 0, "");
-			return apiDocProtectorViewer.passwordRecovery(false, md5Token);
+			return apiDocProtectorViewer.passwordRecovery(false, token64);
 
 		} catch (RuntimeException re) {
 
@@ -90,7 +90,7 @@ public class ApiDocProtectorPasswordRecovery extends ApiDocProtectorLibrary {
 
 			return apiDocProtectorViewer.error(
 					PASSWORD_RECOVERY_ERROR.getMessage(),
-					"The request has caused a exception",
+					base64Encode("The request has caused a exception " + re.getMessage()),
 					PASSWORD_RECOVERY_ERROR.getStatusCode());
 		}
 	}
@@ -105,63 +105,58 @@ public class ApiDocProtectorPasswordRecovery extends ApiDocProtectorLibrary {
 		register(PASSWORD_RECOVERY_DATA_POST, null, "info", 0, "");
 
 		if (session.getAttribute("ADP-USER-PASSWORD-RECOVERY") == null || !session.getAttribute("ADP-USER-PASSWORD-RECOVERY").equals("1")) {
-
-			register(PASSWORD_RECOVERY_FORM_INVALID_SESSION, null, "error", 2, "Invalid Session");
-
-			return apiDocProtectorErrorRedirect.redirectPasswordRecoveryError("invalid_session_user_password_recovery");
+			register(PASSWORD_RECOVERY_FORM_INVALID_SESSION, null, "error", 2, "Invalid session");
+			return apiDocProtectorErrorRedirect.redirectError(base64Encode("Invalid session"));
 		}
 
-		ApiDocProtectorEntity user = apiDocProtectorRepository.findByToken(body.get("token"));
+		if (body.get("token") == null || body.get("token").equals("")) {
+			register(GENERIC_MESSAGE, null, "error", 2, "Missing token on request (invalid form)");
+			return apiDocProtectorErrorRedirect.redirectError(base64Encode("Missing token on request (invalid form)"));
+		}
+
+		if (body.get("password") == null || body.get("password").equals("")) {
+			register(GENERIC_MESSAGE, null, "error", 2, "Missing password on request");
+			return apiDocProtectorErrorRedirect.redirectError(base64Encode("Missing password on request"));
+		}
+
+		String md5TokenCrypt = base64Decode(body.get("token"));
+
+		ApiDocProtectorEntity user = apiDocProtectorRepository.findByToken(md5TokenCrypt);
 
 		if (user == null) {
 
-			register(PASSWORD_RECOVERY_USER_NOT_FOUND, null, "error", 2, "User not found (using token) " + body.get("token"));
+			register(PASSWORD_RECOVERY_USER_NOT_FOUND, null, "error", 2, "User not found to token " + md5TokenCrypt);
 
-			session.setAttribute("ADP-ACCOUNT-PASSWORD-RECOVERY-SUCCESSFUL", null);
-			return apiDocProtectorErrorRedirect.redirectPasswordRecoveryError("user_not_found");
+			session.setAttribute("ADP-ACCOUNT-PASSWORD-RECOVERY-SUCCESSFULL", null);
+			return apiDocProtectorErrorRedirect.redirectError(base64Encode("User not found to token " + md5TokenCrypt));
 		}
 
-		String newToken = userPasswordUpdate(body, user);
+		String updatedMd5TokenCrypt = userPasswordUpdate(body, user);
 
-		if (newToken == null) {
-
-			register(PASSWORD_RECOVERY_EXCEPTION, null, "info", 1, "Password Recovery");
-
-			return apiDocProtectorErrorRedirect.redirectPasswordRecoveryError("error_to_password_recovery");
-
+		if (updatedMd5TokenCrypt == null) {
+			register(PASSWORD_RECOVERY_EXCEPTION, null, "info", 1, "Password recovery exception");
+			return apiDocProtectorErrorRedirect.redirectError(base64Encode("Password recovery exception"));
 		}
 
 		try {
 
-			String subject = apiDocProtectorMailSender.subjectMail(user.getUsername());
-			String content = apiDocProtectorMailSender.contentMailPasswordRecovery(newToken, user);
+			String subject = apiDocProtectorMailSender.subjectMail("Password recovered", user.getUsername());
+			String content = apiDocProtectorMailSender.contentMailPasswordRecovery(updatedMd5TokenCrypt, user);
 
 			apiDocProtectorMailSender.sendMailAttached(user.getEmail(), subject, content);
-			session.setAttribute("ADP-ACCOUNT-PASSWORD-RECOVERY-SUCCESSFUL", "1");
+			session.setAttribute("ADP-ACCOUNT-PASSWORD-RECOVERY-SUCCESSFULL", "1");
 
 			register(PASSWORD_RECOVERY_MAIL_SENDER_OK, null, "info", 0, "Email sended to: " + user.getName());
 
-			return apiDocProtectorRedirect.redirectToPasswordRecoveryForm(newToken);
+			return apiDocProtectorRedirect.redirectToPasswordRecoveryForm(updatedMd5TokenCrypt);
 
 		} catch (RuntimeException re) {
 
 			register(PASSWORD_RECOVERY_EXCEPTION, null, "except", 1, re.getMessage());
 
-			session.setAttribute("ADP-ACCOUNT-PASSWORD-RECOVERY-SUCCESSFUL", null);
-			return apiDocProtectorErrorRedirect.redirectPasswordRecoveryError("password_recovery_error");
+			session.setAttribute("ADP-ACCOUNT-PASSWORD-RECOVERY-SUCCESSFULL", null);
+			return apiDocProtectorErrorRedirect.redirectError(base64Encode(re.getMessage()));
 		}
-	}
-
-	@Operation(hidden = true)
-	@GetMapping(path = "/doc-protect/password/recovery/error/{data}")
-	public ModelAndView error(@PathVariable(required = false) String data) {
-
-		register(PASSWORD_RECOVERY_EXCEPTION, null, "error", 2, data);
-
-		return apiDocProtectorViewer.error(
-				PASSWORD_RECOVERY_ERROR.getMessage(),
-				data.replace("_", " "),
-				PASSWORD_RECOVERY_ERROR.getStatusCode());
 	}
 
 }

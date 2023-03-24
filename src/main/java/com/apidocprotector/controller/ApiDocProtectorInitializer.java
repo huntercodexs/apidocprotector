@@ -1,6 +1,5 @@
 package com.apidocprotector.controller;
 
-import com.apidocprotector.enumerator.ApiDocProtectorLibraryEnum;
 import com.apidocprotector.library.ApiDocProtectorLibrary;
 import com.apidocprotector.model.ApiDocProtectorEntity;
 import io.swagger.v3.oas.annotations.Hidden;
@@ -21,35 +20,41 @@ import static com.apidocprotector.enumerator.ApiDocProtectorRegisterEnum.*;
 public class ApiDocProtectorInitializer extends ApiDocProtectorLibrary {
 
 	@Operation(hidden = true)
-	@GetMapping(path = "${apidocprotector.custom.uri-login:/doc-protect/login}/{token}")
-	public String initializer(@PathVariable("token") String token) {
+	@GetMapping(path = "${apidocprotector.custom.uri-login:/doc-protect/login}/{token64}")
+	public String initializer(@PathVariable("token64") String token64) {
 
 		register(INITIALIZER_STARTED, null, "info", 2, "");
 
-		String tokenCrypt = dataEncrypt(token);
-		ApiDocProtectorEntity result = findAccountByTokenAndActive(tokenCrypt, "yes");
+		String currentToken = base64Decode(token64);
+		String md5TokenCrypt = md5(currentToken);
+		ApiDocProtectorEntity apiDocProtectorEntity = findAccountByTokenAndActive(md5TokenCrypt, "yes");
 
-		register(INITIALIZER_TOKEN_OK, null, "info", 2, "Result token: " + result.getName());
+		register(INITIALIZER_TOKEN_OK, null, "info", 2, "token: " + md5TokenCrypt);
 
-		if (result != null && result.getToken().equals(tokenCrypt)) {
+		if (findAccountByTokenAndActive(md5TokenCrypt, "no") != null) {
+			register(INITIALIZER_ERROR, null, "info", 2, "User token is not active");
+			return apiDocProtectorErrorRedirect.redirectError(base64Encode("User token is not active"));
+		}
 
-			this.transfer = initEnv(token);
+		if (apiDocProtectorEntity == null) {
+			register(INITIALIZER_ERROR, null, "info", 2, "Invalid token");
+			return apiDocProtectorErrorRedirect.redirectError(base64Encode("Invalid Token " + md5TokenCrypt));
+		}
+
+		if (apiDocProtectorEntity.getToken() != null && apiDocProtectorEntity.getToken().equals(md5TokenCrypt)) {
+
+			this.transfer = initEnv(token64);
 			register(INITIALIZER_ENVIRONMENT_OK, null, "info", 2, "Init Transfer: " + this.transfer.getUsername());
 
-			sessionPrepare(session, this.transfer, result);
+			sessionPrepare(session, this.transfer, apiDocProtectorEntity);
 			register(INITIALIZER_SESSION_PREPARE_OK, null, "info", 2, "Session configured: " + session);
 
 			return apiDocProtectorRedirect.forwardToGlass();
 		}
 
-		String error = token;
-		if (findAccountByTokenAndActive(tokenCrypt, "no") != null) {
-			error = "user_is_not_active";
-		}
+		register(INITIALIZER_ERROR, null, "info", 2, "Unknown Error");
 
-		register(INITIALIZER_ERROR, null, "info", 2, "Initializer Error");
-
-		return apiDocProtectorErrorRedirect.redirectInitializerError(error);
+		return apiDocProtectorErrorRedirect.redirectError(base64Encode("Unknown Error"));
 	}
 
 	@Operation(hidden = true)
@@ -64,7 +69,7 @@ public class ApiDocProtectorInitializer extends ApiDocProtectorLibrary {
 
 			register(INITIALIZER_EXCEPTION, null, "except", 2, "Initializer glass: " + re.getMessage());
 
-			return apiDocProtectorErrorRedirect.redirectInitializerError("sessionId");
+			return apiDocProtectorErrorRedirect.redirectError(base64Encode(re.getMessage()));
 		}
 	}
 
@@ -87,7 +92,7 @@ public class ApiDocProtectorInitializer extends ApiDocProtectorLibrary {
 
 			return apiDocProtectorViewer.error(
 					INVALID_SESSION.getMessage(),
-					"The request is not valid",
+					base64Encode("The request is not valid"),
 					INVALID_SESSION.getStatusCode());
 		}
 
@@ -95,7 +100,6 @@ public class ApiDocProtectorInitializer extends ApiDocProtectorLibrary {
 		session.setAttribute("ADP-KEYPART", this.transfer.getKeypart());
 		session.setAttribute("ADP-SECRET", this.transfer.getSecret());
 
-		register(NO_AUDITOR, sessionId, "info", 2, "");
 		register(NO_AUDITOR, sessionId, "info", 2, session.getAttribute(sessionId).toString());
 
 		try {
@@ -109,7 +113,7 @@ public class ApiDocProtectorInitializer extends ApiDocProtectorLibrary {
 
 			return apiDocProtectorViewer.error(
 					BURN_ERROR.getMessage(),
-					"The request is burned",
+					base64Encode("The request is burned"),
 					BURN_ERROR.getStatusCode());
 
 		} catch (RuntimeException re) {
@@ -118,7 +122,7 @@ public class ApiDocProtectorInitializer extends ApiDocProtectorLibrary {
 
 			return apiDocProtectorViewer.error(
 					BURN_EXCEPTION.getMessage(),
-					"The request has caused a exception",
+					base64Encode("The request has caused a exception"),
 					BURN_EXCEPTION.getStatusCode());
 		}
 	}
@@ -127,19 +131,7 @@ public class ApiDocProtectorInitializer extends ApiDocProtectorLibrary {
 	@GetMapping(path = "${apidocprotector.custom.uri-login:/doc-protect/login}")
 	public String denied() {
 		register(INITIALIZER_DENIED, null, "info", 2, "Access Denied");
-		return apiDocProtectorErrorRedirect.redirectInitializerError("Missing_Token");
-	}
-
-	@Operation(hidden = true)
-	@GetMapping(path = "/doc-protect/initializer/error/{data}")
-	public ModelAndView error(@PathVariable(required = false) String data) {
-
-		register(INITIALIZER_EXCEPTION, null, "error", 2, "Error: "+data);
-
-		return apiDocProtectorViewer.error(
-				ApiDocProtectorLibraryEnum.INITIALIZER_ERROR.getMessage(),
-				data.replace("_", " "),
-				ApiDocProtectorLibraryEnum.INITIALIZER_ERROR.getStatusCode());
+		return apiDocProtectorErrorRedirect.redirectError(base64Encode("Missing_Token"));
 	}
 
 }
